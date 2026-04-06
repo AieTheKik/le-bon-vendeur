@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Bon Vendeur</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; min-height: 100vh; }
+
+    /* HEADER */
+    header { background: #fff; border-bottom: 1px solid #eee; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .logo { font-size: 18px; font-weight: 700; color: #111; }
+    .logo span { color: #F56B2A; }
+
+    /* LAYOUT */
+    .app { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 57px); }
+
+    /* SIDEBAR */
+    .sidebar { background: #fff; border-right: 1px solid #eee; padding: 20px; overflow-y: auto; }
+    .sidebar-title { font-size: 13px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+    .annonce-card { border: 1px solid #eee; border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; background: #fff; }
+    .annonce-card:hover { border-color: #F56B2A; }
+    .annonce-card.active { border-color: #F56B2A; background: #fff8f5; }
+    .annonce-card-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .annonce-card-prix { font-size: 13px; color: #F56B2A; font-weight: 600; }
+    .annonce-card-etat { font-size: 12px; color: #888; }
+
+    .btn-nouvelle { width: 100%; padding: 12px; background: #F56B2A; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 16px; }
+    .btn-nouvelle:hover { background: #e05a1e; }
+
+    /* MAIN */
+    .main { display: flex; flex-direction: column; }
+
+    /* STEPS */
+    .steps-bar { display: flex; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #eee; gap: 8px; }
+    .step-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #bbb; }
+    .step-item.active { color: #F56B2A; font-weight: 600; }
+    .step-item.done { color: #4caf50; }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .step-arrow { color: #ddd; font-size: 12px; }
+
+    /* CONTENT AREA */
+    .content { flex: 1; padding: 24px; overflow-y: auto; max-width: 720px; }
+
+    /* STEP PANELS */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* UPLOAD */
+    .upload-zone { border: 2px dashed #ddd; border-radius: 14px; padding: 3rem 2rem; text-align: center; cursor: pointer; background: #fff; transition: border-color 0.2s; margin-bottom: 16px; }
+    .upload-zone:hover { border-color: #F56B2A; }
+    .upload-zone input { display: none; }
+    .preview-img { max-width: 100%; max-height: 300px; border-radius: 10px; margin-top: 1rem; object-fit: contain; }
+
+    /* FORM */
+    .form-label { font-size: 13px; color: #666; display: block; margin-bottom: 5px; margin-top: 14px; }
+    input[type=text], input[type=number], textarea, select {
+      width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; font-family: inherit; background: #fff; color: #111;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #F56B2A; }
+    textarea { resize: vertical; }
+
+    /* RESULT CARD */
+    .result-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 18px; margin-bottom: 12px; }
+    .result-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .result-value { font-size: 15px; color: #111; line-height: 1.6; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .copy-btn { font-size: 12px; padding: 3px 10px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; color: #555; }
+    .copy-btn:hover { background: #eee; }
+    .tag { display: inline-block; background: #fff3ec; color: #F56B2A; font-size: 12px; padding: 3px 10px; border-radius: 20px; margin: 2px; border: 1px solid #ffd4b8; }
+    .badge-green { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
+    .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .price-box { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 14px; text-align: center; }
+    .price-box.main { border-color: #F56B2A; background: #fff8f5; }
+    .price-num { font-size: 24px; font-weight: 700; color: #F56B2A; }
+    .price-lbl { font-size: 12px; color: #999; margin-top: 3px; }
+
+    /* PRIX CONFIG */
+    .prix-config { background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .prix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+    .plancher-note { font-size: 12px; color: #888; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+    /* CHAT */
+    .nego-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; align-items: start; }
+    .chat-wrapper { background: #fff; border: 1px solid #eee; border-radius: 14px; overflow: hidden; }
+    .chat-header { padding: 14px 16px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header-title { font-size: 14px; font-weight: 600; }
+    .chat-header-prix { font-size: 13px; color: #F56B2A; font-weight: 600; }
+    .chat-box { height: 380px; overflow-y: auto; padding: 16px; background: #fafafa; }
+    .message { margin-bottom: 12px; display: flex; flex-direction: column; }
+    .message.acheteur { align-items: flex-start; }
+    .message.vendeur { align-items: flex-end; }
+    .bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+    .acheteur .bubble { background: #f0f0f0; color: #111; border-bottom-left-radius: 4px; }
+    .vendeur .bubble { background: #F56B2A; color: #fff; border-bottom-right-radius: 4px; }
+    .msg-label { font-size: 11px; color: #aaa; margin-bottom: 3px; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: #fff; }
+    .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .quick-btn { padding: 5px 12px; background: #fff; border: 1px solid #ddd; border-radius: 20px; font-size: 12px; cursor: pointer; color: #555; transition: all 0.2s; }
+    .quick-btn:hover { border-color: #F56B2A; color: #F56B2A; }
+    .chat-row { display: flex; gap: 8px; }
+    .chat-row input { flex: 1; font-size: 14px; }
+    .send-btn { padding: 10px 18px; background: #F56B2A; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .send-btn:hover { background: #e05a1e; }
+    .send-btn:disabled { background: #ccc; }
+    .typing { font-size: 12px; color: #aaa; font-style: italic; padding: 4px 0; text-align: right; }
+
+    /* PAIEMENT SIDEBAR */
+    .paiement-card { background: #fff; border: 2px solid #F56B2A; border-radius: 14px; padding: 18px; position: sticky; top: 20px; }
+    .paiement-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: #111; }
+    .prix-en-cours { text-align: center; padding: 16px; background: #fff8f5; border-radius: 10px; margin-bottom: 16px; }
+    .prix-en-cours-num { font-size: 32px; font-weight: 800; color: #F56B2A; }
+    .prix-en-cours-lbl { font-size: 12px; color: #888; margin-top: 2px; }
+    .commission-detail { font-size: 12px; color: #888; margin-bottom: 16px; }
+    .commission-row { display: flex; justify-content: space-between; padding: 4px 0; }
+    .commission-row.total { font-weight: 700; color: #111; font-size: 14px; border-top: 1px solid #eee; padding-top: 8px; margin-top: 4px; }
+    .commission-row.total .amount { color: #F56B2A; }
+    .btn-payer { width: 100%; padding: 14px; background: #F56B2A; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-payer:hover { background: #e05a1e; }
+    .btn-payer:disabled { background: #ccc; }
+    .nego-status { font-size: 12px; text-align: center; margin-top: 10px; color: #888; }
+    .nego-status.accord { color: #4caf50; font-weight: 600; }
+
+    /* BUTTONS */
+    .btn-main { padding: 13px 28px; background: #F56B2A; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-main:hover { background: #e05a1e; }
+    .btn-main:disabled { background: #ccc; }
+    .btn-sec { padding: 13px 28px; background: #fff; color: #F56B2A; border: 1.5px solid #F56B2A; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .btn-sec:hover { background: #fff8f5; }
+
+    /* MISC */
+    .loading { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #F56B2A; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { color: #c0392b; font-size: 13px; padding: 12px; background: #fdf0f0; border-radius: 8px; margin-top: 12px; }
+    .success-banner { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #2e7d32; margin-bottom: 14px; }
+    .row-btns { display: flex; gap: 10px; margin-top: 16px; }
+    .sys-msg { text-align: center; font-size: 12px; color: #aaa; padding: 6px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px; }
+
+    @media (max-width: 768px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .nego-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Le <span>Bon</span> Vendeur</div>
+  <div style="font-size:13px; color:#888">Agent IA de vente</div>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="btn-nouvelle" onclick="nouvelleAnnonce()">+ Nouvelle annonce</button>
+    <div class="sidebar-title">Mes annonces</div>
+    <div id="liste-annonces"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="steps-bar" id="steps-bar">
+      <div class="step-item active" id="step1"><div class="step-num">1</div> Photo & annonce</div>
+      <div class="step-arrow">›</div>
+      <div class="step-item" id="step2"><div class="step-num">2</div> Prix</div>
+      <div class="step-arrow">›</div>
+      <div class="step-item" id="step3"><div class="step-num">3</div> Négociation</div>
+    </div>
+
+    <div class="content">
+
+      <!-- PANEL 1 : PHOTO & ANNONCE -->
+      <div class="panel active" id="panel-1">
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)">
+          <div id="uploadPrompt">
+            <div style="font-size:40px; margin-bottom:10px">📷</div>
+            <p style="font-size:16px; font-weight:600; color:#333; margin-bottom:4px">Ajoute une photo de ton objet</p>
+            <p style="font-size:13px; color:#999">JPG, PNG, WEBP</p>
+          </div>
+          <img id="previewImg" class="preview-img" style="display:none">
+        </div>
+        <label class="form-label">Infos supplémentaires (optionnel)</label>
+        <textarea id="extraInfo" rows="2" placeholder="Ex: acheté en 2022, fonctionne parfaitement, vendu avec accessoires..."></textarea>
+        <div class="row-btns">
+          <button class="btn-main" id="analyzeBtn" onclick="analyzeImage()" style="display:none">Générer l'annonce →</button>
+        </div>
+        <div id="results-annonce" style="margin-top:20px"></div>
+      </div>
+
+      <!-- PANEL 2 : PRIX -->
+      <div class="panel" id="panel-2">
+        <div id="annonce-recap"></div>
+        <div class="prix-config">
+          <div style="font-size:16px; font-weight:700; margin-bottom:4px">Définir tes prix</div>
+          <div style="font-size:13px; color:#888; margin-bottom:16px">Ces informations restent confidentielles</div>
+          <div class="prix-grid">
+            <div>
+              <label class="form-label">Prix affiché sur Le Bon Coin (€)</label>
+              <input type="number" id="prixAffiche" placeholder="Ex: 350">
+              <div style="font-size:12px; color:#888; margin-top:4px">Prix visible par les acheteurs</div>
+            </div>
+            <div>
+              <label class="form-label">Prix plancher secret (€)</label>
+              <input type="number" id="prixPlancher" placeholder="Ex: 280">
+              <div class="plancher-note">🔒 Jamais révélé aux acheteurs</div>
+            </div>
+          </div>
+        </div>
+        <div class="row-btns">
+          <button class="btn-sec" onclick="goStep(1)">← Retour</button>
+          <button class="btn-main" onclick="validerPrix()">Démarrer la négociation →</button>
+        </div>
+      </div>
+
+      <!-- PANEL 3 : NÉGOCIATION -->
+      <div class="panel" id="panel-3">
+        <div class="nego-layout">
+          <div class="chat-wrapper">
+            <div class="chat-header">
+              <div class="chat-header-title" id="chat-objet-title">Simulation de négociation</div>
+              <div class="chat-header-prix" id="chat-prix-header"></div>
+            </div>
+            <div class="chat-box" id="chatBox"></div>
+            <div class="chat-input-area">
+              <div class="quick-replies">
+                <button class="quick-btn" onclick="envoyerMessage('Bonjour, c\'est encore disponible ?')">Encore dispo ?</button>
+                <button class="quick-btn" onclick="envoyerMessage('Je vous propose la moitié du prix affiché')">Offre basse</button>
+                <button class="quick-btn" onclick="envoyerMessage('Vous pouvez faire un geste sur le prix ?')">Geste sur prix ?</button>
+                <button class="quick-btn" onclick="envoyerMessage('OK je prends au prix affiché, on se voit quand ?')">Accepte le prix</button>
+              </div>
+              <div class="chat-row">
+                <input type="text" id="msgInput" placeholder="Simule un message d'acheteur..." onkeydown="if(event.key==='Enter') envoyerMessageInput()">
+                <button class="send-btn" id="sendBtn" onclick="envoyerMessageInput()">Envoyer</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAIEMENT CARD (toujours visible) -->
+          <div class="paiement-card">
+            <div class="paiement-title">💳 Encaisser la vente</div>
+            <div class="prix-en-cours">
+              <div class="prix-en-cours-num" id="prixActuel">—</div>
+              <div class="prix-en-cours-lbl">Prix en discussion</div>
+            </div>
+            <div class="commission-detail">
+              <div class="commission-row"><span>Prix de vente</span><span id="detail-vente">—</span></div>
+              <div class="commission-row"><span>Commission 5%</span><span id="detail-commission">—</span></div>
+              <div class="commission-row total"><span>Vous recevez</span><span class="amount" id="detail-vendeur">—</span></div>
+            </div>
+            <label class="form-label" style="margin-top:0">Email vendeur</label>
+            <input type="text" id="vendeurEmail" placeholder="vendeur@email.com" style="margin-bottom:12px; font-size:13px">
+            <button class="btn-payer" id="btnPayer" onclick="lancerPaiement()">Encaisser maintenant</button>
+            <div class="nego-status" id="nego-status">Négociation en cours...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ——— STATE ———
+  let imageBase64 = null;
+  let imageType = null;
+  let annonceData = null;
+  let annonces = [];
+  let currentAnnonce = null;
+  let chatHistory = [];
+  let prixDiscussion = 0;
+
+  // ——— UPLOAD ———
+  function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    imageType = file.type;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageBase64 = e.target.result.split(',')[1];
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewImg').style.display = 'block';
+      document.getElementById('uploadPrompt').style.display = 'none';
+      document.getElementById('analyzeBtn').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ——— ANALYSE PHOTO ———
+  async function analyzeImage() {
+    if (!imageBase64) return;
+    const extra = document.getElementById('extraInfo').value;
+    document.getElementById('results-annonce').innerHTML = '<div class="loading"><span class="spinner"></span>Analyse en cours...</div>';
+    document.getElementById('analyzeBtn').disabled = true;
+
+    try {
+      const res = await fetch('http://localhost:3001/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64, imageType, extraInfo: extra })
+      });
+      const d = await res.json();
+      if (d.error) throw new Error(d.error);
+      annonceData = d;
+      renderAnnonce(d);
+    } catch(err) {
+      document.getElementById('results-annonce').innerHTML = '<div class="error">❌ ' + err.message + '</div>';
+    }
+    document.getElementById('analyzeBtn').disabled = false;
+  }
+
+  function renderAnnonce(d) {
+    document.getElementById('results-annonce').innerHTML = `
+      <div class="success-banner">✅ Annonce générée !</div>
+      <div class="result-card">
+        <div class="result-label">Objet</div>
+        <div class="result-value" style="font-size:17px; font-weight:700">${d.objet}</div>
+        <div style="margin-top:8px"><span class="badge-green">${d.etat}</span> <span class="tag">${d.categorie}</span></div>
+      </div>
+      <div class="result-card">
+        <div class="result-header"><div class="result-label">Titre</div><button class="copy-btn" onclick="copyText('r-titre')">Copier</button></div>
+        <div class="result-value" id="r-titre" style="font-weight:600">${d.titre}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-header"><div class="result-label">Description</div><button class="copy-btn" onclick="copyText('r-desc')">Copier</button></div>
+        <div class="result-value" id="r-desc" style="color:#555; font-size:14px">${d.description}</div>
+      </div>
+      <div class="price-row">
+        <div class="price-box"><div class="price-num">${d.prix_min}€</div><div class="price-lbl">Minimum</div></div>
+        <div class="price-box main"><div class="price-num">${d.prix_recommande}€</div><div class="price-lbl">Recommandé</div></div>
+        <div class="price-box"><div class="price-num">${d.prix_max}€</div><div class="price-lbl">Maximum</div></div>
+      </div>
+      <div class="result-card">
+        <div class="result-label">Conseil</div>
+        <div class="result-value" style="font-size:13px; color:#555">${d.conseils}</div>
+      </div>
+      <div class="row-btns">
+        <button class="btn-main" onclick="passerAuPrix()">Définir mes prix →</button>
+      </div>
+    `;
+  }
+
+  function passerAuPrix() {
+    if (!annonceData) return;
+    document.getElementById('prixAffiche').value = annonceData.prix_recommande;
+    document.getElementById('prixPlancher').value = annonceData.prix_min;
+    goStep(2);
+    renderRecap();
+  }
+
+  // ——— RECAP ANNONCE ———
+  function renderRecap() {
+    if (!annonceData) return;
+    document.getElementById('annonce-recap').innerHTML = `
+      <div class="result-card" style="margin-bottom:16px; display:flex; gap:12px; align-items:center">
+        <div style="font-size:28px">🏷️</div>
+        <div>
+          <div style="font-weight:700; font-size:15px">${annonceData.objet}</div>
+          <div style="font-size:13px; color:#888">${annonceData.etat} · ${annonceData.categorie}</div>
+        </div>
+      </div>`;
+  }
+
+  // ——— VALIDER PRIX ———
+  function validerPrix() {
+    const pa = parseFloat(document.getElementById('prixAffiche').value);
+    const pp = parseFloat(document.getElementById('prixPlancher').value);
+    if (!pa || !pp) { alert('Remplis les deux prix.'); return; }
+    if (pp > pa) { alert('Le prix plancher doit être inférieur au prix affiché.'); return; }
+
+    const annonce = {
+      id: Date.now(),
+      objet: annonceData.objet,
+      etat: annonceData.etat,
+      titre: annonceData.titre,
+      description: annonceData.description,
+      prixAffiche: pa,
+      prixPlancher: pp,
+      data: annonceData
+    };
+    annonces.push(annonce);
+    updateSidebar();
+    ouvrirNegociation(annonce);
+  }
+
+  // ——— SIDEBAR ———
+  function updateSidebar() {
+    const liste = document.getElementById('liste-annonces');
+    if (annonces.length === 0) {
+      liste.innerHTML = '<div style="font-size:13px; color:#bbb; text-align:center; padding:20px">Aucune annonce</div>';
+      return;
+    }
+    liste.innerHTML = annonces.map(a => `
+      <div class="annonce-card ${currentAnnonce && currentAnnonce.id === a.id ? 'active' : ''}" onclick="ouvrirNegociation(annonces.find(x=>x.id===${a.id}))">
+        <div class="annonce-card-title">${a.titre}</div>
+        <div class="annonce-card-prix">${a.prixAffiche} €</div>
+        <div class="annonce-card-etat">${a.etat}</div>
+      </div>`).join('');
+  }
+
+  // ——— OUVRIR NÉGOCIATION ———
+  function ouvrirNegociation(annonce) {
+    currentAnnonce = annonce;
+    chatHistory = [];
+    prixDiscussion = annonce.prixAffiche;
+    updateSidebar();
+    goStep(3);
+
+    document.getElementById('chat-objet-title').textContent = annonce.objet;
+    document.getElementById('chat-prix-header').textContent = annonce.prixAffiche + ' €';
+
+    const box = document.getElementById('chatBox');
+    box.innerHTML = `<div class="sys-msg">Simulation démarrée · Prix affiché : ${annonce.prixAffiche}€ · Plancher secret : ${annonce.prixPlancher}€</div>`;
+
+    updatePrixCard(annonce.prixAffiche);
+    document.getElementById('nego-status').textContent = 'Négociation en cours...';
+    document.getElementById('nego-status').className = 'nego-status';
+  }
+
+  // ——— MISE À JOUR CARTE PAIEMENT ———
+  function updatePrixCard(prix) {
+    prixDiscussion = prix;
+    const commission = (prix * 0.05).toFixed(2);
+    const vendeur = (prix * 0.95).toFixed(2);
+    document.getElementById('prixActuel').textContent = prix + ' €';
+    document.getElementById('detail-vente').textContent = prix + ' €';
+    document.getElementById('detail-commission').textContent = commission + ' €';
+    document.getElementById('detail-vendeur').textContent = vendeur + ' €';
+  }
+
+  // ——— CHAT ———
+  function ajouterBubble(type, texte) {
+    const box = document.getElementById('chatBox');
+    if (type === 'sys') {
+      box.innerHTML += `<div class="sys-msg">${texte}</div>`;
+    } else {
+      const label = type === 'acheteur' ? 'Acheteur' : 'Ton agent';
+      box.innerHTML += `<div class="message ${type}"><div class="msg-label">${label}</div><div class="bubble">${texte}</div></div>`;
+    }
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function envoyerMessage(texte) {
+    if (!texte.trim() || !currentAnnonce) return;
+    document.getElementById('msgInput').value = '';
+    document.getElementById('sendBtn').disabled = true;
+
+    ajouterBubble('acheteur', texte);
+    chatHistory.push({ role: 'user', content: texte });
+
+    const box = document.getElementById('chatBox');
+    box.innerHTML += '<div id="typing" class="typing">L\'agent répond...</div>';
+    box.scrollTop = box.scrollHeight;
+
+    try {
+      const res = await fetch('http://localhost:3001/negocier', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: chatHistory,
+          prixAffiche: currentAnnonce.prixAffiche,
+          prixPlancher: currentAnnonce.prixPlancher,
+          objetDescription: currentAnnonce.objet + ' — ' + currentAnnonce.etat
+        })
+      });
+      const data = await res.json();
+      document.getElementById('typing')?.remove();
+      ajouterBubble('vendeur', data.reponse);
+      chatHistory.push({ role: 'assistant', content: data.reponse });
+
+      // Détecter prix mentionné dans la réponse
+      const prixMatch = data.reponse.match(/(\d+)\s*€/);
+      if (prixMatch) updatePrixCard(parseInt(prixMatch[1]));
+
+      // Détecter accord
+      const accord = data.reponse.toLowerCase();
+      if (accord.includes('rendez-vous') || accord.includes('vendu') || accord.includes('parfait') || accord.includes('accord') || accord.includes('convient')) {
+        document.getElementById('nego-status').textContent = '✅ Accord trouvé !';
+        document.getElementById('nego-status').className = 'nego-status accord';
+      }
+    } catch(err) {
+      document.getElementById('typing')?.remove();
+      ajouterBubble('sys', '❌ Erreur : ' + err.message);
+    }
+    document.getElementById('sendBtn').disabled = false;
+  }
+
+  function envoyerMessageInput() {
+    const t = document.getElementById('msgInput').value.trim();
+    if (t) envoyerMessage(t);
+  }
+
+  // ——— PAIEMENT ———
+  async function lancerPaiement() {
+    const email = document.getElementById('vendeurEmail').value;
+    if (!prixDiscussion || prixDiscussion <= 0) { alert('Le prix n\'est pas défini.'); return; }
+
+    document.getElementById('btnPayer').disabled = true;
+    document.getElementById('btnPayer').textContent = 'Redirection...';
+
+    try {
+      const res = await fetch('http://localhost:3001/paiement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          montantVente: prixDiscussion,
+          objetDescription: currentAnnonce?.objet || 'Objet Le Bon Coin',
+          vendeurEmail: email
+        })
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.open(data.url, '_blank');
+      } else {
+        alert('Erreur Stripe : ' + data.error);
+      }
+    } catch(err) {
+      alert('Erreur : ' + err.message);
+    }
+    document.getElementById('btnPayer').disabled = false;
+    document.getElementById('btnPayer').textContent = 'Encaisser maintenant';
+  }
+
+  // ——— NAVIGATION ———
+  function goStep(n) {
+    document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === n - 1));
+    document.querySelectorAll('.step-item').forEach((s, i) => {
+      s.classList.remove('active', 'done');
+      if (i + 1 === n) s.classList.add('active');
+      else if (i + 1 < n) s.classList.add('done');
+    });
+  }
+
+  function nouvelleAnnonce() {
+    annonceData = null;
+    imageBase64 = null;
+    imageType = null;
+    document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('uploadPrompt').style.display = 'block';
+    document.getElementById('analyzeBtn').style.display = 'none';
+    document.getElementById('extraInfo').value = '';
+    document.getElementById('results-annonce').innerHTML = '';
+    goStep(1);
+  }
+
+  function copyText(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    navigator.clipboard.writeText(el.innerText).then(() => {
+      const btn = el.parentElement?.querySelector('.copy-btn');
+      if (btn) { btn.textContent = '✓ Copié !'; setTimeout(() => btn.textContent = 'Copier', 2000); }
+    });
+  }
+
+  // Init
+  updateSidebar();
+</script>
+</body>
+</html>

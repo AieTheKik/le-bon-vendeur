@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le Bon Vendeur — Vendez mieux, sans effort</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --orange: #F4622A;
+      --orange-light: #FF8C5A;
+      --dark: #141414;
+      --mid: #2A2A2A;
+      --cream: #FAF6F0;
+      --gray: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 5%;
+      background: rgba(20,20,20,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: var(--orange); color: #fff;
+      padding: 10px 22px; border-radius: 100px;
+      font-size: 14px; font-weight: 500;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--orange-light); color: #fff; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 5% 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(244,98,42,0.12) 0%, transparent 70%);
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(244,98,42,0.15); border: 1px solid rgba(244,98,42,0.3);
+      color: var(--orange-light); font-size: 13px; font-weight: 500;
+      padding: 6px 16px; border-radius: 100px;
+      margin-bottom: 2rem; position: relative; z-index: 1;
+      animation: fadeUp 0.6s ease both;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 1.5rem;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    h1 em { font-style: italic; color: var(--orange); }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 12px; align-items: center;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn-primary {
+      background: var(--orange); color: #fff;
+      padding: 16px 32px; border-radius: 100px;
+      font-size: 16px; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+      box-shadow: 0 8px 32px rgba(244,98,42,0.35);
+    }
+    .btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(244,98,42,0.45); }
+    .btn-ghost {
+      color: rgba(255,255,255,0.6); font-size: 15px;
+      text-decoration: none; display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: #fff; }
+
+    /* STATS */
+    .stats {
+      display: flex; justify-content: center; gap: 3rem;
+      padding: 0 5% 80px;
+      position: relative; z-index: 1;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px; font-weight: 700; color: #fff;
+    }
+    .stat-num span { color: var(--orange); }
+    .stat-label { font-size: 13px; color: var(--gray); margin-top: 4px; }
+
+    /* HOW IT WORKS */
+    .section {
+      padding: 100px 5%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-tag {
+      font-size: 12px; font-weight: 500; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 4rem;
+    }
+    .section-title em { font-style: italic; color: var(--orange); }
+
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+      border: 0.5px solid rgba(255,255,255,0.08);
+      border-radius: 20px; overflow: hidden;
+    }
+    .step {
+      padding: 2.5rem 2rem;
+      background: var(--mid);
+      position: relative;
+      transition: background 0.3s;
+    }
+    .step:hover { background: #333; }
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px; font-weight: 900;
+      color: rgba(244,98,42,0.15);
+      line-height: 1; margin-bottom: 1.5rem;
+    }
+    .step-icon { font-size: 28px; margin-bottom: 1rem; }
+    .step-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+    .step-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* FEATURES */
+    .features-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .feature-card {
+      background: var(--mid); border: 0.5px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(244,98,42,0.4); transform: translateY(-4px); }
+    .feature-card.large { grid-column: span 2; display: flex; align-items: center; gap: 2rem; }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(244,98,42,0.15); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0; margin-bottom: 1rem;
+    }
+    .feature-card.large .feature-icon { margin-bottom: 0; }
+    .feature-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+    .feature-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* PRICING */
+    .pricing-wrapper {
+      background: var(--mid);
+      border: 0.5px solid rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      align-items: center;
+    }
+    .pricing-left .big-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px; font-weight: 900;
+      line-height: 1; color: var(--orange);
+    }
+    .pricing-left .big-price sup { font-size: 32px; vertical-align: super; }
+    .pricing-tagline { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 8px; }
+    .pricing-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 12px; }
+    .pricing-list li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: rgba(255,255,255,0.7); }
+    .check { width: 20px; height: 20px; border-radius: 50%; background: rgba(244,98,42,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .pricing-right { text-align: center; }
+    .pricing-example {
+      background: rgba(244,98,42,0.08); border: 1px solid rgba(244,98,42,0.2);
+      border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
+    }
+    .example-label { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
+    .example-item { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
+    .example-row { display: flex; justify-content: space-between; font-size: 14px; color: rgba(255,255,255,0.6); padding: 6px 0; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+    .example-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; padding-top: 10px; margin-top: 4px; }
+    .example-total .amount { color: var(--orange); }
+
+    /* CTA FINAL */
+    .cta-section {
+      text-align: center; padding: 100px 5%;
+      background: linear-gradient(180deg, transparent, rgba(244,98,42,0.06));
+    }
+    .cta-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900; line-height: 1.1;
+      letter-spacing: -1.5px; margin-bottom: 1.5rem;
+    }
+    .cta-section h2 em { font-style: italic; color: var(--orange); }
+    .cta-section p { font-size: 18px; color: rgba(255,255,255,0.5); margin-bottom: 2.5rem; }
+
+    /* FOOTER */
+    footer {
+      border-top: 0.5px solid var(--border);
+      padding: 2rem 5%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer .logo { font-size: 16px; }
+    footer p { font-size: 13px; color: var(--gray); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* DIVIDER */
+    .divider {
+      width: 100%; height: 0.5px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .steps { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.large { grid-column: span 1; flex-direction: column; }
+      .pricing-wrapper { grid-template-columns: 1fr; }
+      .stats { gap: 1.5rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Le <span>Bon</span> Vendeur</div>
+    <div class="nav-links">
+      <a href="#comment">Comment ça marche</a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#tarif">Tarif</a>
+    </div>
+    <a href="#tarif" class="nav-cta">Commencer →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-badge"><span class="badge-dot"></span> Propulsé par l'intelligence artificielle</div>
+    <h1>Vendez sur <span style="color:#F56B2A">Le Bon Coin</span><br>sans lever <em>le petit doigt</em></h1>
+    <p class="hero-sub">Prenez une photo. Notre agent IA rédige l'annonce, négocie avec les acheteurs et obtient le meilleur prix pour vous.</p>
+    <div class="hero-actions">
+      <a href="#tarif" class="btn-primary">Essayer maintenant</a>
+      <a href="#comment" class="btn-ghost">Voir comment ça marche ↓</a>
+    </div>
+  </section>
+
+  <div class="stats reveal">
+    <div class="stat"><div class="stat-num">3<span>s</span></div><div class="stat-label">Pour générer une annonce</div></div>
+    <div class="stat"><div class="stat-num">+<span>40%</span></div><div class="stat-label">De prix obtenu en moyenne</div></div>
+    <div class="stat"><div class="stat-num">4,99<span>€</span></div><div class="stat-label">Par mois, sans engagement</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section class="section" id="comment">
+    <div class="section-tag reveal">Comment ça marche</div>
+    <h2 class="section-title reveal">Trois étapes.<br><em>C'est tout.</em></h2>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📷</div>
+        <div class="step-title">Prenez une photo</div>
+        <div class="step-desc">Photographiez votre objet. Notre IA l'identifie, évalue sa valeur et rédige une annonce optimisée en quelques secondes.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🤖</div>
+        <div class="step-title">L'agent négocie</div>
+        <div class="step-desc">Définissez votre prix minimum secret. L'agent répond aux acheteurs à votre place et défend votre prix intelligemment.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">🎯</div>
+        <div class="step-title">Vendez sans limite</div>
+        <div class="step-desc">Vendez autant que vous voulez. Pour 4,99€/mois, accédez à toutes les fonctionnalités sans limite et sans commission.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FONCTIONNALITÉS -->
+  <section class="section" id="fonctions">
+    <div class="section-tag reveal">Fonctionnalités</div>
+    <h2 class="section-title reveal">Tout ce qu'il faut<br>pour <em>vendre mieux</em></h2>
+    <div class="features-grid reveal">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Analyse photo par IA</div>
+        <div class="feature-desc">Identification automatique de l'objet, estimation de valeur marchande et génération du titre et de la description.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">Réponse automatique</div>
+        <div class="feature-desc">L'agent répond aux messages des acheteurs 24h/24, avec le bon ton et sans jamais révéler votre prix plancher. Inclus dans l'abonnement.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Prix optimisé</div>
+        <div class="feature-desc">L'IA analyse le marché pour suggérer le meilleur prix de départ et maximiser vos chances de vente.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">Négociation intelligente</div>
+        <div class="feature-desc">Votre prix minimum reste secret. L'agent contre-propose, tient bon et conclut au meilleur prix possible.</div>
+      </div>
+      <div class="feature-card large">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <div class="feature-title">Zéro effort, résultat garanti</div>
+          <div class="feature-desc">Plus besoin de surveiller vos annonces, de répondre à chaque message ou de négocier vous-même. Pour 4,99€/mois, Le Bon Vendeur s'occupe de tout — sans commission sur vos ventes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TARIF -->
+  <section class="section" id="tarif">
+    <div class="section-tag reveal">Tarif</div>
+    <h2 class="section-title reveal">Simple et <em>transparent</em></h2>
+    <div class="pricing-wrapper reveal">
+      <div class="pricing-left">
+        <div class="big-price"><sup style="font-size:32px; vertical-align:super">€</sup>4,99</div>
+        <div class="pricing-tagline">par mois · sans engagement · résiliable à tout moment</div>
+        <ul class="pricing-list">
+          <li><span class="check">✓</span> Génération d'annonces illimitée</li>
+          <li><span class="check">✓</span> Agent de négociation 24h/24</li>
+          <li><span class="check">✓</span> Prix plancher confidentiel</li>
+          <li><span class="check">✓</span> Zéro commission sur vos ventes</li>
+          <li><span class="check">✓</span> Résiliation en un clic</li>
+          <li><span class="check">✓</span> Accès immédiat après paiement</li>
+        </ul>
+      </div>
+      <div class="pricing-right">
+        <div class="pricing-example">
+          <div class="example-label">Exemple concret</div>
+          <div class="example-item">📱 Vous vendez un iPhone à 320 €</div>
+          <div class="example-row"><span>Coût mensuel Le Bon Vendeur</span><span>4,99 €</span></div>
+          <div class="example-row"><span>Commission sur la vente</span><span style="color:#2ecc71">0 €</span></div>
+          <div class="example-total"><span>Vous encaissez</span><span class="amount">320 €</span></div>
+        </div>
+        <a href="#" class="btn-primary" style="display:block; text-align:center; text-decoration:none">Démarrer pour 4,99€/mois →</a>
+        <p style="font-size:12px; color:var(--gray); margin-top:12px">Sans engagement · Résiliation en un clic</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section">
+    <h2 class="reveal">Prêt à vendre<br><em>sans effort ?</em></h2>
+    <p class="reveal">Rejoignez les vendeurs qui font confiance au Bon Vendeur.</p>
+    <a href="#" class="btn-primary reveal">Créer mon compte gratuitement →</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">Le <span>Bon</span> Vendeur</div>
+    <p>© 2026 Le Bon Vendeur · Tous droits réservés</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
