@@ -1,24 +1,40 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const Anthropic = require('@anthropic-ai/sdk');
-const Stripe = require('stripe');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
-const DB_FILE = './db.json';
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname));
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+// Initialisation lazy des clients API
+let _anthropic = null;
+let _stripe = null;
+
+function getAnthropic() {
+  if (!_anthropic) {
+    const Anthropic = require('@anthropic-ai/sdk');
+    _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  }
+  return _anthropic;
+}
+
+function getStripe() {
+  if (!_stripe) {
+    const Stripe = require('stripe');
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
+  return _stripe;
+}
 
 const PRICE_ID = 'price_1TJKNgCuO271C6haFToCqBGk';
+const BASE_URL = process.env.BASE_URL || 'https://le-bon-vendeur-production.up.railway.app';
 
-// Base de données fichier (persistante)
+// Base de données fichier
+const DB_FILE = './db.json';
 function loadDB() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return {}; }
 }
@@ -27,14 +43,14 @@ function saveDB(users) {
 }
 const users = loadDB();
 
-// ——— UTILITAIRES ———
+// Utilitaires
 function hashPassword(pwd) {
   return crypto.createHash('sha256').update(pwd).digest('hex');
 }
 function generateToken(email) {
   return crypto.createHash('sha256').update(email + Date.now()).digest('hex');
 }
-const sessions = {}; // token -> email
+const sessions = {};
 
 function authMiddleware(req, res, next) {
   const token = req.headers['authorization'];
@@ -43,50 +59,34 @@ function authMiddleware(req, res, next) {
   next();
 }
 
-// ——— AUTH ———
+// AUTH
 app.post('/auth/inscription', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
     if (users[email]) return res.status(400).json({ error: 'Compte déjà existant' });
-
-    const customer = await stripe.customers.create({ email });
-    users[email] = {
-      email,
-      password: hashPassword(password),
-      stripeCustomerId: customer.id,
-      subscriptionId: null,
-      subscriptionStatus: 'inactive',
-      annonces: []
-    };
+    const customer = await getStripe().customers.create({ email });
+    users[email] = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [] };
     saveDB(users);
-
     const token = generateToken(email);
     sessions[token] = email;
     res.json({ token, user: { email, subscriptionStatus: 'inactive' } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/auth/connexion', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = users[email];
-    if (!user || user.password !== hashPassword(password)) {
-      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
-    }
+    if (!user || user.password !== hashPassword(password)) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     const token = generateToken(email);
     sessions[token] = email;
     res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/auth/deconnexion', authMiddleware, (req, res) => {
-  const token = req.headers['authorization'];
-  delete sessions[token];
+  delete sessions[req.headers['authorization']];
   res.json({ ok: true });
 });
 
@@ -95,65 +95,53 @@ app.get('/auth/me', authMiddleware, (req, res) => {
   res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus });
 });
 
-// ——— ABONNEMENT ———
+// ABONNEMENT
 app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: user.stripeCustomerId,
       payment_method_types: ['card'],
       line_items: [{ price: PRICE_ID, quantity: 1 }],
       mode: 'subscription',
-      success_url: 'http://localhost:3001/dashboard.html?abonnement=succes&email=' + encodeURIComponent(req.userEmail),
-      cancel_url: 'http://localhost:3001/dashboard.html?abonnement=annule',
+      success_url: `${BASE_URL}/dashboard.html?abonnement=succes`,
+      cancel_url: `${BASE_URL}/dashboard.html?abonnement=annule`,
       metadata: { email: req.userEmail }
     });
     res.json({ url: session.url });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Route pour activer l'abonnement après retour Stripe (mode local)
 app.post('/abonnement/activer', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
-    // Vérifier que le client a bien un abonnement actif sur Stripe
-    const subscriptions = await stripe.subscriptions.list({ customer: user.stripeCustomerId, status: 'active' });
+    const subscriptions = await getStripe().subscriptions.list({ customer: user.stripeCustomerId, status: 'active' });
     if (subscriptions.data.length > 0) {
       user.subscriptionId = subscriptions.data[0].id;
       user.subscriptionStatus = 'active';
       saveDB(users);
-      console.log('✅ Abonnement activé pour ' + req.userEmail);
       res.json({ ok: true, status: 'active' });
     } else {
       res.json({ ok: false, status: 'inactive' });
     }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/abonnement/resilier', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
     if (!user.subscriptionId) return res.status(400).json({ error: 'Aucun abonnement actif' });
-    await stripe.subscriptions.update(user.subscriptionId, { cancel_at_period_end: true });
-    res.json({ ok: true, message: 'Abonnement résilié — accès jusqu\'à la fin de la période' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    await getStripe().subscriptions.update(user.subscriptionId, { cancel_at_period_end: true });
+    res.json({ ok: true, message: "Abonnement résilié — accès jusqu'à la fin de la période" });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Webhook Stripe pour confirmer les paiements
+// WEBHOOK STRIPE
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   let event;
   try {
-    event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET || '');
-  } catch (err) {
-    return res.status(400).send('Webhook Error: ' + err.message);
-  }
-
+    event = getStripe().webhooks.constructEvent(req.body, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET || '');
+  } catch (err) { return res.status(400).send('Webhook Error: ' + err.message); }
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const email = session.metadata.email;
@@ -161,37 +149,22 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
       users[email].subscriptionId = session.subscription;
       users[email].subscriptionStatus = 'active';
       saveDB(users);
-      console.log(`✅ Abonnement activé pour ${email}`);
     }
   }
-
-  if (event.type === 'customer.subscription.deleted') {
-    const sub = event.data.object;
-    const user = Object.values(users).find(u => u.subscriptionId === sub.id);
-    if (user) {
-      user.subscriptionStatus = 'inactive';
-      user.subscriptionId = null;
-      saveDB(users);
-      console.log(`❌ Abonnement résilié pour ${user.email}`);
-    }
-  }
-
   res.json({ received: true });
 });
 
-// ——— ANNONCES ———
+// ANALYSE PHOTO
 app.post('/analyze', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
-    if (user.subscriptionStatus !== 'active') {
-      return res.status(403).json({ error: 'Abonnement requis' });
-    }
+    if (user.subscriptionStatus !== 'active') return res.status(403).json({ error: 'Abonnement requis' });
     const { imageBase64, imageType, extraInfo } = req.body;
-    const response = await client.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1000,
       system: `Tu es un expert en vente sur Le Bon Coin en France. Analyse la photo et génère une annonce optimisée. Réponds UNIQUEMENT en JSON valide, sans balises markdown :
-{"objet":"nom de l'objet","etat":"Bon état","titre":"titre accrocheur max 70 caractères","description":"description détaillée 3-5 phrases","prix_min":0,"prix_recommande":0,"prix_max":0,"categorie":"catégorie LBC","sous_categorie":"sous-catégorie","mots_cles":["mot1","mot2","mot3"],"conseils":"conseil pour maximiser la vente","options_recommandees":["option1"]}`,
+{"objet":"nom","etat":"état","titre":"titre max 70 chars","description":"description 3-5 phrases","prix_min":0,"prix_recommande":0,"prix_max":0,"categorie":"catégorie","sous_categorie":"sous-catégorie","mots_cles":["mot1"],"conseils":"conseil","options_recommandees":["option1"]}`,
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: imageType || 'image/jpeg', data: imageBase64 } },
         { type: 'text', text: extraInfo ? `Infos : ${extraInfo}` : "Génère l'annonce." }
@@ -203,25 +176,20 @@ app.post('/analyze', authMiddleware, async (req, res) => {
     user.annonces.push(annonce);
     saveDB(users);
     res.json(annonce);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/annonces', authMiddleware, (req, res) => {
-  const user = users[req.userEmail];
-  res.json(user.annonces || []);
+  res.json(users[req.userEmail].annonces || []);
 });
 
-// ——— NÉGOCIATION ———
+// NÉGOCIATION
 app.post('/negocier', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
-    if (user.subscriptionStatus !== 'active') {
-      return res.status(403).json({ error: 'Abonnement requis' });
-    }
+    if (user.subscriptionStatus !== 'active') return res.status(403).json({ error: 'Abonnement requis' });
     const { messages, prixAffiche, prixPlancher, objetDescription } = req.body;
-    const response = await client.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 500,
       system: `Tu es un vendeur particulier sur Le Bon Coin qui vend : ${objetDescription}.
@@ -235,9 +203,8 @@ Prix affiché : ${prixAffiche}€. Prix minimum absolu (ne jamais révéler) : $
       messages
     });
     res.json({ reponse: response.content[0].text });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.listen(3001, () => console.log('✅ Serveur Le Bon Vendeur sur http://localhost:3001'));
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`✅ Serveur Le Bon Vendeur sur port ${PORT}`));
