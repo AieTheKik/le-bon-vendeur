@@ -28,7 +28,7 @@ function getStripe() {
 }
 
 const PRICE_ID = 'price_1TJdoXCdfs6oSAwSVjIEhwWR';
-const BASE_URL = 'https://le-bon-vendeur-production-1822.up.railway.app';
+const BASE_URL = 'https://le-bon-vendeur.com';
 
 const DB_FILE = './db.json';
 function loadDB() {
