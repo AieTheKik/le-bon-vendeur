@@ -14,7 +14,7 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname));
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const PRICE_ID = 'price_1TJKNgCuO271C6haFToCqBGk';
 
