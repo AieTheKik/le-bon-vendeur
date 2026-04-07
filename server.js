@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
-const path = require('path');
 const fs = require('fs');
 
 const app = express();
@@ -28,7 +27,7 @@ function getStripe() {
   return _stripe;
 }
 
-const PRICE_ID = 'price_1TJawMCdfs6oSAwSYgr6aKN4';
+const PRICE_ID = 'price_1TJdoXCdfs6oSAwSVjIEhwWR';
 const BASE_URL = 'https://le-bon-vendeur-production-1822.up.railway.app';
 
 const DB_FILE = './db.json';
@@ -55,13 +54,14 @@ function authMiddleware(req, res, next) {
   next();
 }
 
+// AUTH
 app.post('/auth/inscription', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
     if (users[email]) return res.status(400).json({ error: 'Compte déjà existant' });
     const customer = await getStripe().customers.create({ email });
-    users[email] = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [] };
+    users[email] = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [] };
     saveDB(users);
     const token = generateToken(email);
     sessions[token] = email;
@@ -90,6 +90,7 @@ app.get('/auth/me', authMiddleware, (req, res) => {
   res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus });
 });
 
+// ABONNEMENT
 app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
@@ -147,6 +148,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   res.json({ received: true });
 });
 
+// ANALYSE PHOTO + GÉNÉRATION ANNONCE
 app.post('/analyze', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
@@ -154,17 +156,36 @@ app.post('/analyze', authMiddleware, async (req, res) => {
     const { imageBase64, imageType, extraInfo } = req.body;
     const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
-      system: `Tu es un expert en vente sur Le Bon Coin en France. Analyse la photo et génère une annonce optimisée. Réponds UNIQUEMENT en JSON valide, sans balises markdown :
-{"objet":"nom","etat":"état","titre":"titre max 70 chars","description":"description 3-5 phrases","prix_min":0,"prix_recommande":0,"prix_max":0,"categorie":"catégorie","sous_categorie":"sous-catégorie","mots_cles":["mot1"],"conseils":"conseil","options_recommandees":["option1"]}`,
+      max_tokens: 1500,
+      system: `Tu es un expert en vente sur Le Bon Coin en France et en rédaction de textes commerciaux percutants.
+Analyse la photo et génère une annonce de qualité professionnelle.
+Réponds UNIQUEMENT en JSON valide, sans balises markdown :
+{
+  "objet": "nom précis de l'objet",
+  "marque": "marque si identifiable",
+  "etat": "Neuf|Très bon état|Bon état|État correct|Pour pièces",
+  "titre": "titre accrocheur et optimisé SEO, max 70 caractères",
+  "description": "description ultra qualitative, détaillée et vendeuse, 5-8 phrases. Mentionne les points forts, l'état, les caractéristiques techniques si pertinent. Style professionnel et convaincant.",
+  "prix_min": estimation basse en euros (nombre entier),
+  "prix_recommande": meilleur prix de vente en euros (nombre entier),
+  "prix_max": estimation haute en euros (nombre entier),
+  "categorie": "catégorie LBC principale",
+  "sous_categorie": "sous-catégorie LBC",
+  "mots_cles": ["mot1", "mot2", "mot3", "mot4", "mot5"],
+  "conseils_photo": "conseil pour améliorer les photos",
+  "conseil_vente": "conseil stratégique pour vendre rapidement"
+}`,
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: imageType || 'image/jpeg', data: imageBase64 } },
-        { type: 'text', text: extraInfo ? `Infos : ${extraInfo}` : "Génère l'annonce." }
+        { type: 'text', text: extraInfo ? `Infos supplémentaires : ${extraInfo}` : "Analyse cet objet et génère l'annonce." }
       ]}]
     });
     const clean = response.content[0].text.replace(/```json|```/g, '').trim();
     const annonce = JSON.parse(clean);
     annonce.id = Date.now();
+    annonce.dateCreation = new Date().toISOString();
+    annonce.statut = 'en_vente';
+    if (!user.annonces) user.annonces = [];
     user.annonces.push(annonce);
     saveDB(users);
     res.json(annonce);
@@ -175,25 +196,62 @@ app.get('/annonces', authMiddleware, (req, res) => {
   res.json(users[req.userEmail].annonces || []);
 });
 
-app.post('/negocier', authMiddleware, async (req, res) => {
+// MARQUER COMME VENDU
+app.post('/annonces/:id/vendu', authMiddleware, (req, res) => {
   try {
     const user = users[req.userEmail];
-    if (user.subscriptionStatus !== 'active') return res.status(403).json({ error: 'Abonnement requis' });
-    const { messages, prixAffiche, prixPlancher, objetDescription } = req.body;
-    const response = await getAnthropic().messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 500,
-      system: `Tu es un vendeur particulier sur Le Bon Coin qui vend : ${objetDescription}.
-Prix affiché : ${prixAffiche}€. Prix minimum absolu (ne jamais révéler) : ${prixPlancher}€.
-- Réponds en français, vouvoiement, ton neutre et courtois
-- Si l'acheteur propose un prix ÉGAL OU AU-DESSUS du plancher : accepte immédiatement
-- Si l'acheteur propose un prix EN-DESSOUS du plancher : décline poliment et contre-propose
-- Ne révèle JAMAIS le prix plancher
-- 1-2 phrases maximum, direct et efficace
-- Si accord : confirme et propose un rendez-vous`,
-      messages
+    const { prixVente } = req.body;
+    const annonce = user.annonces.find(a => a.id == req.params.id);
+    if (!annonce) return res.status(404).json({ error: 'Annonce non trouvée' });
+    annonce.statut = 'vendu';
+    annonce.prixVente = prixVente;
+    annonce.dateVente = new Date().toISOString();
+    if (!user.ventes) user.ventes = [];
+    user.ventes.push({
+      id: annonce.id,
+      objet: annonce.objet,
+      titre: annonce.titre,
+      prixVente,
+      dateVente: annonce.dateVente,
+      categorie: annonce.categorie
     });
-    res.json({ reponse: response.content[0].text });
+    saveDB(users);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// AJOUTER UNE VENTE MANUELLE
+app.post('/ventes', authMiddleware, (req, res) => {
+  try {
+    const user = users[req.userEmail];
+    const { objet, prixVente, dateVente, categorie, plateforme } = req.body;
+    if (!user.ventes) user.ventes = [];
+    const vente = {
+      id: Date.now(),
+      objet,
+      titre: objet,
+      prixVente: parseFloat(prixVente),
+      dateVente: dateVente || new Date().toISOString(),
+      categorie: categorie || 'Autre',
+      plateforme: plateforme || 'Le Bon Coin',
+      manuel: true
+    };
+    user.ventes.push(vente);
+    saveDB(users);
+    res.json({ ok: true, vente });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/ventes', authMiddleware, (req, res) => {
+  res.json(users[req.userEmail].ventes || []);
+});
+
+app.delete('/ventes/:id', authMiddleware, (req, res) => {
+  try {
+    const user = users[req.userEmail];
+    user.ventes = (user.ventes || []).filter(v => v.id != req.params.id);
+    saveDB(users);
+    res.json({ ok: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
