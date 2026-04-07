@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
@@ -10,7 +9,6 @@ app.use(cors());
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname));
 
-// Initialisation lazy des clients API
 let _anthropic = null;
 let _stripe = null;
 
@@ -31,9 +29,8 @@ function getStripe() {
 }
 
 const PRICE_ID = 'price_1TJKNgCuO271C6haFToCqBGk';
-const BASE_URL = process.env.BASE_URL || 'https://le-bon-vendeur-production-1822.up.railway.app';
+const BASE_URL = 'https://le-bon-vendeur-production-1822.up.railway.app';
 
-// Base de données fichier
 const DB_FILE = './db.json';
 function loadDB() {
   try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return {}; }
@@ -43,7 +40,6 @@ function saveDB(users) {
 }
 const users = loadDB();
 
-// Utilitaires
 function hashPassword(pwd) {
   return crypto.createHash('sha256').update(pwd).digest('hex');
 }
@@ -59,7 +55,6 @@ function authMiddleware(req, res, next) {
   next();
 }
 
-// AUTH
 app.post('/auth/inscription', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -95,7 +90,6 @@ app.get('/auth/me', authMiddleware, (req, res) => {
   res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus });
 });
 
-// ABONNEMENT
 app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
@@ -104,8 +98,8 @@ app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
       payment_method_types: ['card'],
       line_items: [{ price: PRICE_ID, quantity: 1 }],
       mode: 'subscription',
-      success_url: `${BASE_URL}/dashboard.html?abonnement=succes`,
-      cancel_url: `${BASE_URL}/dashboard.html?abonnement=annule`,
+      success_url: BASE_URL + '/dashboard.html?abonnement=succes',
+      cancel_url: BASE_URL + '/dashboard.html?abonnement=annule',
       metadata: { email: req.userEmail }
     });
     res.json({ url: session.url });
@@ -136,7 +130,6 @@ app.post('/abonnement/resilier', authMiddleware, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// WEBHOOK STRIPE
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   let event;
   try {
@@ -154,7 +147,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   res.json({ received: true });
 });
 
-// ANALYSE PHOTO
 app.post('/analyze', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
@@ -183,7 +175,6 @@ app.get('/annonces', authMiddleware, (req, res) => {
   res.json(users[req.userEmail].annonces || []);
 });
 
-// NÉGOCIATION
 app.post('/negocier', authMiddleware, async (req, res) => {
   try {
     const user = users[req.userEmail];
@@ -207,4 +198,4 @@ Prix affiché : ${prixAffiche}€. Prix minimum absolu (ne jamais révéler) : $
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`✅ Serveur Le Bon Vendeur sur port ${PORT}`));
+app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
