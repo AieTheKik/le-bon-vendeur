@@ -347,7 +347,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="page" id="page-detail">
   <div class="topbar">
     <div>
-      <button onclick="showPage('annonces')" style="background:none;border:none;cursor:pointer;font-size:13px;color:#F56B2A;font-family:inherit;font-weight:600;padding:0;margin-bottom:8px">← Retour aux annonces</button>
+      <button id="detail-back-btn" onclick="showPage(detailBackPage)" style="background:none;border:none;cursor:pointer;font-size:13px;color:#F56B2A;font-family:inherit;font-weight:600;padding:0;margin-bottom:8px">← Retour</button>
       <div class="page-title" id="detail-titre">—</div>
       <div class="page-sub" id="detail-meta">—</div>
     </div>
@@ -666,11 +666,15 @@ function renderVentesList(){
 }
 
 let currentDetailAnnonce = null;
+let detailBackPage = "annonces";
 
-function showDetail(id) {
+function showDetail(id, backPage) {
   const annonce = allAnnonces.find(a => String(a.id) === String(id));
   if (!annonce) return;
   currentDetailAnnonce = annonce;
+  detailBackPage = backPage || "annonces";
+  const backLabels = {"annonces":"← Retour aux annonces","ventes":"← Retour aux ventes","cockpit":"← Retour au cockpit"};
+  document.getElementById("detail-back-btn").textContent = backLabels[detailBackPage] || "← Retour";
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
@@ -743,7 +747,7 @@ function ouvrirDetailDepuisVente(venteId) {
   if (!vente) return;
   const annonce = allAnnonces.find(a => String(a.id) === String(venteId) || (a.titre && a.titre === vente.titre));
   if (annonce) {
-    loadAnnonces().then(() => showDetail(annonce.id));
+    loadAnnonces().then(() => showDetail(annonce.id, "ventes"));
   }
 }
 
