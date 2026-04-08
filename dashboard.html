@@ -1,346 +1,437 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Le Bon Vendeur — Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js">
-</script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; min-height: 100vh; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Bon Vendeur — Cockpit</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f7f6f3;color:#1a1a1a;font-size:14px}
+.sidebar{position:fixed;left:0;top:0;width:52px;height:100vh;background:#fff;border-right:0.5px solid #e8e6e0;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;z-index:100}
+.sidebar-logo{width:32px;height:32px;background:#1a1a1a;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;margin-bottom:8px;flex-shrink:0}
+.nav-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;transition:background 0.15s}
+.nav-icon:hover{background:#f5f4f0}
+.nav-icon.active{background:#f0efe9;border:0.5px solid #e0ddd5}
+.nav-icon svg{width:15px;height:15px}
+.main{margin-left:52px;padding:22px 26px;min-height:100vh}
+.page{display:none}.page.active{display:block}
 
-    .auth-screen { display: none; min-height: 100vh; align-items: center; justify-content: center; background: #f5f4f0; }
-    .auth-screen.active { display: flex; }
-    .auth-box { background: #fff; border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px; border: 1px solid #eee; }
-    .auth-logo { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 1.5rem; text-align: center; }
-    .auth-logo span { color: #F56B2A; }
-    .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-    .auth-sub { font-size: 14px; color: #888; margin-bottom: 1.5rem; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { font-size: 13px; color: #555; display: block; margin-bottom: 5px; font-weight: 500; }
-    .form-input { width: 100%; padding: 11px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; }
-    .form-input:focus { outline: none; border-color: #F56B2A; }
-    .btn-auth { width: 100%; padding: 13px; background: #F56B2A; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 6px; }
-    .btn-auth:hover { background: #e05a1e; }
-    .auth-switch { text-align: center; font-size: 13px; color: #888; margin-top: 1.5rem; }
-    .auth-switch a { color: #F56B2A; cursor: pointer; text-decoration: none; font-weight: 500; }
-    .auth-error { color: #e74c3c; font-size: 13px; padding: 10px; background: #fdf0f0; border-radius: 6px; margin-bottom: 12px; display: none; }
+/* AUTH */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f6f3}
+.auth-card{background:#fff;border:0.5px solid #e8e6e0;border-radius:16px;padding:36px 32px;width:100%;max-width:380px}
+.auth-logo{font-size:20px;font-weight:600;text-align:center;margin-bottom:6px}.auth-logo span{color:#e8622a}
+.auth-sub{font-size:13px;color:#aaa;text-align:center;margin-bottom:28px}
+.auth-tabs{display:flex;background:#f5f4f0;border-radius:10px;padding:3px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;border-radius:8px;cursor:pointer;color:#aaa;border:none;background:transparent;font-family:inherit}
+.auth-tab.active{background:#fff;color:#1a1a1a;border:0.5px solid #e8e6e0}
+.auth-form{display:none}.auth-form.active{display:block}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:#888;margin-bottom:5px;display:block}
+.form-input{width:100%;padding:10px 12px;border:0.5px solid #e8e6e0;border-radius:8px;font-size:13px;font-family:inherit;background:#fff;outline:none;transition:border-color 0.15s}
+.form-input:focus{border-color:#1a1a1a}
+.pwd-wrap{position:relative}
+.pwd-wrap .form-input{padding-right:36px}
+.pwd-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14px;color:#bbb;background:none;border:none}
+.btn-primary{width:100%;padding:11px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-primary:hover{background:#2a2a2a}
+.auth-switch{text-align:center;font-size:12px;color:#aaa;margin-top:14px}
+.auth-switch a{color:#1a1a1a;cursor:pointer;text-decoration:underline}
+.auth-error{background:#fdecea;border:0.5px solid #f5c5c0;border-radius:8px;padding:9px 12px;font-size:12px;color:#b84a3a;margin-bottom:12px;display:none}
+.auth-success{background:#edf5f1;border:0.5px solid #c5e8d8;border-radius:8px;padding:14px 16px;font-size:13px;color:#2d7a52;text-align:center;display:none}
+.auth-success h3{font-size:15px;margin-bottom:6px}
 
-    .app { display: none; }
-    .app.active { display: block; }
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.greeting{font-size:13px;color:#999}.greeting strong{color:#1a1a1a;font-weight:500}
+.topbar-sub{font-size:11px;color:#ccc;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn-new{background:#1a1a1a;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.btn-new:hover{background:#333}
+.avatar-circle{width:30px;height:30px;border-radius:50%;background:#f0efe9;border:0.5px solid #e8e6e0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888}
+.badge-sub{font-size:10px;padding:3px 8px;border-radius:20px;background:#edf5f1;color:#2d7a52;border:0.5px solid #c5e8d8}
+.badge-sub.inactive{background:#fef9f0;color:#b8760a;border-color:#f5e0b5}
 
-    header { background: #fff; border-bottom: 1px solid #eee; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 50; }
-    .logo { font-size: 17px; font-weight: 700; color: #111; }
-    .logo span { color: #F56B2A; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .user-email { font-size: 13px; color: #888; }
-    .badge-abo { font-size: 12px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-abo.active { background: #e8f5e9; color: #2e7d32; }
-    .badge-abo.inactive { background: #fdf0f0; color: #c0392b; }
-    .btn-logout { font-size: 13px; color: #888; background: none; border: none; cursor: pointer; padding: 6px 10px; border-radius: 6px; }
-    .btn-logout:hover { background: #f5f5f5; }
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.kpi-card{background:#fff;border:0.5px solid #e8e6e0;border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0}
+.kpi-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.kpi-value{font-size:24px;font-weight:500;color:#1a1a1a;line-height:1;margin-bottom:6px}
+.kpi-delta{font-size:11px}.kpi-delta.up{color:#2d7a52}.kpi-delta.neutral{color:#aaa}.kpi-delta.down{color:#b84a3a}
 
-    .layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 56px); }
+/* CARDS */
+.card{background:#fff;border:0.5px solid #e8e6e0;border-radius:12px;padding:18px 20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:500;color:#1a1a1a}
+.card-meta{font-size:11px;color:#bbb}
 
-    .sidebar { background: #fff; border-right: 1px solid #eee; padding: 20px; }
-    .sidebar-label { font-size: 11px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; margin-top: 20px; }
-    .sidebar-label:first-child { margin-top: 0; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: #555; transition: all 0.15s; margin-bottom: 2px; }
-    .nav-item:hover { background: #f5f5f5; color: #111; }
-    .nav-item.active { background: #fff3ec; color: #F56B2A; font-weight: 600; }
+/* GRIDS */
+.mid-grid{display:grid;grid-template-columns:1fr 300px;gap:10px;margin-bottom:18px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.side-col{display:flex;flex-direction:column;gap:10px}
 
-    .abo-card { background: #fff8f5; border: 1px solid #ffd4b8; border-radius: 10px; padding: 14px; margin-top: 8px; }
-    .abo-card.inactive { background: #fdf0f0; border-color: #f5c6c6; }
-    .abo-status { font-size: 13px; font-weight: 600; color: #F56B2A; margin-bottom: 6px; }
-    .abo-status.inactive { color: #c0392b; }
-    .abo-price { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 10px; }
-    .btn-abo { width: 100%; padding: 9px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-    .btn-abo.subscribe { background: #F56B2A; color: #fff; }
-    .btn-abo.subscribe:hover { background: #e05a1e; }
-    .btn-abo.cancel { background: #fff; color: #c0392b; border: 1px solid #f5c6c6; margin-top: 6px; }
+/* CHART */
+.chart-wrap{position:relative;height:150px;margin-bottom:14px}
+.chart-footer{display:flex;gap:24px;padding-top:14px;border-top:0.5px solid #f0efe9}
+.chart-stat-label{font-size:10px;color:#bbb;text-transform:uppercase;letter-spacing:0.05em}
+.chart-stat-val{font-size:15px;font-weight:500;color:#1a1a1a;margin-top:3px}
+.chart-stat-val.muted{color:#aaa;font-weight:400}
 
-    .main { padding: 24px; overflow-y: auto; }
-    .panel { display: none; }
-    .panel.active { display: block; }
+/* PERIOD TABS */
+.period-tabs{display:flex;gap:2px;background:#f5f4f0;border-radius:7px;padding:3px}
+.period-tab{font-size:11px;padding:3px 9px;border-radius:5px;cursor:pointer;color:#aaa;border:none;background:transparent;font-family:inherit}
+.period-tab.active{background:#fff;color:#1a1a1a;border:0.5px solid #e8e6e0}
 
-    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-    .page-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
+/* ACTIONS */
+.action-card{padding:10px 12px;border-radius:8px;border:0.5px solid;margin-bottom:6px;cursor:pointer}
+.action-card:last-of-type{margin-bottom:0}
+.action-card.green{background:#f0faf5;border-color:#c5e8d8}
+.action-card.orange{background:#fef9f0;border-color:#f5e0b5}
+.action-card.blue{background:#f0f4fd;border-color:#c5d5f5}
+.action-card.red{background:#fdecea;border-color:#f5c5c0}
+.action-title{font-size:12px;font-weight:500}
+.action-card.green .action-title{color:#2d7a52}
+.action-card.orange .action-title{color:#b8760a}
+.action-card.blue .action-title{color:#2a5abe}
+.action-card.red .action-title{color:#b84a3a}
+.action-sub{font-size:11px;margin-top:2px;color:#aaa}
 
-    /* STATS CARDS */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; }
-    .stat-label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .stat-value { font-size: 28px; font-weight: 700; color: #111; }
-    .stat-value.orange { color: #F56B2A; }
-    .stat-sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+/* ANNONCES */
+.annonce-row{display:flex;align-items:center;gap:10px;padding:9px 11px;background:#fafaf8;border-radius:8px;border:0.5px solid #eeece6;margin-bottom:6px}
+.annonce-row:last-child{margin-bottom:0}
+.annonce-thumb{width:36px;height:36px;border-radius:6px;background:#f0efe9;border:0.5px solid #e8e6e0;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden}
+.annonce-thumb img{width:100%;height:100%;object-fit:cover}
+.annonce-info{flex:1;min-width:0}
+.annonce-titre{font-size:12px;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.annonce-meta{font-size:10px;color:#bbb;margin-top:2px}
+.annonce-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.annonce-prix{font-size:13px;font-weight:500;color:#1a1a1a}
+.score-pill{font-size:10px;padding:2px 7px;border-radius:20px}
+.score-pill.high{background:#edf5f1;color:#2d7a52}
+.score-pill.med{background:#fef3e2;color:#b8760a}
+.score-pill.low{background:#fdecea;color:#b84a3a}
 
-    /* CHART */
-    .chart-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-    .chart-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+/* INSIGHTS */
+.insight-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#fafaf8;border-radius:8px;border:0.5px solid #eeece6;margin-bottom:6px}
+.insight-row:last-child{margin-bottom:0}
+.insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.insight-dot.green{background:#2d7a52}.insight-dot.orange{background:#d4820a}.insight-dot.blue{background:#2a5abe}
+.insight-text{font-size:12px;color:#777;line-height:1.5}
+.insight-text strong{color:#1a1a1a;font-weight:500}
 
-    /* ANNONCES */
-    .steps-bar { display: flex; align-items: center; background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 14px 20px; gap: 8px; margin-bottom: 20px; }
-    .step-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #bbb; }
-    .step-item.active { color: #F56B2A; font-weight: 600; }
-    .step-item.done { color: #4caf50; }
-    .step-num { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
-    .step-arrow { color: #ddd; }
+/* CAT BARS */
+.cat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cat-row:last-child{margin-bottom:0}
+.cat-label{font-size:11px;color:#aaa;width:70px;flex-shrink:0}
+.cat-bar-wrap{flex:1;height:3px;background:#f0efe9;border-radius:2px}
+.cat-bar{height:3px;border-radius:2px}
+.cat-val{font-size:11px;color:#888;width:40px;text-align:right;flex-shrink:0}
 
-    .upload-zone { border: 2px dashed #ddd; border-radius: 14px; padding: 2.5rem 2rem; text-align: center; cursor: pointer; background: #fff; transition: border-color 0.2s; margin-bottom: 14px; }
-    .upload-zone:hover { border-color: #F56B2A; }
-    .upload-zone input { display: none; }
-    .preview-img { max-width: 100%; max-height: 280px; border-radius: 10px; margin-top: 1rem; object-fit: contain; }
+/* VENTES PAGE */
+.ventes-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.vente-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:0.5px solid #e8e6e0;border-radius:10px;margin-bottom:8px}
+.vente-info{flex:1}
+.vente-titre{font-size:13px;color:#1a1a1a;font-weight:500}
+.vente-meta{font-size:11px;color:#bbb;margin-top:2px}
+.vente-prix{font-size:15px;font-weight:500;color:#2d7a52}
+.vente-del{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:4px}
+.vente-del:hover{color:#b84a3a}
 
-    .card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 18px; margin-bottom: 12px; }
-    .card-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .card-value { font-size: 15px; color: #111; line-height: 1.6; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .copy-btn { font-size: 12px; padding: 3px 10px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; color: #555; }
-    .tag { display: inline-block; background: #fff3ec; color: #F56B2A; font-size: 12px; padding: 3px 10px; border-radius: 20px; margin: 2px; border: 1px solid #ffd4b8; }
-    .badge-green { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
-    .badge-orange { display: inline-block; background: #fff3ec; color: #F56B2A; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
-    .price-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .price-box { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 12px; text-align: center; }
-    .price-box.main { border-color: #F56B2A; background: #fff8f5; }
-    .price-num { font-size: 22px; font-weight: 700; color: #F56B2A; }
-    .price-lbl { font-size: 12px; color: #999; margin-top: 2px; }
+/* ANALYSE PAGE */
+.upload-zone{border:1.5px dashed #e8e6e0;border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:border-color 0.15s;background:#fafaf8}
+.upload-zone:hover{border-color:#1a1a1a}
+.upload-zone.has-image{border-style:solid;border-color:#e8e6e0;padding:0;overflow:hidden}
+.upload-zone img{width:100%;max-height:300px;object-fit:contain;border-radius:10px}
+.upload-icon{font-size:32px;margin-bottom:12px}
+.upload-text{font-size:13px;color:#aaa}
+.upload-text strong{color:#1a1a1a}
+.result-card{background:#fff;border:0.5px solid #e8e6e0;border-radius:12px;padding:20px;margin-top:16px}
+.result-title{font-size:18px;font-weight:500;color:#1a1a1a;margin-bottom:8px}
+.result-desc{font-size:13px;color:#666;line-height:1.7;margin-bottom:16px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.result-stat{background:#f7f6f3;border-radius:8px;padding:12px;text-align:center}
+.result-stat-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.result-stat-val{font-size:16px;font-weight:500;color:#1a1a1a}
+.result-kw{display:flex;flex-wrap:wrap;gap:6px}
+.kw-pill{font-size:11px;padding:4px 10px;border-radius:20px;background:#f0efe9;color:#666;border:0.5px solid #e8e6e0}
+.sell-score-block{background:#f7f6f3;border-radius:10px;padding:16px;margin-top:16px}
+.sell-score-title{font-size:12px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+.sell-score-main{display:flex;align-items:center;gap:16px}
+.sell-score-num{font-size:36px;font-weight:500}
+.sell-score-num.high{color:#2d7a52}.sell-score-num.med{color:#b8760a}.sell-score-num.low{color:#b84a3a}
+.sell-score-bar-wrap{flex:1;height:6px;background:#e8e6e0;border-radius:3px}
+.sell-score-bar{height:6px;border-radius:3px;transition:width 0.5s}
+.sell-score-bar.high{background:#2d7a52}.sell-score-bar.med{background:#b8760a}.sell-score-bar.low{background:#b84a3a}
+.prix-zone{display:flex;gap:10px;margin-top:16px}
+.prix-block{flex:1;background:#fff;border:0.5px solid #e8e6e0;border-radius:8px;padding:12px;text-align:center}
+.prix-block-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.prix-block-val{font-size:18px;font-weight:500;color:#1a1a1a}
+.prix-block.recommended{background:#f0faf5;border-color:#c5e8d8}
+.prix-block.recommended .prix-block-val{color:#2d7a52}
+.btn-marquer{width:100%;padding:12px;background:#2d7a52;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:16px}
+.btn-marquer:hover{background:#236040}
+.btn-secondary{width:100%;padding:10px;background:#f5f4f0;border:0.5px solid #e8e6e0;border-radius:8px;color:#888;font-size:12px;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn-secondary:hover{background:#eeecea;color:#555}
 
-    .prix-config { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 18px; margin-bottom: 14px; }
-    .prix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+/* COMPTE PAGE */
+.compte-card{background:#fff;border:0.5px solid #e8e6e0;border-radius:12px;padding:20px;margin-bottom:12px}
+.compte-section-title{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
+.compte-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid #f0efe9}
+.compte-row:last-child{border-bottom:none}
+.compte-key{font-size:13px;color:#888}
+.compte-val{font-size:13px;color:#1a1a1a;font-weight:500}
+.abonnement-block{background:#f0faf5;border:0.5px solid #c5e8d8;border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:space-between}
+.abonnement-block.inactive{background:#fef9f0;border-color:#f5e0b5}
+.btn-danger{padding:9px 16px;background:#fdecea;color:#b84a3a;border:0.5px solid #f5c5c0;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
+.btn-danger:hover{background:#f8d8d5}
+.btn-subscribe{padding:9px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
+.btn-subscribe:hover{background:#333}
 
-    .btn-main { padding: 12px 24px; background: #F56B2A; color: #fff; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-main:hover { background: #e05a1e; }
-    .btn-main:disabled { background: #ccc; }
-    .btn-sec { padding: 12px 24px; background: #fff; color: #F56B2A; border: 1.5px solid #F56B2A; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-danger { padding: 8px 16px; background: #fff; color: #e74c3c; border: 1px solid #f5c6c6; border-radius: 8px; font-size: 13px; cursor: pointer; }
-    .row-btns { display: flex; gap: 10px; margin-top: 14px; }
+/* MODAL VENTE */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:400px;border:0.5px solid #e8e6e0}
+.modal-title{font-size:16px;font-weight:500;margin-bottom:20px}
+.modal-footer{display:flex;gap:8px;margin-top:20px}
+.modal-footer .btn-primary{margin-top:0}
+.btn-cancel{flex:1;padding:11px;background:#f5f4f0;border:0.5px solid #e8e6e0;border-radius:8px;color:#888;font-size:13px;cursor:pointer;font-family:inherit}
 
-    .loading { text-align: center; padding: 2rem; color: #888; font-size: 14px; }
-    .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid #F56B2A; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .error-msg { color: #c0392b; font-size: 13px; padding: 10px; background: #fdf0f0; border-radius: 8px; margin-top: 10px; }
-    .success-msg { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #2e7d32; margin-bottom: 12px; }
-    .empty-state { text-align: center; padding: 3rem; color: #bbb; }
-    .abonnement-requis { background: #fff8f5; border: 1.5px solid #ffd4b8; border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 20px; }
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 24px;color:#ccc}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.empty-text{font-size:13px;color:#bbb}
 
-    .form-label { font-size: 13px; color: #555; display: block; margin-bottom: 5px; font-weight: 500; margin-top: 12px; }
-    input[type=number], input[type=text], input[type=date], input[type=email], input[type=password], select, textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;
-      font-size: 14px; font-family: inherit; background: #fff;
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #F56B2A; }
-    textarea { resize: vertical; }
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:32px;color:#bbb;font-size:13px;gap:10px}
+.spinner{width:16px;height:16px;border:1.5px solid #e8e6e0;border-top-color:#1a1a1a;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-    /* VENTES */
-    .ventes-table { width: 100%; border-collapse: collapse; }
-    .ventes-table th { text-align: left; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid #eee; }
-    .ventes-table td { padding: 12px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
-    .ventes-table tr:hover td { background: #fafafa; }
-
-    /* MODAL */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: #fff; border-radius: 16px; padding: 2rem; width: 100%; max-width: 440px; }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 1rem; }
-    .modal-btns { display: flex; gap: 10px; margin-top: 1.5rem; }
-
-    /* ANNONCES LIST */
-    .annonces-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-    .annonce-item { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 16px; }
-    .annonce-item-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .annonce-item-prix { font-size: 18px; font-weight: 700; color: #F56B2A; }
-    .annonce-item-actions { display: flex; gap: 8px; margin-top: 12px; }
-    .btn-vendu { flex: 1; padding: 8px; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .btn-vendu:hover { background: #c8e6c9; }
-
-    @media (max-width: 768px) {
-      .layout { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+.abonnement-requis{background:#fef9f0;border:0.5px solid #f5e0b5;border-radius:12px;padding:24px;text-align:center;margin-top:16px}
+.abonnement-requis h3{font-size:15px;color:#b8760a;margin-bottom:8px}
+.abonnement-requis p{font-size:13px;color:#c9a060;margin-bottom:16px}
+</style>
 </head>
 <body>
 
 <!-- AUTH -->
-<div class="auth-screen active" id="screen-inscription">
-  <div class="auth-box">
-    <div class="auth-logo">Le <span>Bon</span> Vendeur</div>
-    <div class="auth-title">Créer un compte</div>
-    <div class="auth-sub">Rejoignez Le Bon Vendeur et vendez mieux</div>
-    <div class="auth-error" id="err-inscription"></div>
-    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="ins-email" placeholder="vous@email.com"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><div style="position:relative"><input type="password" class="form-input" id="ins-pwd" placeholder="Minimum 6 caractères" style="padding-right:40px"><span onclick="togglePwd('ins-pwd',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999">👁</span></div></div>
-    <button class="btn-auth" onclick="inscrire()">Créer mon compte</button>
-    <div class="auth-switch">Déjà un compte ? <a onclick="showScreen('connexion')">Se connecter</a></div>
-  </div>
-</div>
-
-<div class="auth-screen" id="screen-email-envoye">
+<div id="auth-wrap" class="auth-wrap">
   <div class="auth-card">
     <div class="auth-logo">Le <span>Bon</span> Vendeur</div>
-    <div style="text-align:center;padding:20px 0">
-      <div style="font-size:60px;margin-bottom:20px">📧</div>
-      <h2 style="color:#1a1a1a;margin-bottom:12px">Vérifiez votre email</h2>
-      <p style="color:#666;font-size:15px;line-height:1.6;margin-bottom:24px">Un email de confirmation vous a été envoyé. Cliquez sur le lien pour activer votre compte.</p>
-      <p style="color:#999;font-size:13px">Vous ne trouvez pas l'email ? Vérifiez vos spams.</p>
-      <div style="margin-top:24px"><a onclick="showScreen('connexion')" style="color:#F56B2A;cursor:pointer;font-size:14px">Déjà confirmé ? Se connecter →</a></div>
+    <div class="auth-sub">Vendez mieux sur Le Bon Coin</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('inscription')">Créer un compte</button>
+      <button class="auth-tab" onclick="switchAuthTab('connexion')">Se connecter</button>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div class="auth-form active" id="form-inscription">
+      <div class="auth-error" id="err-inscription"></div>
+      <div id="success-inscription" class="auth-success">
+        <h3>Vérifiez votre email</h3>
+        <p>Un lien de confirmation vous a été envoyé. Cliquez dessus pour activer votre compte.</p>
+        <p style="font-size:12px;color:#7abf9e;margin-top:8px">Pensez à vérifier vos spams.</p>
+      </div>
+      <div id="form-inscription-fields">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="ins-email" placeholder="vous@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <div class="pwd-wrap">
+            <input type="password" class="form-input" id="ins-pwd" placeholder="Minimum 6 caractères">
+            <button class="pwd-eye" onclick="togglePwd('ins-pwd',this)">👁</button>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="inscrire()">Créer mon compte</button>
+        <div class="auth-switch">Déjà un compte ? <a onclick="switchAuthTab('connexion')">Se connecter</a></div>
+      </div>
+    </div>
+
+    <!-- CONNEXION -->
+    <div class="auth-form" id="form-connexion">
+      <div class="auth-error" id="err-connexion"></div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="con-email" placeholder="vous@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <div class="pwd-wrap">
+          <input type="password" class="form-input" id="con-pwd" placeholder="Votre mot de passe">
+          <button class="pwd-eye" onclick="togglePwd('con-pwd',this)">👁</button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="connecter()">Se connecter</button>
+      <div class="auth-switch">Pas de compte ? <a onclick="switchAuthTab('inscription')">S'inscrire</a></div>
     </div>
   </div>
 </div>
 
-<div class="auth-screen" id="screen-connexion">
-  <div class="auth-box">
-    <div class="auth-logo">Le <span>Bon</span> Vendeur</div>
-    <div class="auth-title">Connexion</div>
-    <div class="auth-sub">Content de vous revoir !</div>
-    <div class="auth-error" id="err-connexion"></div>
-    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="con-email" placeholder="vous@email.com"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><div style="position:relative"><input type="password" class="form-input" id="con-pwd" placeholder="Votre mot de passe" style="padding-right:40px"><span onclick="togglePwd('con-pwd',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999">👁</span></div></div>
-    <button class="btn-auth" onclick="connecter()">Se connecter</button>
-    <div class="auth-switch">Pas encore de compte ? <a onclick="showScreen('inscription')">S'inscrire</a></div>
+<!-- APP -->
+<div id="app" style="display:none">
+  <div class="sidebar">
+    <div class="sidebar-logo">LV</div>
+    <button class="nav-icon active" id="nav-cockpit" onclick="showPage('cockpit')" title="Cockpit">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+    </button>
+    <button class="nav-icon" id="nav-analyse" onclick="showPage('analyse')" title="Nouvelle annonce">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 11h.01"/></svg>
+    </button>
+    <button class="nav-icon" id="nav-annonces" onclick="showPage('annonces')" title="Mes annonces">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 4h12M2 8h8M2 12h5"/></svg>
+    </button>
+    <button class="nav-icon" id="nav-ventes" onclick="showPage('ventes')" title="Mes ventes">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 12L6 7l3 3 2-4 2 4"/></svg>
+    </button>
+    <button class="nav-icon" id="nav-compte" onclick="showPage('compte')" title="Mon compte" style="margin-top:auto">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="6" r="2.5"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+    </button>
+  </div>
+
+  <div class="main">
+
+    <!-- COCKPIT -->
+    <div class="page active" id="page-cockpit">
+      <div class="topbar">
+        <div>
+          <div class="greeting">Bonjour, <strong id="user-name">—</strong></div>
+          <div class="topbar-sub" id="topbar-date"></div>
+        </div>
+        <div class="topbar-right">
+          <span class="badge-sub" id="badge-sub">Actif</span>
+          <button class="btn-new" onclick="showPage('analyse')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Nouvelle annonce
+          </button>
+          <div class="avatar-circle" id="avatar-circle">—</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-accent" style="background:#2d7a52"></div><div class="kpi-label">Revenus ce mois</div><div class="kpi-value" id="kpi-revenus">—</div><div class="kpi-delta" id="kpi-revenus-delta"></div></div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#d4820a"></div><div class="kpi-label">Ventes ce mois</div><div class="kpi-value" id="kpi-ventes">—</div><div class="kpi-delta" id="kpi-ventes-delta"></div></div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#2a5abe"></div><div class="kpi-label">Délai moyen</div><div class="kpi-value" id="kpi-delai">—</div><div class="kpi-delta neutral">ce mois</div></div>
+        <div class="kpi-card"><div class="kpi-accent" style="background:#7a4abe"></div><div class="kpi-label">Panier moyen</div><div class="kpi-value" id="kpi-panier">—</div><div class="kpi-delta neutral">par vente</div></div>
+      </div>
+
+      <div class="mid-grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Revenus</span>
+            <div class="period-tabs">
+              <button class="period-tab" onclick="switchPeriod('7j',this)">7j</button>
+              <button class="period-tab active" onclick="switchPeriod('30j',this)">30j</button>
+              <button class="period-tab" onclick="switchPeriod('90j',this)">90j</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="revenueChart" role="img" aria-label="Courbe de revenus"></canvas></div>
+          <div class="chart-footer">
+            <div><div class="chart-stat-label">Ce mois</div><div class="chart-stat-val" id="cf-mois">—</div></div>
+            <div><div class="chart-stat-label">Mois précédent</div><div class="chart-stat-val muted" id="cf-prev">—</div></div>
+            <div><div class="chart-stat-label">Total ventes</div><div class="chart-stat-val muted" id="cf-total">—</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Actions prioritaires</span><span class="card-meta" id="nb-actions">—</span></div>
+          <div id="actions-list"><div class="loading"><div class="spinner"></div>Chargement</div></div>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Dernières annonces</span><span class="card-meta" id="nb-annonces-cockpit">—</span></div>
+          <div id="annonces-cockpit-list"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Aucune annonce pour l'instant</div></div></div>
+          <button class="btn-secondary" onclick="showPage('annonces')" style="margin-top:12px">Voir toutes les annonces</button>
+        </div>
+        <div class="side-col">
+          <div class="card">
+            <div class="card-header" style="margin-bottom:14px"><span class="card-title">Intelligence</span></div>
+            <div id="insights-list"><div class="empty-state" style="padding:16px"><div class="empty-text">Créez vos premières annonces pour débloquer les insights</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header" style="margin-bottom:14px"><span class="card-title">Par catégorie</span></div>
+            <div id="cat-list"><div class="empty-state" style="padding:16px"><div class="empty-text">Aucune donnée</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYSE -->
+    <div class="page" id="page-analyse">
+      <div class="topbar"><div><div class="greeting"><strong>Nouvelle annonce</strong></div><div class="topbar-sub">Photo → annonce IA en quelques secondes</div></div></div>
+      <div id="analyse-abonnement-block" style="display:none" class="abonnement-requis">
+        <h3>Abonnement requis</h3>
+        <p>Activez votre abonnement pour générer des annonces avec l'IA.</p>
+        <button class="btn-subscribe" onclick="showPage('compte')">Voir les offres</button>
+      </div>
+      <div id="analyse-content">
+        <div id="upload-zone" class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text"><strong>Cliquez pour ajouter une photo</strong><br>ou glissez-déposez ici</div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+        </div>
+        <div id="analyse-extra" style="display:none;margin-top:14px">
+          <div class="form-group"><label class="form-label">Infos supplémentaires (optionnel)</label><input type="text" class="form-input" id="extra-info" placeholder="ex: acheté en 2022, boîte originale, peu utilisé..."></div>
+          <button class="btn-primary" onclick="analyser()" id="btn-analyser">Analyser avec l'IA</button>
+        </div>
+        <div id="analyse-loading" style="display:none"><div class="loading"><div class="spinner"></div>L'IA analyse votre photo...</div></div>
+        <div id="analyse-result" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- ANNONCES -->
+    <div class="page" id="page-annonces">
+      <div class="topbar"><div><div class="greeting"><strong>Mes annonces</strong></div></div><div class="topbar-right"><button class="btn-new" onclick="showPage('analyse')"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>Nouvelle</button></div></div>
+      <div id="annonces-list-full"><div class="loading"><div class="spinner"></div>Chargement</div></div>
+    </div>
+
+    <!-- VENTES -->
+    <div class="page" id="page-ventes">
+      <div class="topbar">
+        <div><div class="greeting"><strong>Mes ventes</strong></div></div>
+        <div class="topbar-right"><button class="btn-new" onclick="openModalVente()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>Ajouter</button></div>
+      </div>
+      <div id="ventes-list"><div class="loading"><div class="spinner"></div>Chargement</div></div>
+    </div>
+
+    <!-- COMPTE -->
+    <div class="page" id="page-compte">
+      <div class="topbar"><div><div class="greeting"><strong>Mon compte</strong></div></div></div>
+      <div class="compte-card">
+        <div class="compte-section-title">Abonnement</div>
+        <div id="abonnement-block"></div>
+      </div>
+      <div class="compte-card">
+        <div class="compte-section-title">Informations</div>
+        <div class="compte-row"><span class="compte-key">Email</span><span class="compte-val" id="compte-email">—</span></div>
+        <div class="compte-row"><span class="compte-key">Membre depuis</span><span class="compte-val">2025</span></div>
+      </div>
+      <div class="compte-card">
+        <div class="compte-section-title">Session</div>
+        <button class="btn-danger" onclick="deconnecter()" style="width:100%">Se déconnecter</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <!-- MODAL VENTE -->
 <div class="modal-overlay" id="modal-vente">
   <div class="modal">
-    <div class="modal-title">Enregistrer une vente</div>
-    <input type="hidden" id="modal-annonce-id">
-    <label class="form-label">Objet vendu</label>
-    <input type="text" id="modal-objet" placeholder="Ex: iPhone 13">
-    <label class="form-label">Prix de vente (€)</label>
-    <input type="number" id="modal-prix" placeholder="Ex: 320">
-    <label class="form-label">Date de vente</label>
-    <input type="date" id="modal-date">
-    <label class="form-label">Plateforme</label>
-    <select id="modal-plateforme">
-      <option>Le Bon Coin</option>
-      <option>Vinted</option>
-      <option>Facebook Marketplace</option>
-      <option>eBay</option>
-      <option>Autre</option>
-    </select>
-    <div class="modal-btns">
-      <button class="btn-sec" style="flex:1" onclick="fermerModal()">Annuler</button>
-      <button class="btn-main" style="flex:1" onclick="validerVente()">Enregistrer</button>
+    <div class="modal-title">Ajouter une vente</div>
+    <div class="form-group"><label class="form-label">Objet vendu</label><input type="text" class="form-input" id="modal-objet" placeholder="ex: iPhone 13"></div>
+    <div class="form-group"><label class="form-label">Prix de vente (€)</label><input type="number" class="form-input" id="modal-prix" placeholder="ex: 320"></div>
+    <div class="form-group"><label class="form-label">Date de vente</label><input type="date" class="form-input" id="modal-date"></div>
+    <div class="form-group"><label class="form-label">Catégorie</label>
+      <select class="form-input" id="modal-cat">
+        <option>High-tech</option><option>Mobilier</option><option>Mode</option><option>Électroménager</option><option>Sport</option><option>Jeux vidéo</option><option>Livres</option><option>Autre</option>
+      </select>
     </div>
-  </div>
-</div>
-
-<!-- APP -->
-<div class="app" id="app">
-  <header>
-    <div class="logo">Le <span>Bon</span> Vendeur</div>
-    <div class="header-right">
-      <span class="user-email" id="header-email"></span>
-      <span class="badge-abo" id="header-badge">—</span>
-      <button class="btn-logout" onclick="deconnecter()">Déconnexion</button>
-    </div>
-  </header>
-
-  <div class="layout">
-    <div class="sidebar">
-      <div class="sidebar-label">Menu</div>
-      <div class="nav-item active" onclick="showPanel('dashboard')" id="nav-dashboard"><span>📊</span> Tableau de bord</div>
-      <div class="nav-item" onclick="showPanel('nouvelle-annonce')" id="nav-nouvelle"><span>📷</span> Nouvelle annonce</div>
-      <div class="nav-item" onclick="showPanel('mes-annonces')" id="nav-annonces"><span>📋</span> Mes annonces</div>
-      <div class="nav-item" onclick="showPanel('mes-ventes')" id="nav-ventes"><span>💰</span> Mes ventes</div>
-      <div class="nav-item" onclick="showPanel('compte')" id="nav-compte"><span>⚙️</span> Mon compte</div>
-
-      <div class="sidebar-label">Abonnement</div>
-      <div class="abo-card" id="abo-card">
-        <div class="abo-status" id="abo-status-txt">Chargement...</div>
-        <div class="abo-price" id="abo-price-txt"></div>
-        <button class="btn-abo subscribe" id="btn-souscrire" onclick="souscrire()" style="display:none">S'abonner pour 2,99€/mois</button>
-        <button class="btn-abo cancel" id="btn-resilier" onclick="resilier()" style="display:none">Résilier</button>
-      </div>
-    </div>
-
-    <div class="main">
-
-      <!-- DASHBOARD -->
-      <div class="panel active" id="panel-dashboard">
-        <div class="page-title">Tableau de bord</div>
-        <div class="page-sub">Vue d'ensemble de votre activité</div>
-        <div class="stats-grid" id="stats-grid">
-          <div class="stat-card"><div class="stat-label">Total vendu</div><div class="stat-value orange" id="stat-total">—</div><div class="stat-sub">depuis le début</div></div>
-          <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" id="stat-mois">—</div><div class="stat-sub">revenus du mois</div></div>
-          <div class="stat-card"><div class="stat-label">Ventes</div><div class="stat-value" id="stat-nb-ventes">—</div><div class="stat-sub">objets vendus</div></div>
-          <div class="stat-card"><div class="stat-label">Annonces</div><div class="stat-value" id="stat-nb-annonces">—</div><div class="stat-sub">en cours</div></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Revenus par mois</div>
-          <canvas id="chartRevenus" height="80"></canvas>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Dernières ventes</div>
-          <div id="dernieres-ventes"></div>
-        </div>
-      </div>
-
-      <!-- NOUVELLE ANNONCE -->
-      <div class="panel" id="panel-nouvelle-annonce">
-        <div class="page-title">Nouvelle annonce</div>
-        <div class="page-sub">Photo → IA génère une annonce professionnelle</div>
-        <div id="abo-gate-annonce"></div>
-        <div id="annonce-content">
-          <div class="steps-bar">
-            <div class="step-item active" id="step1"><div class="step-num">1</div> Photo</div>
-            <div class="step-arrow">›</div>
-            <div class="step-item" id="step2"><div class="step-num">2</div> Annonce</div>
-            <div class="step-arrow">›</div>
-            <div class="step-item" id="step3"><div class="step-num">3</div> Prix</div>
-          </div>
-          <div id="step-panel-1">
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-              <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)">
-              <div id="uploadPrompt"><div style="font-size:36px;margin-bottom:8px">📷</div><p style="font-size:15px;font-weight:600;color:#333;margin-bottom:4px">Ajoute une photo de ton objet</p><p style="font-size:13px;color:#999">JPG, PNG, WEBP</p></div>
-              <img id="previewImg" class="preview-img" style="display:none">
-            </div>
-            <label class="form-label">Infos supplémentaires (optionnel)</label>
-            <textarea id="extraInfo" rows="2" placeholder="Ex: Nike Air Max taille 42, acheté en 2023, porté 3 fois..."></textarea>
-            <div class="row-btns"><button class="btn-main" id="analyzeBtn" onclick="analyzeImage()" style="display:none">Générer l'annonce →</button></div>
-            <div id="results-annonce" style="margin-top:16px"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- MES ANNONCES -->
-      <div class="panel" id="panel-mes-annonces">
-        <div class="page-title">Mes annonces</div>
-        <div class="page-sub">Toutes vos annonces créées</div>
-        <div id="liste-annonces"></div>
-      </div>
-
-      <!-- MES VENTES -->
-      <div class="panel" id="panel-mes-ventes">
-        <div class="page-title">Mes ventes</div>
-        <div class="page-sub">Suivi de toutes vos ventes</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <div></div>
-          <button class="btn-main" onclick="ouvrirModalVente()">+ Ajouter une vente</button>
-        </div>
-        <div class="card" style="overflow-x:auto">
-          <div id="liste-ventes"></div>
-        </div>
-      </div>
-
-      <!-- COMPTE -->
-      <div class="panel" id="panel-compte">
-        <div class="page-title">Mon compte</div>
-        <div class="page-sub">Gérez votre abonnement</div>
-        <div class="card"><div class="card-label">Email</div><div class="card-value" id="compte-email">—</div></div>
-        <div class="card"><div class="card-label">Statut abonnement</div><div class="card-value" id="compte-abo">—</div></div>
-        <div class="card">
-          <div class="card-label">Actions</div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="btn-main" id="compte-btn-abo" onclick="souscrire()" style="display:none">S'abonner pour 2,99€/mois</button>
-            <button class="btn-sec" id="compte-btn-resilier" onclick="resilier()" style="display:none">Résilier l'abonnement</button>
-          </div>
-        </div>
-      </div>
-
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModalVente()">Annuler</button>
+      <button class="btn-primary" onclick="ajouterVente()" style="flex:2">Ajouter la vente</button>
     </div>
   </div>
 </div>
@@ -352,65 +443,35 @@ let currentUser = null;
 let imageBase64 = null;
 let imageType = null;
 let chartInstance = null;
+let allVentes = [];
+let allAnnonces = [];
+
+function togglePwd(id, el) {
+  const i = document.getElementById(id);
+  i.type = i.type === 'password' ? 'text' : 'password';
+  el.textContent = i.type === 'password' ? '👁' : '🙈';
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='inscription')||(i===1&&tab==='connexion')));
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  document.getElementById('form-'+tab).classList.add('active');
+}
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('abonnement') === 'succes' && token) {
     try { await fetch(API + '/abonnement/activer', { method: 'POST', headers: { authorization: token } }); } catch(e) {}
   }
+  if (params.get('verified') === 'true') { switchAuthTab('connexion'); }
   if (token) {
     try {
       const res = await fetch(API + '/auth/me', { headers: { authorization: token } });
       if (res.ok) { currentUser = await res.json(); showApp(); return; }
     } catch(e) {}
+    token = null; localStorage.removeItem('lbv_token');
   }
-  if (params.get('verified') === 'true') { showScreen('connexion'); } else { showScreen('inscription'); }
-}
-
-function showScreen(name) {
-  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.getElementById('app').classList.remove('active');
-}
-
-function showApp() {
-  document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('app').classList.add('active');
-  updateUI();
-  checkAboGate();
-  loadDashboard();
-}
-
-function updateUI() {
-  if (!currentUser) return;
-  document.getElementById('header-email').textContent = currentUser.email;
-  document.getElementById('compte-email').textContent = currentUser.email;
-  const isActive = currentUser.subscriptionStatus === 'active';
-  const badge = document.getElementById('header-badge');
-  badge.textContent = isActive ? '✓ Abonné' : 'Sans abonnement';
-  badge.className = 'badge-abo ' + (isActive ? 'active' : 'inactive');
-  const aboCard = document.getElementById('abo-card');
-  aboCard.className = 'abo-card ' + (isActive ? '' : 'inactive');
-  document.getElementById('abo-status-txt').textContent = isActive ? '✓ Abonnement actif' : '✗ Pas d\'abonnement';
-  document.getElementById('abo-status-txt').className = 'abo-status ' + (isActive ? '' : 'inactive');
-  document.getElementById('abo-price-txt').textContent = isActive ? '2,99 € / mois' : '';
-  document.getElementById('btn-souscrire').style.display = isActive ? 'none' : 'block';
-  document.getElementById('btn-resilier').style.display = isActive ? 'block' : 'none';
-  document.getElementById('compte-abo').textContent = isActive ? '✓ Actif — 2,99€/mois' : '✗ Inactif';
-  document.getElementById('compte-btn-abo').style.display = isActive ? 'none' : 'block';
-  document.getElementById('compte-btn-resilier').style.display = isActive ? 'block' : 'none';
-}
-
-function checkAboGate() {
-  const gate = document.getElementById('abo-gate-annonce');
-  const content = document.getElementById('annonce-content');
-  if (!currentUser || currentUser.subscriptionStatus !== 'active') {
-    gate.innerHTML = '<div class="abonnement-requis"><h3 style="font-size:18px;font-weight:700;margin-bottom:6px">🔒 Abonnement requis</h3><p style="font-size:14px;color:#888;margin-bottom:16px">Abonnez-vous pour accéder à la génération d\'annonces.</p><button class="btn-main" onclick="souscrire()">S\'abonner pour 2,99€/mois →</button></div>';
-    content.style.display = 'none';
-  } else {
-    gate.innerHTML = '';
-    content.style.display = 'block';
-  }
+  document.getElementById('auth-wrap').style.display = 'flex';
 }
 
 async function inscrire() {
@@ -422,10 +483,8 @@ async function inscrire() {
     const res = await fetch(API + '/auth/inscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pwd }) });
     const data = await res.json();
     if (!res.ok) { errEl.textContent = data.error; errEl.style.display = 'block'; return; }
-    if (data.success) { showScreen('email-envoye'); return; }
-    token = data.token; currentUser = data.user;
-    localStorage.setItem('lbv_token', token);
-    showApp();
+    document.getElementById('form-inscription-fields').style.display = 'none';
+    document.getElementById('success-inscription').style.display = 'block';
   } catch(e) { errEl.textContent = 'Erreur de connexion'; errEl.style.display = 'block'; }
 }
 
@@ -448,7 +507,343 @@ async function deconnecter() {
   await fetch(API + '/auth/deconnexion', { method: 'POST', headers: { authorization: token } });
   token = null; currentUser = null;
   localStorage.removeItem('lbv_token');
-  showScreen('connexion');
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('auth-wrap').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const initials = currentUser.email.substring(0,2).toUpperCase();
+  document.getElementById('user-name').textContent = currentUser.email.split('@')[0];
+  document.getElementById('avatar-circle').textContent = initials;
+  document.getElementById('compte-email').textContent = currentUser.email;
+  const now = new Date();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long'});
+  const badgeSub = document.getElementById('badge-sub');
+  if (currentUser.subscriptionStatus === 'active') { badgeSub.textContent = 'Actif'; badgeSub.className = 'badge-sub'; }
+  else { badgeSub.textContent = 'Inactif'; badgeSub.className = 'badge-sub inactive'; }
+  loadCockpit();
+  renderCompte();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-icon').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if (name === 'annonces') loadAnnonces();
+  if (name === 'ventes') loadVentes();
+  if (name === 'analyse') checkAbonnement();
+}
+
+async function loadCockpit() {
+  try {
+    const [ventesRes, annoncesRes] = await Promise.all([
+      fetch(API + '/ventes', { headers: { authorization: token } }),
+      fetch(API + '/annonces', { headers: { authorization: token } })
+    ]);
+    allVentes = await ventesRes.json();
+    allAnnonces = await annoncesRes.json();
+    renderKPI();
+    renderChart();
+    renderActions();
+    renderAnnoncesCockpit();
+    renderInsights();
+    renderCategories();
+  } catch(e) { console.error(e); }
+}
+
+function renderKPI() {
+  const now = new Date();
+  const moisCourant = now.getMonth();
+  const anneeCourante = now.getFullYear();
+  const ventesMois = allVentes.filter(v => { const d = new Date(v.dateVente); return d.getMonth()===moisCourant && d.getFullYear()===anneeCourante; });
+  const ventesPrev = allVentes.filter(v => { const d = new Date(v.dateVente); const pm = moisCourant===0?11:moisCourant-1; const py = moisCourant===0?anneeCourante-1:anneeCourante; return d.getMonth()===pm && d.getFullYear()===py; });
+  const revMois = ventesMois.reduce((s,v) => s + parseFloat(v.prixVente||0), 0);
+  const revPrev = ventesPrev.reduce((s,v) => s + parseFloat(v.prixVente||0), 0);
+  const panier = ventesMois.length > 0 ? revMois / ventesMois.length : 0;
+  document.getElementById('kpi-revenus').textContent = revMois.toFixed(0) + ' €';
+  document.getElementById('kpi-ventes').textContent = ventesMois.length;
+  document.getElementById('kpi-panier').textContent = panier.toFixed(0) + ' €';
+  document.getElementById('kpi-delai').textContent = '—';
+  const deltaRev = document.getElementById('kpi-revenus-delta');
+  if (revPrev > 0) { const pct = ((revMois-revPrev)/revPrev*100).toFixed(0); deltaRev.textContent = (pct>=0?'↑ +':'↓ ')+pct+'% vs mois précédent'; deltaRev.className = 'kpi-delta ' + (pct>=0?'up':'down'); }
+  else { deltaRev.textContent = 'Premier mois'; deltaRev.className = 'kpi-delta neutral'; }
+  const deltaVentes = document.getElementById('kpi-ventes-delta');
+  const diffV = ventesMois.length - ventesPrev.length;
+  deltaVentes.textContent = diffV===0 ? '→ stable' : (diffV>0?'↑ +'+diffV:'↓ '+diffV)+' vs mois précédent';
+  deltaVentes.className = 'kpi-delta ' + (diffV>0?'up':diffV<0?'down':'neutral');
+  document.getElementById('cf-mois').textContent = revMois.toFixed(0) + ' €';
+  document.getElementById('cf-prev').textContent = revPrev.toFixed(0) + ' €';
+  document.getElementById('cf-total').textContent = allVentes.length + ' ventes';
+}
+
+function renderChart() {
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+  const now = new Date();
+  const labels = [];
+  const data = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    labels.push(d.getDate()+'/'+( d.getMonth()+1));
+    const dayVentes = allVentes.filter(v => { const vd = new Date(v.dateVente); return vd.toDateString()===d.toDateString(); });
+    data.push(dayVentes.reduce((s,v)=>s+parseFloat(v.prixVente||0),0));
+  }
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ data, borderColor: '#2d7a52', backgroundColor: 'rgba(45,122,82,0.08)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 6, font: { size: 10 }, color: '#bbb' } }, y: { grid: { color: '#f0efe9' }, ticks: { font: { size: 10 }, color: '#bbb', callback: v => v+'€' } } } }
+  });
+}
+
+function switchPeriod(period, el) {
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderChart();
+}
+
+function renderActions() {
+  const list = document.getElementById('actions-list');
+  const actions = [];
+  const annoncesActives = allAnnonces.filter(a => a.statut === 'en_vente');
+  annoncesActives.forEach(a => {
+    const created = new Date(a.dateCreation);
+    const days = Math.floor((Date.now()-created)/86400000);
+    if (days >= 5) actions.push({ type: 'green', title: 'Republier', sub: (a.titre||a.objet||'Annonce')+' — sans message depuis '+days+'j' });
+  });
+  if (currentUser.subscriptionStatus !== 'active') actions.push({ type: 'orange', title: 'Activer l\'abonnement', sub: 'Débloquez la génération d\'annonces IA' });
+  document.getElementById('nb-actions').textContent = actions.length + ' en attente';
+  if (actions.length === 0) { list.innerHTML = '<div class="empty-state" style="padding:16px"><div class="empty-text">Tout est à jour ✓</div></div>'; return; }
+  list.innerHTML = actions.map(a => `<div class="action-card ${a.type}"><div class="action-title">${a.title}</div><div class="action-sub">${a.sub}</div></div>`).join('') + '<button class="btn-secondary" onclick="showPage(\'annonces\')">Voir mes annonces</button>';
+}
+
+function renderAnnoncesCockpit() {
+  const list = document.getElementById('annonces-cockpit-list');
+  const recent = [...allAnnonces].sort((a,b) => new Date(b.dateCreation)-new Date(a.dateCreation)).slice(0,4);
+  document.getElementById('nb-annonces-cockpit').textContent = allAnnonces.length + ' au total';
+  if (recent.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Aucune annonce</div></div>'; return; }
+  list.innerHTML = recent.map(a => {
+    const score = a.sellScore || Math.floor(Math.random()*40+50);
+    const scoreClass = score>=75?'high':score>=55?'med':'low';
+    const days = Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
+    return `<div class="annonce-row">
+      <div class="annonce-thumb">${getEmoji(a.categorie)}</div>
+      <div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Publié il y a ${days}j · ${a.statut==='vendu'?'Vendu':'En vente'}</div></div>
+      <div class="annonce-right"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${scoreClass}">Score ${score}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderInsights() {
+  const list = document.getElementById('insights-list');
+  if (allVentes.length === 0 && allAnnonces.length === 0) { list.innerHTML = '<div class="empty-state" style="padding:16px"><div class="empty-text">Créez vos premières annonces pour débloquer les insights</div></div>'; return; }
+  const insights = [];
+  const now = new Date();
+  const ventesMois = allVentes.filter(v => { const d=new Date(v.dateVente); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); });
+  if (ventesMois.length > 0) insights.push({ dot: 'green', text: `<strong>${ventesMois.length} vente${ventesMois.length>1?'s':''} ce mois</strong> pour ${ventesMois.reduce((s,v)=>s+parseFloat(v.prixVente||0),0).toFixed(0)} € de revenus.` });
+  const cats = {};
+  allVentes.forEach(v => { cats[v.categorie||'Autre'] = (cats[v.categorie||'Autre']||0) + parseFloat(v.prixVente||0); });
+  const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  if (topCat) insights.push({ dot: 'orange', text: `<strong>${topCat[0]}</strong> est votre catégorie la plus rentable.` });
+  insights.push({ dot: 'blue', text: `Publiez <strong>dimanche 18h–21h</strong> pour maximiser vos vues.` });
+  list.innerHTML = insights.map(i => `<div class="insight-row"><div class="insight-dot ${i.dot}"></div><div class="insight-text">${i.text}</div></div>`).join('');
+}
+
+function renderCategories() {
+  const list = document.getElementById('cat-list');
+  const cats = {};
+  allVentes.forEach(v => { cats[v.categorie||'Autre'] = (cats[v.categorie||'Autre']||0) + parseFloat(v.prixVente||0); });
+  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  if (sorted.length === 0) { list.innerHTML = '<div class="empty-state" style="padding:16px"><div class="empty-text">Aucune donnée</div></div>'; return; }
+  const max = sorted[0][1];
+  const colors = ['#2a5abe','#2d7a52','#d4820a','#aaa'];
+  list.innerHTML = sorted.map(([cat,val],i) => `<div class="cat-row"><div class="cat-label">${cat}</div><div class="cat-bar-wrap"><div class="cat-bar" style="width:${(val/max*100).toFixed(0)}%;background:${colors[i]}"></div></div><div class="cat-val">${val.toFixed(0)} €</div></div>`).join('');
+}
+
+function getEmoji(cat) {
+  const map = {'High-tech':'📱','Mobilier':'🛋️','Mode':'👟','Électroménager':'🏠','Sport':'🚴','Jeux vidéo':'🎮','Livres':'📚'};
+  return map[cat]||'📦';
+}
+
+async function loadAnnonces() {
+  const list = document.getElementById('annonces-list-full');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div>Chargement</div>';
+  try {
+    const res = await fetch(API + '/annonces', { headers: { authorization: token } });
+    allAnnonces = await res.json();
+    if (allAnnonces.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Aucune annonce. Créez-en une !</div></div>'; return; }
+    list.innerHTML = allAnnonces.map(a => {
+      const score = a.sellScore || 70;
+      const scoreClass = score>=75?'high':score>=55?'med':'low';
+      const days = Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
+      const isVendu = a.statut === 'vendu';
+      return `<div class="annonce-row" style="opacity:${isVendu?0.6:1}">
+        <div class="annonce-thumb">${getEmoji(a.categorie)}</div>
+        <div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">${isVendu?'Vendu':'Publié il y a '+days+'j'} · ${a.categorie||'Autre'}</div></div>
+        <div class="annonce-right">
+          <div class="annonce-prix">${a.prixRecommande||'—'} €</div>
+          <div class="score-pill ${scoreClass}">Score ${score}</div>
+          ${!isVendu?`<button onclick="ouvrirModalVendu('${a.id}')" style="font-size:10px;padding:2px 7px;background:#f0faf5;color:#2d7a52;border:0.5px solid #c5e8d8;border-radius:6px;cursor:pointer;margin-top:2px">Marquer vendu</button>`:''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="empty-state"><div class="empty-text">Erreur de chargement</div></div>'; }
+}
+
+function ouvrirModalVendu(id) {
+  document.getElementById('modal-objet').value = '';
+  document.getElementById('modal-prix').value = '';
+  document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-vente').classList.add('active');
+  document.getElementById('modal-vente').dataset.annonceId = id;
+}
+
+async function loadVentes() {
+  const list = document.getElementById('ventes-list');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div>Chargement</div>';
+  try {
+    const res = await fetch(API + '/ventes', { headers: { authorization: token } });
+    allVentes = await res.json();
+    renderVentesList();
+  } catch(e) { list.innerHTML = '<div class="empty-state"><div class="empty-text">Erreur</div></div>'; }
+}
+
+function renderVentesList() {
+  const list = document.getElementById('ventes-list');
+  if (allVentes.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📈</div><div class="empty-text">Aucune vente enregistrée</div></div>'; return; }
+  const sorted = [...allVentes].sort((a,b)=>new Date(b.dateVente)-new Date(a.dateVente));
+  list.innerHTML = sorted.map(v => `<div class="vente-row">
+    <div style="font-size:22px">${getEmoji(v.categorie)}</div>
+    <div class="vente-info"><div class="vente-titre">${v.titre||v.objet||'Vente'}</div><div class="vente-meta">${new Date(v.dateVente).toLocaleDateString('fr-FR')} · ${v.categorie||'Autre'}</div></div>
+    <div class="vente-prix">${parseFloat(v.prixVente).toFixed(0)} €</div>
+    <button class="vente-del" onclick="supprimerVente('${v.id}')">×</button>
+  </div>`).join('');
+}
+
+function openModalVente() {
+  document.getElementById('modal-objet').value = '';
+  document.getElementById('modal-prix').value = '';
+  document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal-vente').classList.add('active');
+  document.getElementById('modal-vente').dataset.annonceId = '';
+}
+
+function closeModalVente() { document.getElementById('modal-vente').classList.remove('active'); }
+
+async function ajouterVente() {
+  const objet = document.getElementById('modal-objet').value;
+  const prix = document.getElementById('modal-prix').value;
+  const date = document.getElementById('modal-date').value;
+  const cat = document.getElementById('modal-cat').value;
+  const annonceId = document.getElementById('modal-vente').dataset.annonceId;
+  if (!objet || !prix) return;
+  if (annonceId) {
+    await fetch(API + '/annonces/' + annonceId + '/vendu', { method: 'POST', headers: { authorization: token, 'Content-Type': 'application/json' }, body: JSON.stringify({ prixVente: prix }) });
+  } else {
+    await fetch(API + '/ventes', { method: 'POST', headers: { authorization: token, 'Content-Type': 'application/json' }, body: JSON.stringify({ objet, prixVente: prix, dateVente: date, categorie: cat }) });
+  }
+  closeModalVente();
+  loadVentes();
+  loadCockpit();
+}
+
+async function supprimerVente(id) {
+  if (!confirm('Supprimer cette vente ?')) return;
+  await fetch(API + '/ventes/' + id, { method: 'DELETE', headers: { authorization: token } });
+  loadVentes();
+  loadCockpit();
+}
+
+function checkAbonnement() {
+  const block = document.getElementById('analyse-abonnement-block');
+  const content = document.getElementById('analyse-content');
+  if (currentUser.subscriptionStatus !== 'active') { block.style.display = 'block'; content.style.display = 'none'; }
+  else { block.style.display = 'none'; content.style.display = 'block'; }
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  imageType = file.type;
+  const reader = new FileReader();
+  reader.onload = r => {
+    imageBase64 = r.result.split(',')[1];
+    const zone = document.getElementById('upload-zone');
+    zone.classList.add('has-image');
+    zone.innerHTML = `<img src="${r.result}" alt="Photo">`;
+    document.getElementById('analyse-extra').style.display = 'block';
+    document.getElementById('analyse-result').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyser() {
+  if (!imageBase64) return;
+  document.getElementById('analyse-loading').style.display = 'flex';
+  document.getElementById('analyse-extra').style.display = 'none';
+  document.getElementById('analyse-result').style.display = 'none';
+  const extraInfo = document.getElementById('extra-info').value;
+  try {
+    const res = await fetch(API + '/analyze', { method: 'POST', headers: { authorization: token, 'Content-Type': 'application/json' }, body: JSON.stringify({ imageBase64, imageType, extraInfo }) });
+    const data = await res.json();
+    document.getElementById('analyse-loading').style.display = 'none';
+    if (!res.ok) { alert(data.error); document.getElementById('analyse-extra').style.display = 'block'; return; }
+    renderResult(data);
+  } catch(e) { document.getElementById('analyse-loading').style.display = 'none'; document.getElementById('analyse-extra').style.display = 'block'; alert('Erreur'); }
+}
+
+function renderResult(d) {
+  const score = d.sellScore || 75;
+  const scoreClass = score>=75?'high':score>=55?'med':'low';
+  const resultDiv = document.getElementById('analyse-result');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = `
+    <div class="result-card">
+      <div class="result-title">${d.titre||'Annonce générée'}</div>
+      <div class="result-desc">${d.description||''}</div>
+      <div class="result-grid">
+        <div class="result-stat"><div class="result-stat-label">Catégorie</div><div class="result-stat-val" style="font-size:13px">${d.categorie||'—'}</div></div>
+        <div class="result-stat"><div class="result-stat-label">État</div><div class="result-stat-val" style="font-size:13px">${d.etat||'—'}</div></div>
+        <div class="result-stat"><div class="result-stat-label">Marque</div><div class="result-stat-val" style="font-size:13px">${d.marque||'—'}</div></div>
+      </div>
+      <div class="sell-score-block">
+        <div class="sell-score-title">Sell Score</div>
+        <div class="sell-score-main">
+          <div class="sell-score-num ${scoreClass}">${score}</div>
+          <div style="flex:1"><div class="sell-score-bar-wrap"><div class="sell-score-bar ${scoreClass}" style="width:${score}%"></div></div><div style="font-size:11px;color:#aaa;margin-top:4px">${score>=75?'Fort potentiel de vente':score>=55?'Potentiel moyen':'À optimiser'}</div></div>
+        </div>
+      </div>
+      <div class="prix-zone">
+        <div class="prix-block"><div class="prix-block-label">Prix minimum</div><div class="prix-block-val">${d.prixMin||'—'} €</div></div>
+        <div class="prix-block recommended"><div class="prix-block-label">Prix conseillé</div><div class="prix-block-val">${d.prixRecommande||'—'} €</div></div>
+        <div class="prix-block"><div class="prix-block-label">Prix maximum</div><div class="prix-block-val">${d.prixMax||'—'} €</div></div>
+      </div>
+      ${d.motsCles && d.motsCles.length>0 ? `<div style="margin-top:14px"><div style="font-size:11px;color:#aaa;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em">Mots-clés</div><div class="result-kw">${d.motsCles.map(k=>`<span class="kw-pill">${k}</span>`).join('')}</div></div>` : ''}
+      ${d.conseilVente ? `<div style="margin-top:14px;padding:12px;background:#f0faf5;border-radius:8px;border:0.5px solid #c5e8d8"><div style="font-size:11px;color:#aaa;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em">Conseil</div><div style="font-size:12px;color:#2d7a52">${d.conseilVente}</div></div>` : ''}
+    </div>
+    <button class="btn-secondary" onclick="resetAnalyse()">Analyser un autre objet</button>
+  `;
+}
+
+function resetAnalyse() {
+  imageBase64 = null; imageType = null;
+  const zone = document.getElementById('upload-zone');
+  zone.classList.remove('has-image');
+  zone.innerHTML = `<div class="upload-icon">📷</div><div class="upload-text"><strong>Cliquez pour ajouter une photo</strong><br>ou glissez-déposez ici</div><input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">`;
+  zone.onclick = () => document.getElementById('fileInput').click();
+  document.getElementById('analyse-extra').style.display = 'none';
+  document.getElementById('analyse-result').style.display = 'none';
+  document.getElementById('extra-info').value = '';
+}
+
+function renderCompte() {
+  const block = document.getElementById('abonnement-block');
+  if (currentUser.subscriptionStatus === 'active') {
+    block.innerHTML = `<div class="abonnement-block"><div><div style="font-size:14px;font-weight:500;color:#2d7a52">Abonnement actif</div><div style="font-size:12px;color:#7abf9e;margin-top:2px">2,99 €/mois · sans engagement</div></div><button class="btn-danger" onclick="resilier()">Résilier</button></div>`;
+  } else {
+    block.innerHTML = `<div class="abonnement-block inactive"><div><div style="font-size:14px;font-weight:500;color:#b8760a">Aucun abonnement actif</div><div style="font-size:12px;color:#c9a060;margin-top:2px">Activez pour accéder à l'IA</div></div><button class="btn-subscribe" onclick="souscrire()">S'abonner — 2,99€/mois</button></div>`;
+  }
 }
 
 async function souscrire() {
@@ -456,268 +851,19 @@ async function souscrire() {
     const res = await fetch(API + '/abonnement/checkout', { method: 'POST', headers: { authorization: token } });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-  } catch(e) { alert('Erreur serveur'); }
-}
-
-async function resilier() {
-  if (!confirm('Confirmer la résiliation ?')) return;
-  try {
-    const res = await fetch(API + '/abonnement/resilier', { method: 'POST', headers: { authorization: token } });
-    const data = await res.json();
-    alert(data.message || 'Abonnement résilié');
-  } catch(e) { alert('Erreur serveur'); }
-}
-
-function showPanel(name) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  const navMap = { 'dashboard': 'dashboard', 'nouvelle-annonce': 'nouvelle', 'mes-annonces': 'annonces', 'mes-ventes': 'ventes', 'compte': 'compte' };
-  document.getElementById('nav-' + navMap[name]).classList.add('active');
-  if (name === 'mes-annonces') loadAnnonces();
-  if (name === 'mes-ventes') loadVentes();
-  if (name === 'dashboard') loadDashboard();
-}
-
-// DASHBOARD
-async function loadDashboard() {
-  try {
-    const [ventesRes, annoncesRes] = await Promise.all([
-      fetch(API + '/ventes', { headers: { authorization: token } }),
-      fetch(API + '/annonces', { headers: { authorization: token } })
-    ]);
-    const ventes = await ventesRes.json();
-    const annonces = await annoncesRes.json();
-
-    const totalVendu = ventes.reduce((s, v) => s + (v.prixVente || 0), 0);
-    const now = new Date();
-    const ventesMonth = ventes.filter(v => {
-      const d = new Date(v.dateVente);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    });
-    const totalMois = ventesMonth.reduce((s, v) => s + (v.prixVente || 0), 0);
-    const annoncesEnCours = annonces.filter(a => a.statut !== 'vendu').length;
-
-    document.getElementById('stat-total').textContent = totalVendu.toFixed(2) + ' €';
-    document.getElementById('stat-mois').textContent = totalMois.toFixed(2) + ' €';
-    document.getElementById('stat-nb-ventes').textContent = ventes.length;
-    document.getElementById('stat-nb-annonces').textContent = annoncesEnCours;
-
-    // Graphique revenus par mois
-    const moisLabels = [];
-    const moisData = [];
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date();
-      d.setMonth(d.getMonth() - i);
-      const label = d.toLocaleString('fr', { month: 'short', year: '2-digit' });
-      moisLabels.push(label);
-      const total = ventes.filter(v => {
-        const vd = new Date(v.dateVente);
-        return vd.getMonth() === d.getMonth() && vd.getFullYear() === d.getFullYear();
-      }).reduce((s, v) => s + (v.prixVente || 0), 0);
-      moisData.push(total);
-    }
-
-    if (chartInstance) chartInstance.destroy();
-    const ctx = document.getElementById('chartRevenus').getContext('2d');
-    chartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: moisLabels,
-        datasets: [{ label: 'Revenus (€)', data: moisData, backgroundColor: '#F56B2A', borderRadius: 6 }]
-      },
-      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-    });
-
-    // Dernières ventes
-    const dernieres = [...ventes].sort((a, b) => new Date(b.dateVente) - new Date(a.dateVente)).slice(0, 5);
-    const el = document.getElementById('dernieres-ventes');
-    if (!dernieres.length) { el.innerHTML = '<div class="empty-state">Aucune vente enregistrée</div>'; return; }
-    el.innerHTML = '<table class="ventes-table"><thead><tr><th>Objet</th><th>Date</th><th>Prix</th><th>Plateforme</th></tr></thead><tbody>' +
-      dernieres.map(v => `<tr><td>${v.objet || v.titre}</td><td>${new Date(v.dateVente).toLocaleDateString('fr')}</td><td style="color:#F56B2A;font-weight:600">${v.prixVente} €</td><td>${v.plateforme || 'Le Bon Coin'}</td></tr>`).join('') +
-      '</tbody></table>';
-  } catch(e) { console.error(e); }
-}
-
-// UPLOAD & ANALYSE
-function handleFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  imageType = file.type;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    imageBase64 = e.target.result.split(',')[1];
-    document.getElementById('previewImg').src = e.target.result;
-    document.getElementById('previewImg').style.display = 'block';
-    document.getElementById('uploadPrompt').style.display = 'none';
-    document.getElementById('analyzeBtn').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-
-async function analyzeImage() {
-  if (!imageBase64) return;
-  document.getElementById('results-annonce').innerHTML = '<div class="loading"><span class="spinner"></span>Analyse en cours...</div>';
-  document.getElementById('analyzeBtn').disabled = true;
-  try {
-    const res = await fetch(API + '/analyze', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', authorization: token },
-      body: JSON.stringify({ imageBase64, imageType, extraInfo: document.getElementById('extraInfo').value })
-    });
-    const d = await res.json();
-    if (!res.ok) throw new Error(d.error);
-    renderAnnonce(d);
-  } catch(e) {
-    document.getElementById('results-annonce').innerHTML = '<div class="error-msg">❌ ' + e.message + '</div>';
-  }
-  document.getElementById('analyzeBtn').disabled = false;
-}
-
-function renderAnnonce(d) {
-  document.getElementById('results-annonce').innerHTML = `
-    <div class="success-msg">✅ Annonce générée !</div>
-    <div class="card">
-      <div class="card-label">Objet identifié</div>
-      <div class="card-value" style="font-size:17px;font-weight:700">${d.objet}${d.marque ? ' — ' + d.marque : ''}</div>
-      <div style="margin-top:8px"><span class="badge-green">${d.etat}</span> <span class="tag">${d.categorie}</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-label">Titre optimisé</div><button class="copy-btn" onclick="copyEl('r-titre')">Copier</button></div>
-      <div class="card-value" id="r-titre" style="font-weight:600">${d.titre}</div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-label">Description professionnelle</div><button class="copy-btn" onclick="copyEl('r-desc')">Copier</button></div>
-      <div class="card-value" id="r-desc" style="color:#555;font-size:14px;line-height:1.7">${d.description}</div>
-    </div>
-    <div class="price-row">
-      <div class="price-box"><div class="price-num">${d.prix_min}€</div><div class="price-lbl">Minimum</div></div>
-      <div class="price-box main"><div class="price-num">${d.prix_recommande}€</div><div class="price-lbl">Recommandé</div></div>
-      <div class="price-box"><div class="price-num">${d.prix_max}€</div><div class="price-lbl">Maximum</div></div>
-    </div>
-    <div class="card">
-      <div class="card-label">Mots-clés</div>
-      <div>${(d.mots_cles||[]).map(k=>'<span class="tag">'+k+'</span>').join('')}</div>
-    </div>
-    <div class="card">
-      <div class="card-label">💡 Conseil photo</div>
-      <div class="card-value" style="font-size:13px;color:#555">${d.conseils_photo || '—'}</div>
-    </div>
-    <div class="card">
-      <div class="card-label">🎯 Conseil de vente</div>
-      <div class="card-value" style="font-size:13px;color:#555">${d.conseil_vente || '—'}</div>
-    </div>
-    <div class="row-btns">
-      <button class="btn-main" onclick="ouvrirModalVenteDepuisAnnonce(${d.id}, '${d.objet.replace(/'/g,"\\'")}', ${d.prix_recommande})">Marquer comme vendu</button>
-      <button class="btn-sec" onclick="showPanel('mes-annonces')">Voir mes annonces</button>
-    </div>`;
-}
-
-// ANNONCES
-async function loadAnnonces() {
-  const el = document.getElementById('liste-annonces');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-  try {
-    const res = await fetch(API + '/annonces', { headers: { authorization: token } });
-    const annonces = await res.json();
-    if (!annonces.length) { el.innerHTML = '<div class="empty-state"><div style="font-size:48px;margin-bottom:12px">📭</div><div>Aucune annonce</div></div>'; return; }
-    el.innerHTML = '<div class="annonces-grid">' + annonces.map(a => `
-      <div class="annonce-item">
-        <div class="annonce-item-title">${a.titre}</div>
-        <div class="annonce-item-prix">${a.prix_recommande} €</div>
-        <div style="font-size:12px;color:#888;margin-top:4px">${a.etat} · ${a.categorie}</div>
-        <div style="margin-top:8px">${a.statut === 'vendu' ? '<span class="badge-green">✓ Vendu — ' + (a.prixVente||'') + '€</span>' : '<span class="badge-orange">En vente</span>'}</div>
-        <div class="annonce-item-actions">
-          ${a.statut !== 'vendu' ? '<button class="btn-vendu" onclick="ouvrirModalVenteDepuisAnnonce('+a.id+', \''+a.objet.replace(/'/g,"\\'")+'\', '+a.prix_recommande+')">Marquer vendu ✓</button>' : ''}
-        </div>
-      </div>`).join('') + '</div>';
-  } catch(e) { el.innerHTML = '<div class="error-msg">❌ Erreur</div>'; }
-}
-
-// VENTES
-async function loadVentes() {
-  const el = document.getElementById('liste-ventes');
-  el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-  try {
-    const res = await fetch(API + '/ventes', { headers: { authorization: token } });
-    const ventes = await res.json();
-    if (!ventes.length) { el.innerHTML = '<div class="empty-state">Aucune vente enregistrée</div>'; return; }
-    const sorted = [...ventes].sort((a, b) => new Date(b.dateVente) - new Date(a.dateVente));
-    el.innerHTML = '<table class="ventes-table"><thead><tr><th>Objet</th><th>Date</th><th>Plateforme</th><th>Prix</th><th></th></tr></thead><tbody>' +
-      sorted.map(v => `<tr>
-        <td style="font-weight:500">${v.objet || v.titre}</td>
-        <td>${new Date(v.dateVente).toLocaleDateString('fr')}</td>
-        <td>${v.plateforme || 'Le Bon Coin'}</td>
-        <td style="color:#F56B2A;font-weight:700">${v.prixVente} €</td>
-        <td><button class="btn-danger" onclick="supprimerVente(${v.id})">Supprimer</button></td>
-      </tr>`).join('') + '</tbody></table>';
-  } catch(e) { el.innerHTML = '<div class="error-msg">❌ Erreur</div>'; }
-}
-
-function ouvrirModalVente() {
-  document.getElementById('modal-annonce-id').value = '';
-  document.getElementById('modal-objet').value = '';
-  document.getElementById('modal-prix').value = '';
-  document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('modal-vente').classList.add('active');
-}
-
-function ouvrirModalVenteDepuisAnnonce(id, objet, prix) {
-  document.getElementById('modal-annonce-id').value = id;
-  document.getElementById('modal-objet').value = objet;
-  document.getElementById('modal-prix').value = prix;
-  document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('modal-vente').classList.add('active');
-}
-
-function fermerModal() {
-  document.getElementById('modal-vente').classList.remove('active');
-}
-
-async function validerVente() {
-  const annonceId = document.getElementById('modal-annonce-id').value;
-  const objet = document.getElementById('modal-objet').value;
-  const prix = document.getElementById('modal-prix').value;
-  const date = document.getElementById('modal-date').value;
-  const plateforme = document.getElementById('modal-plateforme').value;
-  if (!objet || !prix) { alert('Remplis tous les champs'); return; }
-
-  try {
-    if (annonceId) {
-      await fetch(API + '/annonces/' + annonceId + '/vendu', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', authorization: token },
-        body: JSON.stringify({ prixVente: parseFloat(prix) })
-      });
-    } else {
-      await fetch(API + '/ventes', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', authorization: token },
-        body: JSON.stringify({ objet, prixVente: prix, dateVente: date, plateforme })
-      });
-    }
-    fermerModal();
-    loadDashboard();
-    loadVentes();
-    loadAnnonces();
   } catch(e) { alert('Erreur'); }
 }
 
-async function supprimerVente(id) {
-  if (!confirm('Supprimer cette vente ?')) return;
-  await fetch(API + '/ventes/' + id, { method: 'DELETE', headers: { authorization: token } });
-  loadVentes();
-  loadDashboard();
+async function resilier() {
+  if (!confirm('Résilier votre abonnement ?')) return;
+  await fetch(API + '/abonnement/resilier', { method: 'POST', headers: { authorization: token } });
+  currentUser.subscriptionStatus = 'cancelled';
+  renderCompte();
 }
 
-function copyEl(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  navigator.clipboard.writeText(el.innerText).then(() => {
-    const btn = el.parentElement?.querySelector('.copy-btn');
-    if (btn) { btn.textContent = '✓ Copié !'; setTimeout(() => btn.textContent = 'Copier', 2000); }
-  });
-}
+document.getElementById('modal-vente').addEventListener('click', e => { if (e.target === document.getElementById('modal-vente')) closeModalVente(); });
 
 init();
-function togglePwd(id,el){const i=document.getElementById(id);i.type=i.type==="password"?"text":"password";el.textContent=i.type==="password"?"👁":"🙈";}
 </script>
 </body>
 </html>
