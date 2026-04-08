@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 const app = express();
 app.use(cors());
@@ -33,14 +35,38 @@ function getStripe() {
 const PRICE_ID = 'price_1TJdoXCdfs6oSAwSVjIEhwWR';
 const BASE_URL = 'https://le-bon-vendeur.com';
 
-const DB_FILE = './db.json';
-function loadDB() {
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); } catch(e) { return {}; }
+async function getUser(email) {
+  const { data } = await supabase.from('users').select('*').eq('email', email).single();
+  return data;
 }
-function saveDB(users) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2));
+async function saveUser(user) {
+  const { error } = await supabase.from('users').upsert({
+    email: user.email,
+    password: user.password,
+    stripe_customer_id: user.stripeCustomerId,
+    subscription_id: user.subscriptionId,
+    subscription_status: user.subscriptionStatus,
+    email_verified: user.emailVerified,
+    verification_token: user.verificationToken,
+    annonces: user.annonces || [],
+    ventes: user.ventes || []
+  });
+  return error;
 }
-const users = loadDB();
+function dbToUser(row) {
+  if (!row) return null;
+  return {
+    email: row.email,
+    password: row.password,
+    stripeCustomerId: row.stripe_customer_id,
+    subscriptionId: row.subscription_id,
+    subscriptionStatus: row.subscription_status,
+    emailVerified: row.email_verified,
+    verificationToken: row.verification_token,
+    annonces: row.annonces || [],
+    ventes: row.ventes || []
+  };
+}
 
 function hashPassword(pwd) {
   return crypto.createHash('sha256').update(pwd).digest('hex');
@@ -62,11 +88,12 @@ app.post('/auth/inscription', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
-    if (users[email]) return res.status(400).json({ error: 'Compte déjà existant' });
+    const existing = await getUser(email);
+    if (existing) return res.status(400).json({ error: 'Compte déjà existant' });
     const customer = await getStripe().customers.create({ email });
     const verificationToken = generateToken(email + 'verify');
-    users[email] = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [], emailVerified: false, verificationToken };
-    saveDB(users);
+    const newUser = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [], emailVerified: false, verificationToken };
+    await saveUser(newUser);
 resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: email, subject: 'Confirmez votre email - Le Bon Vendeur', html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif"><div style="max-width:600px;margin:40px auto;background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="background:#F56B2A;padding:40px;text-align:center"><h1 style="color:white;margin:0;font-size:28px">Le Bon Vendeur</h1></div><div style="padding:40px"><h2 style="color:#1a1a1a;font-size:24px">Bienvenue, vous faites le bon choix !</h2><p style="color:#555;font-size:16px;line-height:1.6">Votre compte est cree et pret a emploi. Prenez une photo de vos objets, notre IA genere une annonce professionnelle en quelques secondes.</p><p style="color:#555;font-size:16px;line-height:1.6">Plus besoin de chercher le bon prix ou les bons mots, on s occupe pour vous.</p><div style="text-align:center;margin:40px 0"><a href="https://le-bon-vendeur.com/auth/verify?token=${verificationToken}" style="background:#F56B2A;color:white;padding:16px 40px;border-radius:100px;text-decoration:none;font-size:18px;font-weight:bold">Confirmer mon email</a></div><p style="color:#999;font-size:14px;text-align:center">Des questions ? Repondez a cet email, on est la.</p></div><div style="background:#f5f5f5;padding:24px;text-align:center"><p style="color:#aaa;font-size:12px;margin:0">2025 Le Bon Vendeur</p></div></div></body></html>` });
     res.json({ success: true, message: 'Verifiez votre email pour activer votre compte' });
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -74,18 +101,20 @@ resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: em
 
 app.get('/auth/verify', (req, res) => {
   const { token } = req.query;
-  const user = Object.values(users).find(u => u.verificationToken === token);
+  const { data: row } = await supabase.from('users').select('*').eq('verification_token', token).single();
+  const user = dbToUser(row);
   if (!user) return res.status(400).send('Lien invalide ou expire');
   user.emailVerified = true;
   user.verificationToken = null;
-  saveDB(users);
+  await saveUser(user);
   res.redirect('/dashboard.html?verified=true');
 });
 
 app.post('/auth/connexion', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = users[email];
+    const row = await getUser(email);
+    const user = dbToUser(row);
     if (!user || user.password !== hashPassword(password)) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     if (!user.emailVerified) return res.status(403).json({ error: 'Veuillez verifier votre email avant de vous connecter' });
     if (false) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
@@ -100,15 +129,18 @@ app.post('/auth/deconnexion', authMiddleware, (req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/auth/me', authMiddleware, (req, res) => {
-  const user = users[req.userEmail];
+app.get('/auth/me', authMiddleware, async (req, res) => {
+  const row = await getUser(req.userEmail);
+  const user = dbToUser(row);
+  if (!user) return res.status(404).json({ error: 'Utilisateur non trouve' });
   res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus });
 });
 
 // ABONNEMENT
 app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     const session = await getStripe().checkout.sessions.create({
       customer: user.stripeCustomerId,
       payment_method_types: ['card'],
@@ -124,12 +156,13 @@ app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
 
 app.post('/abonnement/activer', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     const subscriptions = await getStripe().subscriptions.list({ customer: user.stripeCustomerId, status: 'active' });
     if (subscriptions.data.length > 0) {
       user.subscriptionId = subscriptions.data[0].id;
       user.subscriptionStatus = 'active';
-      saveDB(users);
+      await saveUser(user);
       res.json({ ok: true, status: 'active' });
     } else {
       res.json({ ok: false, status: 'inactive' });
@@ -139,7 +172,8 @@ app.post('/abonnement/activer', authMiddleware, async (req, res) => {
 
 app.post('/abonnement/resilier', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     if (!user.subscriptionId) return res.status(400).json({ error: 'Aucun abonnement actif' });
     await getStripe().subscriptions.update(user.subscriptionId, { cancel_at_period_end: true });
     res.json({ ok: true, message: "Abonnement résilié — accès jusqu'à la fin de la période" });
@@ -154,10 +188,12 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const email = session.metadata.email;
-    if (users[email] && session.subscription) {
-      users[email].subscriptionId = session.subscription;
-      users[email].subscriptionStatus = 'active';
-      saveDB(users);
+    const wRow = await getUser(email);
+    const wUser = dbToUser(wRow);
+    if (wUser && session.subscription) {
+      wUser.subscriptionId = session.subscription;
+      wUser.subscriptionStatus = 'active';
+      await saveUser(wUser);
     }
   }
   res.json({ received: true });
@@ -166,7 +202,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 // ANALYSE PHOTO + GÉNÉRATION ANNONCE
 app.post('/analyze', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     if (user.subscriptionStatus !== 'active') return res.status(403).json({ error: 'Abonnement requis' });
     const { imageBase64, imageType, extraInfo } = req.body;
     const response = await getAnthropic().messages.create({
@@ -202,19 +239,22 @@ Réponds UNIQUEMENT en JSON valide, sans balises markdown :
     annonce.statut = 'en_vente';
     if (!user.annonces) user.annonces = [];
     user.annonces.push(annonce);
-    saveDB(users);
+    await saveUser(user);
     res.json(annonce);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.get('/annonces', authMiddleware, (req, res) => {
-  res.json(users[req.userEmail].annonces || []);
+app.get('/annonces', authMiddleware, async (req, res) => {
+  const row = await getUser(req.userEmail);
+  const user = dbToUser(row);
+  res.json(user ? user.annonces || [] : []);
 });
 
 // MARQUER COMME VENDU
-app.post('/annonces/:id/vendu', authMiddleware, (req, res) => {
+app.post('/annonces/:id/vendu', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     const { prixVente } = req.body;
     const annonce = user.annonces.find(a => a.id == req.params.id);
     if (!annonce) return res.status(404).json({ error: 'Annonce non trouvée' });
@@ -230,15 +270,16 @@ app.post('/annonces/:id/vendu', authMiddleware, (req, res) => {
       dateVente: annonce.dateVente,
       categorie: annonce.categorie
     });
-    saveDB(users);
+    await saveUser(user);
     res.json({ ok: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // AJOUTER UNE VENTE MANUELLE
-app.post('/ventes', authMiddleware, (req, res) => {
+app.post('/ventes', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     const { objet, prixVente, dateVente, categorie, plateforme } = req.body;
     if (!user.ventes) user.ventes = [];
     const vente = {
@@ -252,20 +293,23 @@ app.post('/ventes', authMiddleware, (req, res) => {
       manuel: true
     };
     user.ventes.push(vente);
-    saveDB(users);
+    await saveUser(user);
     res.json({ ok: true, vente });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.get('/ventes', authMiddleware, (req, res) => {
-  res.json(users[req.userEmail].ventes || []);
+app.get('/ventes', authMiddleware, async (req, res) => {
+  const row = await getUser(req.userEmail);
+  const user = dbToUser(row);
+  res.json(user ? user.ventes || [] : []);
 });
 
-app.delete('/ventes/:id', authMiddleware, (req, res) => {
+app.delete('/ventes/:id', authMiddleware, async (req, res) => {
   try {
-    const user = users[req.userEmail];
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
     user.ventes = (user.ventes || []).filter(v => v.id != req.params.id);
-    saveDB(users);
+    await saveUser(user);
     res.json({ ok: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
