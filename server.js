@@ -99,7 +99,7 @@ resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: em
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.get('/auth/verify', (req, res) => {
+app.get('/auth/verify', async (req, res) => {
   const { token } = req.query;
   const { data: row } = await supabase.from('users').select('*').eq('verification_token', token).single();
   const user = dbToUser(row);
