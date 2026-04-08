@@ -364,7 +364,8 @@ async function init() {
       if (res.ok) { currentUser = await res.json(); showApp(); return; }
     } catch(e) {}
   }
-  showScreen('inscription');
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('verified') === 'true') { showScreen('connexion'); } else { showScreen('inscription'); }
 }
 
 function showScreen(name) {
