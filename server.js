@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname));
+app.get("/", (req, res) => res.redirect("/lebonvendeur.html"));
 
 let _anthropic = null;
 let _stripe = null;
