@@ -662,7 +662,7 @@ function renderVentesList(){
   const list=document.getElementById('ventes-list');
   if(allVentes.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📈</div><div class="empty-title">Aucune vente</div><div class="empty-sub">Ajoutez vos premières ventes</div></div>';return;}
   const sorted=[...allVentes].sort((a,b)=>new Date(b.dateVente)-new Date(a.dateVente));
-  list.innerHTML=sorted.map(v=>`<div class="vente-row"><div class="vente-icon">${getEmoji(v.categorie)}</div><div class="vente-info"><div class="vente-titre">${v.titre||v.objet||'Vente'}</div><div class="vente-meta">${new Date(v.dateVente).toLocaleDateString('fr-FR')} · ${v.categorie||'Autre'}</div></div><div class="vente-prix">+${parseFloat(v.prixVente).toFixed(0)} €</div><button class="vente-del" onclick="supprimerVente('${v.id}')">×</button></div>`).join('');
+  list.innerHTML=sorted.map(v=>`<div class="vente-row" style="cursor:pointer" onclick="ouvrirDetailDepuisVente('${v.id}')"><div class="vente-icon">${getEmoji(v.categorie)}</div><div class="vente-info"><div class="vente-titre">${v.titre||v.objet||'Vente'}</div><div class="vente-meta">${new Date(v.dateVente).toLocaleDateString('fr-FR')} · ${v.categorie||'Autre'}</div></div><div class="vente-prix">+${parseFloat(v.prixVente).toFixed(0)} €</div><button class="vente-del" onclick="event.stopPropagation();supprimerVente('${v.id}')">×</button></div>`).join('');
 }
 
 let currentDetailAnnonce = null;
@@ -736,6 +736,15 @@ function showDetail(id) {
 
   // Conseil
   document.getElementById('detail-conseil').innerHTML = annonce.conseilVente ? `<div class="conseil-block"><div class="conseil-label">Conseil de vente</div><div class="conseil-text">${annonce.conseilVente}</div></div>` : '';
+}
+
+function ouvrirDetailDepuisVente(venteId) {
+  const vente = allVentes.find(v => String(v.id) === String(venteId));
+  if (!vente) return;
+  const annonce = allAnnonces.find(a => String(a.id) === String(venteId) || (a.titre && a.titre === vente.titre));
+  if (annonce) {
+    loadAnnonces().then(() => showDetail(annonce.id));
+  }
 }
 
 function ouvrirModalVenduFromDetail() {
