@@ -15,8 +15,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .nav-item.active{background:#FEF0E8}
 .nav-item svg{width:18px;height:18px;stroke:#999;stroke-width:1.5;fill:none}
 .nav-item.active svg{stroke:#F56B2A}
-.nav-label{font-size:8px;color:#bbb;letter-spacing:0.02em}
-.nav-item.active .nav-label{color:#F56B2A}
+.nav-label{font-size:9px;color:#888;letter-spacing:0.02em;font-weight:500}
+.nav-item.active .nav-label{color:#F56B2A;font-weight:600}
 .main{margin-left:60px;padding:22px 26px;min-height:100vh}
 .page{display:none}.page.active{display:block}
 
@@ -146,12 +146,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .upload-sub{font-size:13px;color:#999}
 
 .result-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:22px;margin-top:16px}
-.result-titre{font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:10px;letter-spacing:-0.3px}
-.result-desc{font-size:14px;color:#555;line-height:1.7;margin-bottom:18px}
+.result-titre{font-size:24px;font-weight:700;color:#1a1a1a;margin-bottom:12px;letter-spacing:-0.5px}
+.result-desc{font-size:15px;color:#444;line-height:1.8;margin-bottom:20px}
 .result-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
 .result-meta{background:#f5f4f0;border-radius:10px;padding:12px;text-align:center}
 .result-meta-label{font-size:11px;color:#999;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
-.result-meta-val{font-size:14px;font-weight:600;color:#1a1a1a}
+.result-meta-val{font-size:15px;font-weight:700;color:#1a1a1a}
 
 .sell-score-block{background:#f5f4f0;border-radius:12px;padding:18px;margin-bottom:18px}
 .sell-score-label{font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px}
@@ -172,15 +172,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .prix-block{background:#f5f4f0;border-radius:10px;padding:14px;text-align:center;border:1px solid transparent}
 .prix-block.recommended{background:#e8f5ef;border-color:#c5e8d8}
 .prix-block-label{font-size:11px;color:#999;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
-.prix-block-val{font-size:20px;font-weight:700;color:#1a1a1a}
+.prix-block-val{font-size:24px;font-weight:700;color:#1a1a1a}
 .prix-block.recommended .prix-block-val{color:#1a6e3e}
 
 .kw-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.kw-pill{font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;background:#f5f4f0;color:#555;border:1px solid #eee}
+.kw-pill{font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;background:#f5f4f0;color:#444;border:1px solid #eee}
 
 .conseil-block{background:#FEF0E8;border-radius:10px;padding:14px 16px;margin-top:14px;border:1px solid #FDDCC8}
 .conseil-label{font-size:11px;color:#c44d0d;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
-.conseil-text{font-size:13px;color:#8a3a0d;line-height:1.6}
+.conseil-text{font-size:14px;color:#8a3a0d;line-height:1.7}
 
 .btn-secondary{width:100%;padding:11px;background:#f5f4f0;border:1px solid #e0ddd5;border-radius:10px;color:#555;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:10px}
 .btn-secondary:hover{background:#eeecea;color:#1a1a1a}
@@ -578,7 +578,9 @@ async function loadAnnonces(){
 }
 
 function ouvrirModalVendu(id){
-  document.getElementById('modal-objet').value='';document.getElementById('modal-prix').value='';
+  const annonce=allAnnonces.find(a=>String(a.id)===String(id));
+  document.getElementById('modal-objet').value=annonce?(annonce.titre||annonce.objet||''):'';
+  document.getElementById('modal-prix').value='';
   document.getElementById('modal-date').value=new Date().toISOString().split('T')[0];
   document.getElementById('modal-vente').classList.add('active');
   document.getElementById('modal-vente').dataset.annonceId=id;
