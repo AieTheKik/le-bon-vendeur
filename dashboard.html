@@ -642,10 +642,10 @@ function handleFile(e){
   imageType=file.type;
   const reader=new FileReader();
   reader.onload=r=>{
-    imageBase64=r.result.split(',')[1];
+    imageBase64=reader.result.split(',')[1];
     const zone=document.getElementById('upload-zone');
     zone.classList.add('has-image');
-    zone.innerHTML=`<img src="${r.result}" alt="Photo">`;
+    zone.innerHTML=`<img src="${reader.result}" alt="Photo">`;
     document.getElementById('analyse-extra').style.display='block';
     document.getElementById('analyse-result').style.display='none';
   };
