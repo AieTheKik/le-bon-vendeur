@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Le Bon Vendeur — Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+</script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; min-height: 100vh; }
@@ -169,7 +170,7 @@
     <div class="auth-sub">Rejoignez Le Bon Vendeur et vendez mieux</div>
     <div class="auth-error" id="err-inscription"></div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="ins-email" placeholder="vous@email.com"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" class="form-input" id="ins-pwd" placeholder="Minimum 6 caractères"></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><div style="position:relative"><input type="password" class="form-input" id="ins-pwd" placeholder="Minimum 6 caractères" style="padding-right:40px"><span onclick="togglePwd('ins-pwd',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999">👁</span></div></div>
     <button class="btn-auth" onclick="inscrire()">Créer mon compte</button>
     <div class="auth-switch">Déjà un compte ? <a onclick="showScreen('connexion')">Se connecter</a></div>
   </div>
@@ -182,7 +183,7 @@
     <div class="auth-sub">Content de vous revoir !</div>
     <div class="auth-error" id="err-connexion"></div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="con-email" placeholder="vous@email.com"></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" class="form-input" id="con-pwd" placeholder="Votre mot de passe"></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><div style="position:relative"><input type="password" class="form-input" id="con-pwd" placeholder="Votre mot de passe" style="padding-right:40px"><span onclick="togglePwd('con-pwd',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999">👁</span></div></div>
     <button class="btn-auth" onclick="connecter()">Se connecter</button>
     <div class="auth-switch">Pas encore de compte ? <a onclick="showScreen('inscription')">S'inscrire</a></div>
   </div>
@@ -702,6 +703,7 @@ function copyEl(id) {
 }
 
 init();
+function togglePwd(id,el){const i=document.getElementById(id);i.type=i.type==="password"?"text":"password";el.textContent=i.type==="password"?"👁":"🙈";}
 </script>
 </body>
 </html>
