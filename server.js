@@ -210,7 +210,14 @@ app.post('/analyze', authMiddleware, async (req, res) => {
       model: 'claude-sonnet-4-6',
       max_tokens: 1500,
       system: `Tu es un expert en vente sur Le Bon Coin en France et en rédaction de textes commerciaux percutants.
-Analyse la photo et génère une annonce de qualité professionnelle.
+Analyse la photo et génère une annonce de qualité professionnelle avec un Sell Score détaillé.
+
+Le Sell Score global (0-100) est la moyenne de 4 sous-scores:
+- scorePrix (0-100): prix bien positionné par rapport au marché selon l'état et la marque
+- scoreClarte (0-100): titre et description précis, complets, sans ambiguïté
+- scoreConfiance (0-100): annonce inspirant confiance (état détaillé, marque, accessoires mentionnés)
+- scoreImpact (0-100): accroche forte, mots-clés optimaux pour la recherche LBC
+
 Réponds UNIQUEMENT en JSON valide, sans balises markdown :
 {
   "objet": "nom précis de l'objet",
@@ -218,14 +225,23 @@ Réponds UNIQUEMENT en JSON valide, sans balises markdown :
   "etat": "Neuf|Très bon état|Bon état|État correct|Pour pièces",
   "titre": "titre accrocheur et optimisé SEO, max 70 caractères",
   "description": "description ultra qualitative, détaillée et vendeuse, 5-8 phrases. Mentionne les points forts, l'état, les caractéristiques techniques si pertinent. Style professionnel et convaincant.",
-  "prix_min": estimation basse en euros (nombre entier),
-  "prix_recommande": meilleur prix de vente en euros (nombre entier),
-  "prix_max": estimation haute en euros (nombre entier),
+  "prixMin": estimation basse en euros (nombre entier),
+  "prixRecommande": meilleur prix de vente en euros (nombre entier),
+  "prixMax": estimation haute en euros (nombre entier),
   "categorie": "catégorie LBC principale",
-  "sous_categorie": "sous-catégorie LBC",
-  "mots_cles": ["mot1", "mot2", "mot3", "mot4", "mot5"],
-  "conseils_photo": "conseil pour améliorer les photos",
-  "conseil_vente": "conseil stratégique pour vendre rapidement"
+  "motsCles": ["mot1", "mot2", "mot3", "mot4", "mot5"],
+  "conseilVente": "conseil stratégique pour vendre rapidement",
+  "scorePrix": nombre entier 0-100,
+  "scoreClarte": nombre entier 0-100,
+  "scoreConfiance": nombre entier 0-100,
+  "scoreImpact": nombre entier 0-100,
+  "sellScore": moyenne des 4 sous-scores arrondie,
+  "scoreStatut": "Fort potentiel de vente|Potentiel moyen|Score faible — optimisation nécessaire",
+  "actionsCorrectives": [
+    {"impact": "fort", "texte": "action concrète et spécifique pour améliorer le score le plus faible"},
+    {"impact": "moyen", "texte": "action concrète et spécifique pour le deuxième point faible"},
+    {"impact": "faible", "texte": "action concrète et spécifique pour peaufiner l annonce"}
+  ]
 }`,
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: imageType || 'image/jpeg', data: imageBase64 } },

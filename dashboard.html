@@ -670,7 +670,14 @@ async function analyser(){
 function renderResult(d){
   const score=d.sellScore||75;
   const sc=score>=75?'high':score>=55?'med':'low';
-  const status=score>=75?'Fort potentiel de vente':score>=55?'Potentiel moyen — à optimiser':'Score faible — des actions sont nécessaires';
+  const scoreColor=sc==='high'?'#1a6e3e':sc==='med'?'#F56B2A':'#9e2a2a';
+  const statut=d.scoreStatut||(score>=75?'Fort potentiel de vente':score>=55?'Potentiel moyen — à optimiser':'Score faible — optimisation nécessaire');
+  const r=36, circ=(2*Math.PI*r).toFixed(1), dashoffset=(2*Math.PI*r-(score/100)*2*Math.PI*r).toFixed(1);
+  const actions=d.actionsCorrectives||[];
+  const impactBg={'fort':'#FEF0E8','moyen':'#fef9f0','faible':'#f5f4f0'};
+  const impactBorder={'fort':'#FDDCC8','moyen':'#f5e8c0','faible':'#e8e6e0'};
+  const impactColor={'fort':'#c44d0d','moyen':'#8a6000','faible':'#666'};
+  const subScores=[['💰 Prix',d.scorePrix||0,'#1a6e3e'],['✏️ Clarté',d.scoreClarte||0,'#F56B2A'],['🛡️ Confiance',d.scoreConfiance||0,'#1a5abe'],['⚡ Impact',d.scoreImpact||0,'#7a3abe']];
   const resultDiv=document.getElementById('analyse-result');
   resultDiv.style.display='block';
   resultDiv.innerHTML=`<div class="result-card">
@@ -683,10 +690,25 @@ function renderResult(d){
     </div>
     <div class="sell-score-block">
       <div class="sell-score-label">Sell Score</div>
-      <div class="sell-score-row">
-        <div class="sell-score-num ${sc}">${score}</div>
-        <div class="sell-score-right"><div class="sell-score-bar-bg"><div class="sell-score-bar ${sc}" style="width:${score}%"></div></div><div class="sell-score-status">${status}</div></div>
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:16px">
+        <div style="position:relative;width:88px;height:88px;flex-shrink:0">
+          <svg width="88" height="88" viewBox="0 0 88 88" style="transform:rotate(-90deg)">
+            <circle cx="44" cy="44" r="${r}" fill="none" stroke="#f0efe9" stroke-width="7"/>
+            <circle cx="44" cy="44" r="${r}" fill="none" stroke="${scoreColor}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${dashoffset}"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:${scoreColor}">${score}</div>
+            <div style="font-size:10px;color:#bbb">/100</div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:10px">${statut}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            ${subScores.map(([lbl,val,col])=>`<div style="background:#f5f4f0;border-radius:8px;padding:8px 10px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:600;color:#555">${lbl}</span><span style="font-size:12px;font-weight:700;color:${col}">${val}</span></div><div style="height:4px;background:#e0ddd5;border-radius:2px"><div style="height:4px;border-radius:2px;background:${col};width:${val}%"></div></div></div>`).join('')}
+          </div>
+        </div>
       </div>
+      ${actions.length>0?`<div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:8px">Actions pour booster votre score</div>${actions.map(a=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:7px;background:${impactBg[a.impact]||'#f5f4f0'};border:1px solid ${impactBorder[a.impact]||'#e8e6e0'}"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:${impactBorder[a.impact]||'#e8e6e0'};color:${impactColor[a.impact]||'#666'};flex-shrink:0;white-space:nowrap">${a.impact}</span><div style="font-size:13px;color:#444;line-height:1.5">${a.texte}</div></div>`).join('')}`:''}
     </div>
     <div class="prix-zone">
       <div class="prix-block"><div class="prix-block-label">Prix minimum</div><div class="prix-block-val">${d.prixMin||'—'} €</div></div>
