@@ -1,286 +1,356 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Le Bon Vendeur — Vendez mieux sur Le Bon Coin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --orange: #F56B2A;
-      --orange-light: #FF8C5A;
-      --dark: #141414;
-      --mid: #2A2A2A;
-      --gray: #888;
-      --border: rgba(255,255,255,0.08);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: #fff; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Bon Vendeur — Vendez mieux sur Le Bon Coin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#1a1a1a;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
 
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 5%;
-      background: rgba(20,20,20,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 0.5px solid var(--border);
-    }
-    .logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff; }
-    .logo span { color: var(--orange); }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta { background: var(--orange); color: #fff; padding: 10px 22px; border-radius: 100px; font-size: 14px; font-weight: 500; text-decoration: none; transition: background 0.2s; }
-    .nav-cta:hover { background: var(--orange-light); color: #fff; }
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid #f0efe9;background:#fff;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:20px;font-weight:800;letter-spacing:-0.5px}.nav-logo span{color:#F56B2A}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost{padding:9px 18px;border:1px solid #e0ddd5;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#555;font-family:inherit}
+.btn-ghost:hover{background:#f5f4f0}
+.btn-orange{padding:9px 20px;background:#F56B2A;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;font-family:inherit}
+.btn-orange:hover{background:#e55a1a}
 
-    .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 120px 5% 80px;
-      position: relative; overflow: hidden;
-    }
-    .hero-bg { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(245,107,42,0.12) 0%, transparent 70%); }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(245,107,42,0.15); border: 1px solid rgba(245,107,42,0.3);
-      color: var(--orange-light); font-size: 13px; font-weight: 500;
-      padding: 6px 16px; border-radius: 100px;
-      margin-bottom: 2rem; position: relative; z-index: 1;
-      animation: fadeUp 0.6s ease both;
-    }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(48px, 8vw, 88px); font-weight: 900;
-      line-height: 1.05; letter-spacing: -2px; margin-bottom: 1.5rem;
-      position: relative; z-index: 1;
-      animation: fadeUp 0.6s 0.1s ease both;
-    }
-    h1 em { font-style: italic; color: var(--orange); }
-    .hero-sub {
-      font-size: clamp(16px, 2vw, 20px); color: rgba(255,255,255,0.55);
-      font-weight: 300; max-width: 560px; line-height: 1.6; margin-bottom: 2.5rem;
-      position: relative; z-index: 1;
-      animation: fadeUp 0.6s 0.2s ease both;
-    }
-    .hero-actions { display: flex; gap: 12px; align-items: center; position: relative; z-index: 1; animation: fadeUp 0.6s 0.3s ease both; }
-    .btn-primary {
-      background: var(--orange); color: #fff; padding: 16px 32px; border-radius: 100px;
-      font-size: 16px; font-weight: 500; text-decoration: none; transition: all 0.2s;
-      box-shadow: 0 8px 32px rgba(245,107,42,0.35);
-    }
-    .btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(245,107,42,0.45); }
-    .btn-ghost { color: rgba(255,255,255,0.6); font-size: 15px; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
-    .btn-ghost:hover { color: #fff; }
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:80px 48px 72px;max-width:1200px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:24px}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:#F56B2A;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-title{font-size:52px;font-weight:800;letter-spacing:-2.5px;line-height:1.04;margin-bottom:22px;color:#1a1a1a}
+.hero-title span{color:#F56B2A}
+.hero-sub{font-size:17px;color:#666;line-height:1.75;margin-bottom:36px;max-width:460px}
+.hero-cta-wrap{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.btn-cta-hero{padding:15px 32px;background:#F56B2A;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit}
+.btn-cta-hero:hover{background:#e55a1a}
+.hero-note{font-size:13px;color:#bbb}
+.hero-note strong{color:#888;font-weight:500}
 
-    .stats { display: flex; justify-content: center; gap: 3rem; padding: 0 5% 80px; position: relative; z-index: 1; animation: fadeUp 0.6s 0.4s ease both; }
-    .stat { text-align: center; }
-    .stat-num { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: #fff; }
-    .stat-num span { color: var(--orange); }
-    .stat-label { font-size: 13px; color: var(--gray); margin-top: 4px; }
+.demo-wrap{background:#fff;border:1px solid #e8e6e0;border-radius:18px;overflow:hidden}
+.demo-titlebar{background:#f5f4f0;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e8e6e0}
+.dot{width:11px;height:11px;border-radius:50%}
+.demo-urlbar{flex:1;background:#fff;border:1px solid #e8e6e0;border-radius:7px;padding:5px 14px;font-size:11px;color:#bbb;text-align:center;font-family:inherit}
+.demo-body{padding:18px}
+.demo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.demo-greeting{font-size:14px;font-weight:700;color:#1a1a1a}
+.demo-badge-active{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:#e8f5ef;color:#1a6e3e;border:1px solid #c5e8d8}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.kpi{background:#f5f4f0;border-radius:10px;padding:10px 12px}
+.kpi-lbl{font-size:10px;color:#999;font-weight:500;margin-bottom:4px}
+.kpi-val{font-size:19px;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px;line-height:1}
+.kpi-delta{font-size:10px;font-weight:600;margin-top:3px}
+.kpi-delta.up{color:#1a6e3e}
+.section-lbl{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
+.ann-row{display:flex;align-items:center;gap:9px;padding:8px 10px;background:#fafaf8;border-radius:8px;border:1px solid #eee;margin-bottom:6px;transition:opacity 0.6s}
+.ann-thumb{width:32px;height:32px;border-radius:6px;background:#f0efe9;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ann-info{flex:1;min-width:0}
+.ann-title-d{font-size:11px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ann-meta-d{font-size:10px;color:#bbb;margin-top:1px}
+.score-d{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.score-d.high{background:#e8f5ef;color:#1a6e3e}
+.score-d.med{background:#FEF0E8;color:#c44d0d}
+.insight-d{display:flex;align-items:center;gap:9px;padding:9px 12px;background:#FEF0E8;border-radius:8px;border:1px solid #FDDCC8;margin-top:10px;transition:opacity 0.6s}
+.insight-d-icon{font-size:14px}
+.insight-d-text{font-size:11px;color:#c44d0d;font-weight:500;line-height:1.4}
 
-    .section { padding: 100px 5%; max-width: 1100px; margin: 0 auto; }
-    .section-tag { font-size: 12px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 1rem; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; line-height: 1.1; letter-spacing: -1px; margin-bottom: 4rem; }
-    .section-title em { font-style: italic; color: var(--orange); }
+.social-proof{background:#f5f4f0;padding:20px 48px;border-top:1px solid #eee;border-bottom:1px solid #eee}
+.sp-inner{display:flex;align-items:center;justify-content:center;gap:48px;max-width:1100px;margin:0 auto}
+.sp-stat{text-align:center}
+.sp-val{font-size:28px;font-weight:800;color:#1a1a1a;letter-spacing:-1px}
+.sp-val span{color:#F56B2A}
+.sp-lbl{font-size:13px;color:#888;margin-top:2px}
 
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; }
-    .step { padding: 2.5rem 2rem; background: var(--mid); transition: background 0.3s; }
-    .step:hover { background: #333; }
-    .step-num { font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 900; color: rgba(245,107,42,0.15); line-height: 1; margin-bottom: 1.5rem; }
-    .step-icon { font-size: 28px; margin-bottom: 1rem; }
-    .step-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
-    .step-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+.features{padding:80px 48px;background:#fff}
+.section-title{font-size:38px;font-weight:800;letter-spacing:-1.5px;text-align:center;margin-bottom:10px}
+.section-sub{font-size:16px;color:#888;text-align:center;margin-bottom:56px;line-height:1.6}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
+.feat-card{background:#fff;border:1px solid #eee;border-radius:18px;padding:32px;transition:border-color 0.2s}
+.feat-card:hover{border-color:#F56B2A}
+.feat-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px}
+.feat-title{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:10px;letter-spacing:-0.3px}
+.feat-desc{font-size:14px;color:#777;line-height:1.75}
+.feat-pill{display:inline-block;margin-top:14px;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:#FEF0E8;color:#c44d0d}
 
-    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .feature-card { background: var(--mid); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 2rem; transition: border-color 0.3s, transform 0.3s; }
-    .feature-card:hover { border-color: rgba(245,107,42,0.4); transform: translateY(-4px); }
-    .feature-card.large { grid-column: span 2; display: flex; align-items: center; gap: 2rem; }
-    .feature-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(245,107,42,0.15); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; margin-bottom: 1rem; }
-    .feature-card.large .feature-icon { margin-bottom: 0; }
-    .feature-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
-    .feature-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+.how{background:#f5f4f0;padding:80px 48px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1000px;margin:0 auto;position:relative}
+.step{text-align:center;padding:32px 24px}
+.step-num{width:48px;height:48px;border-radius:50%;background:#F56B2A;color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.step-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:8px;letter-spacing:-0.3px}
+.step-desc{font-size:14px;color:#777;line-height:1.7}
 
-    .pricing-wrapper { background: var(--mid); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-    .big-price { font-family: 'Playfair Display', serif; font-size: 72px; font-weight: 900; line-height: 1; color: var(--orange); }
-    .big-price sup { font-size: 32px; vertical-align: super; }
-    .pricing-tagline { font-size: 16px; color: rgba(255,255,255,0.5); margin-top: 8px; }
-    .pricing-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 12px; }
-    .pricing-list li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: rgba(255,255,255,0.7); }
-    .check { width: 20px; height: 20px; border-radius: 50%; background: rgba(245,107,42,0.2); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
-    .pricing-example { background: rgba(245,107,42,0.08); border: 1px solid rgba(245,107,42,0.2); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
-    .example-label { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
-    .example-item { font-size: 15px; font-weight: 500; margin-bottom: 16px; }
-    .example-row { display: flex; justify-content: space-between; font-size: 14px; color: rgba(255,255,255,0.6); padding: 6px 0; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
-    .example-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; padding-top: 10px; margin-top: 4px; }
-    .example-total .amount { color: var(--orange); }
+.pricing{padding:80px 48px;background:#fff;text-align:center}
+.pricing-card{background:#fff;border:2px solid #F56B2A;border-radius:22px;padding:44px;max-width:420px;margin:0 auto}
+.pricing-badge{display:inline-block;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:24px}
+.pricing-amount{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-bottom:6px}
+.pricing-num{font-size:64px;font-weight:800;color:#1a1a1a;letter-spacing:-3px;line-height:1}
+.pricing-currency{font-size:28px;font-weight:700;color:#1a1a1a}
+.pricing-period{font-size:16px;color:#999;margin-bottom:8px}
+.pricing-engag{font-size:14px;color:#bbb;margin-bottom:36px}
+.pricing-feats{text-align:left;margin-bottom:36px;border-top:1px solid #f5f4f0;padding-top:24px}
+.pricing-feat{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f5f4f0;font-size:14px;color:#444}
+.pricing-feat:last-child{border-bottom:none}
+.check{width:22px;height:22px;background:#e8f5ef;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:#1a6e3e;font-weight:700}
+.btn-pricing{width:100%;padding:16px;background:#F56B2A;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit;margin-bottom:12px}
+.btn-pricing:hover{background:#e55a1a}
+.pricing-reassurance{font-size:13px;color:#bbb}
 
-    .cta-section { text-align: center; padding: 100px 5%; background: linear-gradient(180deg, transparent, rgba(245,107,42,0.06)); }
-    .cta-section h2 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 6vw, 64px); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 1.5rem; }
-    .cta-section h2 em { font-style: italic; color: var(--orange); }
-    .cta-section p { font-size: 18px; color: rgba(255,255,255,0.5); margin-bottom: 2.5rem; }
+.testimonials{background:#f5f4f0;padding:80px 48px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto}
+.testi-card{background:#fff;border:1px solid #eee;border-radius:16px;padding:28px}
+.testi-stars{color:#F56B2A;font-size:16px;margin-bottom:14px;letter-spacing:2px}
+.testi-text{font-size:14px;color:#555;line-height:1.7;margin-bottom:18px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:#FEF0E8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#F56B2A;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:600;color:#1a1a1a}
+.testi-meta{font-size:12px;color:#bbb;margin-top:2px}
 
-    footer { border-top: 0.5px solid var(--border); padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; }
-    footer .logo { font-size: 16px; }
-    footer p { font-size: 13px; color: var(--gray); }
+.footer-cta{background:#F56B2A;padding:72px 48px;text-align:center}
+.footer-cta h2{font-size:42px;font-weight:800;color:#fff;letter-spacing:-1.5px;margin-bottom:14px}
+.footer-cta p{font-size:17px;color:rgba(255,255,255,0.8);margin-bottom:36px;line-height:1.6}
+.btn-white-cta{padding:16px 36px;background:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#F56B2A;font-family:inherit}
+.btn-white-cta:hover{background:#f5f4f0}
+.footer-note{font-size:13px;color:rgba(255,255,255,0.6);margin-top:16px}
 
-    .divider { width: 100%; height: 0.5px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-size:16px;font-weight:700;color:#fff}.footer-logo span{color:#F56B2A}
+.footer-copy{font-size:12px;color:#666}
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 768px) {
-      .steps { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr; }
-      .feature-card.large { grid-column: span 1; flex-direction: column; }
-      .pricing-wrapper { grid-template-columns: 1fr; }
-      .stats { gap: 1.5rem; }
-      .nav-links { display: none; }
-    }
-  </style>
+@media(max-width:768px){
+  .nav{padding:14px 20px}
+  .hero{grid-template-columns:1fr;padding:40px 20px;gap:32px}
+  .hero-title{font-size:36px}
+  .features-grid,.steps,.testi-grid{grid-template-columns:1fr}
+  .features,.how,.pricing,.testimonials,.footer-cta{padding:48px 20px}
+  .sp-inner{flex-wrap:wrap;gap:24px}
+  footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
+}
+</style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">Le <span>Bon</span> Vendeur</div>
-  <div class="nav-links">
-    <a href="#comment">Comment ça marche</a>
-    <a href="#fonctions">Fonctionnalités</a>
-    <a href="#tarif">Tarif</a>
+<nav class="nav">
+  <div class="nav-logo">Le <span>Bon</span> Vendeur</div>
+  <div class="nav-right">
+    <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Se connecter</button>
+    <button class="btn-orange" onclick="window.location.href='dashboard.html'">Commencer →</button>
   </div>
-  <a href="dashboard.html" class="nav-cta">Commencer →</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-badge"><span class="badge-dot"></span> Propulsé par l'intelligence artificielle</div>
-  <h1>Vendez sur <span style="color:#F56B2A">Le Bon Coin</span><br>comme un <em>professionnel</em></h1>
-  <p class="hero-sub">Estimez vos objets, créez des annonces percutantes et suivez vos ventes — tout en un seul endroit.</p>
-  <div class="hero-actions">
-    <a href="dashboard.html" class="btn-primary">Essayer maintenant</a>
-    <a href="#comment" class="btn-ghost">Voir comment ça marche ↓</a>
+<section style="background:#fff">
+  <div class="hero">
+    <div>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>IA alimentée par Claude · Anthropic</div>
+      <h1 class="hero-title">Vendez mieux.<br>Vendez plus <span>vite.</span></h1>
+      <p class="hero-sub">Prenez une photo de votre objet. L'IA génère votre annonce, estime le prix parfait et pilote votre activité en temps réel sur Le Bon Coin.</p>
+      <div class="hero-cta-wrap">
+        <button class="btn-cta-hero" onclick="window.location.href='dashboard.html'">Essayer gratuitement →</button>
+      </div>
+      <div class="hero-note">2,99€/mois · <strong>Sans engagement</strong> · Annulez à tout moment</div>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-titlebar">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#ffbd2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        <div class="demo-urlbar">le-bon-vendeur.com/dashboard</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-header">
+          <div class="demo-greeting">Bonjour Thomas 👋</div>
+          <div class="demo-badge-active">Abonnement actif</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi-lbl">Revenus ce mois</div>
+            <div class="kpi-val" id="kpi-rev">0 €</div>
+            <div class="kpi-delta up" id="kpi-rev-delta">↑ +0%</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Ventes</div>
+            <div class="kpi-val" id="kpi-ventes">0</div>
+            <div class="kpi-delta up">↑ +3 ce mois</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">Délai moyen</div>
+            <div class="kpi-val">3.8j</div>
+            <div class="kpi-delta up">↑ Record</div>
+          </div>
+        </div>
+        <div class="section-lbl">Annonces actives</div>
+        <div class="ann-row">
+          <div class="ann-thumb">📱</div>
+          <div class="ann-info"><div class="ann-title-d">iPhone 14 128Go — Noir</div><div class="ann-meta-d">Publié il y a 2j · 34 vues</div></div>
+          <div class="score-d high">Score 91</div>
+        </div>
+        <div class="ann-row" id="ann2" style="opacity:0">
+          <div class="ann-thumb">🛋️</div>
+          <div class="ann-info"><div class="ann-title-d">Table basse scandinave chêne</div><div class="ann-meta-d">Vient d'être publiée · 6 vues</div></div>
+          <div class="score-d med">Score 78</div>
+        </div>
+        <div class="ann-row" id="ann3" style="opacity:0">
+          <div class="ann-thumb">👟</div>
+          <div class="ann-info"><div class="ann-title-d">Nike Air Max 90 — T42</div><div class="ann-meta-d">Publié hier · 21 vues</div></div>
+          <div class="score-d high">Score 85</div>
+        </div>
+        <div class="insight-d" id="insight-block" style="opacity:0">
+          <div class="insight-d-icon">💡</div>
+          <div class="insight-d-text"><strong>Intelligence IA :</strong> Publiez dimanche 18h–21h pour +40% de vues cette semaine.</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="stats reveal">
-  <div class="stat"><div class="stat-num">3<span>s</span></div><div class="stat-label">Pour générer une annonce</div></div>
-  <div class="stat"><div class="stat-num">+<span>40%</span></div><div class="stat-label">De prix obtenu en moyenne</div></div>
-  <div class="stat"><div class="stat-num">2,99<span>€</span></div><div class="stat-label">Par mois seulement</div></div>
+<div class="social-proof">
+  <div class="sp-inner">
+    <div class="sp-stat"><div class="sp-val">10 <span>sec</span></div><div class="sp-lbl">pour générer une annonce</div></div>
+    <div class="sp-stat"><div class="sp-val"><span>+</span>35%</div><div class="sp-lbl">de revenus en moyenne</div></div>
+    <div class="sp-stat"><div class="sp-val">2,99 <span>€</span></div><div class="sp-lbl">par mois sans engagement</div></div>
+    <div class="sp-stat"><div class="sp-val"><span>IA</span></div><div class="sp-lbl">alimentée par Claude · Anthropic</div></div>
+  </div>
 </div>
 
-<div class="divider"></div>
+<section class="features">
+  <h2 class="section-title">Trois outils. Un seul objectif.</h2>
+  <p class="section-sub">Vendre plus, vendre mieux, sans y passer des heures.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FEF0E8">📷</div>
+      <div class="feat-title">Annonce IA en 10 secondes</div>
+      <div class="feat-desc">Prenez une photo, l'IA analyse l'objet, génère un titre accrocheur, une description complète et une estimation de prix précise au juste marché. Zéro effort, résultat pro.</div>
+      <span class="feat-pill">Génération instantanée</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#e8f5ef">🏆</div>
+      <div class="feat-title">Sell Score — votre jauge de vente</div>
+      <div class="feat-desc">Chaque annonce reçoit un score de 0 à 100 mesurant le prix, la clarté, la confiance et l'impact visuel. Corrigez ce qui freine la vente avant de publier.</div>
+      <span class="feat-pill">Diagnostic en temps réel</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#EBF2FC">📊</div>
+      <div class="feat-title">Cockpit vendeur en temps réel</div>
+      <div class="feat-desc">Revenus, ventes, délais, catégories et insights IA actionnables dans un tableau de bord vivant. Pilotez votre activité comme un pro, avec des recommandations chaque semaine.</div>
+      <span class="feat-pill">Données en direct</span>
+    </div>
+  </div>
+</section>
 
-<section class="section" id="comment">
-  <div class="section-tag reveal">Comment ça marche</div>
-  <h2 class="section-title reveal">Trois étapes.<br><em>C'est tout.</em></h2>
-  <div class="steps reveal">
+<section class="how">
+  <h2 class="section-title" style="text-align:center;margin-bottom:10px">Comment ça marche ?</h2>
+  <p class="section-sub">Trois étapes. C'est tout.</p>
+  <div class="steps">
     <div class="step">
-      <div class="step-num">01</div>
-      <div class="step-icon">📷</div>
+      <div class="step-num">1</div>
       <div class="step-title">Prenez une photo</div>
-      <div class="step-desc">Photographiez votre objet. Notre IA l'identifie, évalue sa valeur marchande et génère un titre et une description professionnels en quelques secondes.</div>
+      <div class="step-desc">Photographiez votre objet avec votre téléphone ou importez une image depuis votre ordinateur. Pas besoin de studio photo.</div>
     </div>
     <div class="step">
-      <div class="step-num">02</div>
-      <div class="step-icon">✍️</div>
-      <div class="step-title">Annonce prête à poster</div>
-      <div class="step-desc">Titre accrocheur, description ultra qualitative, prix optimisé, mots-clés pertinents. Copiez-collez directement sur Le Bon Coin en quelques secondes.</div>
+      <div class="step-num">2</div>
+      <div class="step-title">L'IA génère votre annonce</div>
+      <div class="step-desc">En 10 secondes, Le Bon Vendeur analyse l'objet, génère le titre, la description, estime le prix et calcule votre Sell Score.</div>
     </div>
     <div class="step">
-      <div class="step-num">03</div>
-      <div class="step-icon">📊</div>
-      <div class="step-title">Suivez vos ventes</div>
-      <div class="step-desc">Enregistrez vos ventes, visualisez vos revenus mois par mois et gardez une trace complète de toute votre activité sur Le Bon Coin.</div>
+      <div class="step-num">3</div>
+      <div class="step-title">Publiez et suivez</div>
+      <div class="step-desc">Copiez l'annonce sur Le Bon Coin, suivez vos ventes dans votre cockpit et recevez des insights IA chaque semaine pour progresser.</div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<section class="pricing">
+  <h2 class="section-title">Simple. Transparent. Efficace.</h2>
+  <p class="section-sub">Un seul abonnement. Toutes les fonctionnalités. Sans surprise.</p>
+  <div class="pricing-card">
+    <div class="pricing-badge">Sans engagement</div>
+    <div class="pricing-amount"><div class="pricing-num">2,99</div><div class="pricing-currency">€</div></div>
+    <div class="pricing-period">par mois</div>
+    <div class="pricing-engag">Annulez quand vous voulez · Pas de frais cachés</div>
+    <div class="pricing-feats">
+      <div class="pricing-feat"><div class="check">✓</div>Génération d'annonces IA illimitée</div>
+      <div class="pricing-feat"><div class="check">✓</div>Sell Score sur chaque annonce</div>
+      <div class="pricing-feat"><div class="check">✓</div>Estimation de prix intelligente</div>
+      <div class="pricing-feat"><div class="check">✓</div>Cockpit vendeur complet</div>
+      <div class="pricing-feat"><div class="check">✓</div>Insights IA hebdomadaires</div>
+      <div class="pricing-feat"><div class="check">✓</div>Suivi des ventes et revenus</div>
+    </div>
+    <button class="btn-pricing" onclick="window.location.href='dashboard.html'">Commencer maintenant →</button>
+    <div class="pricing-reassurance">Premier mois · Annulez à tout moment</div>
+  </div>
+</section>
 
-<section class="section" id="fonctions">
-  <div class="section-tag reveal">Fonctionnalités</div>
-  <h2 class="section-title reveal">Tout ce qu'il faut<br>pour <em>vendre mieux</em></h2>
-  <div class="features-grid reveal">
-    <div class="feature-card">
-      <div class="feature-icon">🔍</div>
-      <div class="feature-title">Estimation de prix par IA</div>
-      <div class="feature-desc">Notre IA analyse votre objet et vous donne une fourchette de prix réaliste basée sur le marché actuel. Ne bradez plus jamais vos affaires.</div>
+<section class="testimonials">
+  <h2 class="section-title" style="text-align:center;margin-bottom:10px">Ils vendent mieux avec Le Bon Vendeur</h2>
+  <p class="section-sub">Des vendeurs réguliers comme vous.</p>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"J'avais l'habitude de passer 30 minutes par annonce. Maintenant c'est 10 secondes. Et mes objets se vendent deux fois plus vite."</div>
+      <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Marie L.</div><div class="testi-meta">Vend 15 objets/mois en moyenne</div></div></div>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">✍️</div>
-      <div class="feature-title">Annonces ultra qualitatives</div>
-      <div class="feature-desc">Textes percutants, titres optimisés pour le référencement LBC, mots-clés pertinents. Vos annonces se démarquent de la concurrence.</div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Le Sell Score m'a fait réaliser que mes prix étaient systématiquement trop bas. En les ajustant, j'ai gagné 40% de revenus en plus sur le même mois."</div>
+      <div class="testi-author"><div class="testi-avatar">T</div><div><div class="testi-name">Thomas B.</div><div class="testi-meta">+487€ de revenus ce mois</div></div></div>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <div class="feature-title">Tableau de bord vendeur</div>
-      <div class="feature-desc">Visualisez vos revenus mois par mois, suivez le nombre d'objets vendus et gardez une trace de toute votre activité en un coup d'œil.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💰</div>
-      <div class="feature-title">Suivi des ventes</div>
-      <div class="feature-desc">Enregistrez vos ventes depuis vos annonces ou manuellement. Récapitulatif mensuel complet pour savoir exactement combien vous avez gagné.</div>
-    </div>
-    <div class="feature-card large">
-      <div class="feature-icon">⚡</div>
-      <div>
-        <div class="feature-title">Zéro effort, résultats maximaux</div>
-        <div class="feature-desc">En 30 secondes, vous avez une annonce professionnelle prête à poster. Le Bon Vendeur s'occupe du texte, de l'estimation et du suivi — vous n'avez qu'à vendre.</div>
-      </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Le cockpit vendeur est addictif. Je regarde mes stats tous les matins. C'est devenu un vrai business de côté, pas juste du vide-grenier."</div>
+      <div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Sophie R.</div><div class="testi-meta">Vendeuse régulière depuis 6 mois</div></div></div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<section class="section" id="tarif">
-  <div class="section-tag reveal">Tarif</div>
-  <h2 class="section-title reveal">Simple et <em>transparent</em></h2>
-  <div class="pricing-wrapper reveal">
-    <div>
-      <div class="big-price"><sup>€</sup>2,99</div>
-      <div class="pricing-tagline">par mois · sans engagement · résiliable à tout moment</div>
-      <ul class="pricing-list">
-        <li><span class="check">✓</span> Génération d'annonces illimitée</li>
-        <li><span class="check">✓</span> Estimation de prix par IA</li>
-        <li><span class="check">✓</span> Textes ultra qualitatifs</li>
-        <li><span class="check">✓</span> Tableau de bord vendeur</li>
-        <li><span class="check">✓</span> Suivi des ventes mensuel</li>
-        <li><span class="check">✓</span> Résiliation en un clic</li>
-      </ul>
-    </div>
-    <div>
-      <div class="pricing-example">
-        <div class="example-label">Exemple concret</div>
-        <div class="example-item">📱 Vous vendez un iPhone à 320 €</div>
-        <div class="example-row"><span>Abonnement Le Bon Vendeur</span><span>2,99 €</span></div>
-        <div class="example-row"><span>Commission sur la vente</span><span style="color:#2ecc71">0 €</span></div>
-        <div class="example-total"><span>Vous encaissez</span><span class="amount">320 €</span></div>
-      </div>
-      <a href="dashboard.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none">Démarrer pour 2,99€/mois →</a>
-      <p style="font-size:12px;color:var(--gray);margin-top:12px;text-align:center">Sans engagement · Résiliation en un clic</p>
-    </div>
-  </div>
-</section>
-
-<section class="cta-section">
-  <h2 class="reveal">Prêt à vendre<br><em>comme un pro ?</em></h2>
-  <p class="reveal">Rejoignez les vendeurs qui font confiance au Bon Vendeur.</p>
-  <a href="dashboard.html" class="btn-primary reveal">Créer mon compte gratuitement →</a>
+<section class="footer-cta">
+  <h2>Prêt à vendre comme un pro ?</h2>
+  <p>Rejoignez les vendeurs qui utilisent l'IA pour vendre<br>plus vite, mieux, et sans effort.</p>
+  <button class="btn-white-cta" onclick="window.location.href='dashboard.html'">Créer mon compte gratuitement →</button>
+  <div class="footer-note">2,99€/mois · Sans engagement · Annulez quand vous voulez</div>
 </section>
 
 <footer>
-  <div class="logo">Le <span>Bon</span> Vendeur</div>
-  <p>© 2026 Le Bon Vendeur · Tous droits réservés</p>
+  <div class="footer-logo">Le <span>Bon</span> Vendeur</div>
+  <div class="footer-copy">© 2025 Le Bon Vendeur · Tous droits réservés</div>
 </footer>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+function animCount(el, target, suffix, duration) {
+  let v = 0;
+  const step = target / (duration / 20);
+  const iv = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = Math.round(v) + suffix;
+    if (v >= target) clearInterval(iv);
+  }, 20);
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animCount(document.getElementById('kpi-rev'), 487, ' €', 1800);
+      animCount(document.getElementById('kpi-ventes'), 9, '', 1400);
+      const delta = document.getElementById('kpi-rev-delta');
+      let pct = 0;
+      const di = setInterval(() => { pct = Math.min(pct + 1, 24); delta.textContent = '↑ +' + pct + '%'; if (pct >= 24) clearInterval(di); }, 70);
+      setTimeout(() => { document.getElementById('ann2').style.opacity = '1'; }, 1200);
+      setTimeout(() => { document.getElementById('ann3').style.opacity = '1'; }, 2200);
+      setTimeout(() => { document.getElementById('insight-block').style.opacity = '1'; }, 3400);
+      observer.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+const demoEl = document.querySelector('.demo-wrap');
+if (demoEl) observer.observe(demoEl);
+
+document.querySelectorAll('.reveal').forEach(el => {
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.1 }).observe(el);
+});
 </script>
 </body>
 </html>
