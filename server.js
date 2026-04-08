@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const fs = require('fs');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 app.use(cors());
@@ -64,6 +66,7 @@ app.post('/auth/inscription', async (req, res) => {
     const customer = await getStripe().customers.create({ email });
     users[email] = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [] };
     saveDB(users);
+resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: email, subject: 'Bienvenue sur Le Bon Vendeur !', html: '<h2>Bienvenue 🎉</h2><p>Votre compte a bien été créé.</p><a href="https://le-bon-vendeur.com/dashboard.html" style="background:#F56B2A;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;">Accéder à mon dashboard</a>' });
     const token = generateToken(email);
     sessions[token] = email;
     res.json({ token, user: { email, subscriptionStatus: 'inactive' } });
