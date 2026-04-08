@@ -176,6 +176,19 @@
   </div>
 </div>
 
+<div class="auth-screen" id="screen-email-envoye">
+  <div class="auth-card">
+    <div class="auth-logo">Le <span>Bon</span> Vendeur</div>
+    <div style="text-align:center;padding:20px 0">
+      <div style="font-size:60px;margin-bottom:20px">📧</div>
+      <h2 style="color:#1a1a1a;margin-bottom:12px">Vérifiez votre email</h2>
+      <p style="color:#666;font-size:15px;line-height:1.6;margin-bottom:24px">Un email de confirmation vous a été envoyé. Cliquez sur le lien pour activer votre compte.</p>
+      <p style="color:#999;font-size:13px">Vous ne trouvez pas l'email ? Vérifiez vos spams.</p>
+      <div style="margin-top:24px"><a onclick="showScreen('connexion')" style="color:#F56B2A;cursor:pointer;font-size:14px">Déjà confirmé ? Se connecter →</a></div>
+    </div>
+  </div>
+</div>
+
 <div class="auth-screen" id="screen-connexion">
   <div class="auth-box">
     <div class="auth-logo">Le <span>Bon</span> Vendeur</div>
@@ -409,6 +422,7 @@ async function inscrire() {
     const res = await fetch(API + '/auth/inscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pwd }) });
     const data = await res.json();
     if (!res.ok) { errEl.textContent = data.error; errEl.style.display = 'block'; return; }
+    if (data.success) { showScreen('email-envoye'); return; }
     token = data.token; currentUser = data.user;
     localStorage.setItem('lbv_token', token);
     showApp();
