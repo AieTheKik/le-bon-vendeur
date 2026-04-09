@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Le Bon Vendeur est votre coach personnel pour vendre mieux sur Le Bon Coin. Créez des annonces parfaites en 10 secondes, obtenez le meilleur prix et suivez vos ventes. 2,99€/mois sans engagement.">
+<meta name="keywords" content="le bon coin, vendre sur leboncoin, annonce leboncoin, coach vente, optimiser annonce, prix leboncoin, vendre rapidement">
+<meta name="author" content="Le Bon Vendeur">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="FzD3UWznidd84ZqxQYkkiWqFboP3sMGdlbORANfmyRA">
+<meta property="og:title" content="Le Bon Vendeur — Votre coach pour vendre mieux sur Le Bon Coin">
+<meta property="og:description" content="Créez des annonces parfaites en 10 secondes, obtenez le meilleur prix et vendez plus vite sur Le Bon Coin. Votre coach personnel à 2,99€/mois.">
+<meta property="og:url" content="https://le-bon-vendeur.com">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Le Bon Vendeur — Vendez mieux sur Le Bon Coin">
+<meta name="twitter:description" content="Votre coach personnel pour vendre mieux sur Le Bon Coin. Annonces parfaites en 10 secondes. 2,99€/mois.">
+<link rel="canonical" href="https://le-bon-vendeur.com">
+<title>Le Bon Vendeur — Votre coach pour vendre mieux sur Le Bon Coin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#1a1a1a;overflow-x:hidden}
+
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid #f0efe9;background:#fff;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:20px;font-weight:800;letter-spacing:-0.5px}.nav-logo span{color:#F56B2A}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost{padding:9px 18px;border:1px solid #e0ddd5;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#555;font-family:inherit}
+.btn-ghost:hover{background:#f5f4f0}
+.btn-orange{padding:9px 20px;background:#F56B2A;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;font-family:inherit}
+.btn-orange:hover{background:#e55a1a}
+
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:80px 48px 72px;max-width:1200px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:24px}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:#F56B2A;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-title{font-size:52px;font-weight:800;letter-spacing:-2.5px;line-height:1.04;margin-bottom:22px;color:#1a1a1a}
+.hero-title span{color:#F56B2A}
+.hero-sub{font-size:18px;color:#555;line-height:1.75;margin-bottom:36px;max-width:480px}
+.hero-cta-wrap{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.btn-cta-hero{padding:15px 32px;background:#F56B2A;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit}
+.btn-cta-hero:hover{background:#e55a1a}
+.hero-note{font-size:13px;color:#bbb}
+.hero-note strong{color:#888;font-weight:500}
+
+.demo-wrap{background:#fff;border:1px solid #e8e6e0;border-radius:18px;overflow:hidden}
+.demo-titlebar{background:#f5f4f0;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e8e6e0}
+.dot{width:11px;height:11px;border-radius:50%}
+.demo-urlbar{flex:1;background:#fff;border:1px solid #e8e6e0;border-radius:7px;padding:5px 14px;font-size:11px;color:#bbb;text-align:center;font-family:inherit}
+.demo-body{padding:18px}
+.demo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.demo-greeting{font-size:14px;font-weight:700;color:#1a1a1a}
+.demo-badge-active{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:#e8f5ef;color:#1a6e3e;border:1px solid #c5e8d8}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.kpi{background:#f5f4f0;border-radius:10px;padding:10px 12px}
+.kpi-lbl{font-size:10px;color:#999;font-weight:500;margin-bottom:4px}
+.kpi-val{font-size:19px;font-weight:700;color:#1a1a1a;letter-spacing:-0.5px;line-height:1}
+.kpi-delta{font-size:10px;font-weight:600;margin-top:3px;color:#1a6e3e}
+.section-lbl{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
+.ann-row{display:flex;align-items:center;gap:9px;padding:8px 10px;background:#fafaf8;border-radius:8px;border:1px solid #eee;margin-bottom:6px;transition:opacity 0.6s}
+.ann-thumb{width:32px;height:32px;border-radius:6px;background:#f0efe9;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ann-info{flex:1;min-width:0}
+.ann-title-d{font-size:11px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ann-meta-d{font-size:10px;color:#bbb;margin-top:1px}
+.score-d{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.score-d.high{background:#e8f5ef;color:#1a6e3e}
+.score-d.med{background:#FEF0E8;color:#c44d0d}
+.insight-d{display:flex;align-items:center;gap:9px;padding:9px 12px;background:#FEF0E8;border-radius:8px;border:1px solid #FDDCC8;margin-top:10px;transition:opacity 0.6s}
+.insight-d-text{font-size:11px;color:#c44d0d;font-weight:500;line-height:1.4}
+
+.social-proof{background:#f5f4f0;padding:20px 48px;border-top:1px solid #eee;border-bottom:1px solid #eee}
+.sp-inner{display:flex;align-items:center;justify-content:center;gap:56px;max-width:1100px;margin:0 auto}
+.sp-stat{text-align:center}
+.sp-val{font-size:28px;font-weight:800;color:#1a1a1a;letter-spacing:-1px}
+.sp-val span{color:#F56B2A}
+.sp-lbl{font-size:13px;color:#888;margin-top:2px}
+
+.coach-section{padding:80px 48px;background:#fff}
+.coach-inner{max-width:1100px;margin:0 auto}
+.section-title{font-size:38px;font-weight:800;letter-spacing:-1.5px;text-align:center;margin-bottom:10px}
+.section-sub{font-size:17px;color:#777;text-align:center;margin-bottom:56px;line-height:1.7;max-width:600px;margin-left:auto;margin-right:auto}
+
+.coach-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-bottom:64px}
+.coach-grid.reverse{direction:rtl}
+.coach-grid.reverse > *{direction:ltr}
+.coach-visual{background:#f5f4f0;border-radius:18px;padding:28px}
+.coach-text-wrap{}
+.coach-tag{display:inline-block;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:16px}
+.coach-title{font-size:26px;font-weight:800;letter-spacing:-0.5px;color:#1a1a1a;margin-bottom:14px;line-height:1.2}
+.coach-desc{font-size:16px;color:#666;line-height:1.8;margin-bottom:20px}
+.coach-points{display:flex;flex-direction:column;gap:10px}
+.coach-point{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:#444;line-height:1.5}
+.coach-point-check{width:22px;height:22px;background:#e8f5ef;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1a6e3e;font-weight:700;flex-shrink:0;margin-top:1px}
+
+.score-demo{background:#fff;border:1px solid #eee;border-radius:14px;padding:20px}
+.score-demo-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.score-circle{width:72px;height:72px;border-radius:50%;background:#e8f5ef;border:3px solid #1a6e3e;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.score-circle-num{font-size:22px;font-weight:800;color:#1a6e3e;line-height:1}
+.score-circle-sub{font-size:9px;color:#5aaa7e}
+.score-bars{display:flex;flex-direction:column;gap:7px;flex:1}
+.score-bar-row{display:flex;align-items:center;gap:8px}
+.score-bar-lbl{font-size:11px;color:#888;width:70px;flex-shrink:0}
+.score-bar-bg{flex:1;height:5px;background:#f0efe9;border-radius:3px}
+.score-bar-fill{height:5px;border-radius:3px}
+.conseil-demo{background:#FEF0E8;border:1px solid #FDDCC8;border-radius:10px;padding:12px 14px}
+.conseil-demo-label{font-size:10px;font-weight:700;color:#c44d0d;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5px}
+.conseil-demo-text{font-size:12px;color:#8a3a0d;line-height:1.5}
+
+.pricing-demo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.prix-d{border-radius:12px;padding:14px;text-align:center;border:1px solid}
+.prix-d.flash{background:#EBF2FC;border-color:#CCDFF7}
+.prix-d.marche{background:#e8f5ef;border-color:#c5e8d8;border-width:2px}
+.prix-d.premium{background:#f0ecfd;border-color:#d4c8f8}
+.prix-d-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.prix-d.flash .prix-d-label{color:#1a5abe}
+.prix-d.marche .prix-d-label{color:#1a6e3e}
+.prix-d.premium .prix-d-label{color:#5a3ab8}
+.prix-d-val{font-size:22px;font-weight:800;letter-spacing:-1px}
+.prix-d.flash .prix-d-val{color:#1a5abe}
+.prix-d.marche .prix-d-val{color:#1a6e3e}
+.prix-d.premium .prix-d-val{color:#5a3ab8}
+.prix-d-sub{font-size:10px;margin-top:2px}
+.prix-d.flash .prix-d-sub{color:#2a5abe}
+.prix-d.marche .prix-d-sub{color:#2a6e3e}
+.prix-d.premium .prix-d-sub{color:#6a4ac8}
+
+.coach-profil{background:#fff;border:1px solid #eee;border-radius:14px;padding:18px}
+.profil-hero-mini{background:#F56B2A;border-radius:10px;padding:14px;text-align:center;margin-bottom:14px}
+.profil-emoji{font-size:28px;margin-bottom:4px}
+.profil-type{font-size:14px;font-weight:800;color:#fff}
+.profil-sub-mini{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px}
+.conseil-list{display:flex;flex-direction:column;gap:8px}
+.conseil-mini{display:flex;align-items:flex-start;gap:8px;padding:9px 11px;background:#fafaf8;border-radius:8px;border:1px solid #eee}
+.conseil-num-mini{width:20px;height:20px;border-radius:50%;background:#F56B2A;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.conseil-text-mini{font-size:11px;color:#555;line-height:1.5}
+
+.how{background:#f5f4f0;padding:80px 48px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1000px;margin:0 auto}
+.step{text-align:center;padding:32px 24px;background:#fff;border-radius:16px;border:1px solid #eee}
+.step-num{width:52px;height:52px;border-radius:50%;background:#F56B2A;color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.step-title{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:8px;letter-spacing:-0.3px}
+.step-desc{font-size:14px;color:#777;line-height:1.7}
+
+.pricing{padding:80px 48px;background:#fff;text-align:center}
+.pricing-card{background:#fff;border:2px solid #F56B2A;border-radius:22px;padding:44px;max-width:420px;margin:0 auto}
+.pricing-badge{display:inline-block;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:24px}
+.pricing-amount{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-bottom:6px}
+.pricing-num{font-size:64px;font-weight:800;color:#1a1a1a;letter-spacing:-3px;line-height:1}
+.pricing-currency{font-size:28px;font-weight:700;color:#1a1a1a}
+.pricing-period{font-size:16px;color:#999;margin-bottom:8px}
+.pricing-engag{font-size:14px;color:#bbb;margin-bottom:36px}
+.pricing-feats{text-align:left;margin-bottom:36px;border-top:1px solid #f5f4f0;padding-top:24px}
+.pricing-feat{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #f5f4f0;font-size:14px;color:#444}
+.pricing-feat:last-child{border-bottom:none}
+.check{width:22px;height:22px;background:#e8f5ef;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;color:#1a6e3e;font-weight:700}
+.btn-pricing{width:100%;padding:16px;background:#F56B2A;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit;margin-bottom:12px}
+.btn-pricing:hover{background:#e55a1a}
+.pricing-reassurance{font-size:13px;color:#bbb}
+
+.testimonials{background:#f5f4f0;padding:80px 48px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto}
+.testi-card{background:#fff;border:1px solid #eee;border-radius:16px;padding:28px}
+.testi-stars{color:#F56B2A;font-size:16px;margin-bottom:14px;letter-spacing:2px}
+.testi-text{font-size:14px;color:#555;line-height:1.75;margin-bottom:18px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:38px;height:38px;border-radius:50%;background:#FEF0E8;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#F56B2A;flex-shrink:0}
+.testi-name{font-size:13px;font-weight:600;color:#1a1a1a}
+.testi-meta{font-size:12px;color:#bbb;margin-top:2px}
+
+.footer-cta{background:#F56B2A;padding:72px 48px;text-align:center}
+.footer-cta h2{font-size:42px;font-weight:800;color:#fff;letter-spacing:-1.5px;margin-bottom:14px}
+.footer-cta p{font-size:17px;color:rgba(255,255,255,0.85);margin-bottom:36px;line-height:1.7}
+.btn-white-cta{padding:16px 36px;background:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;color:#F56B2A;font-family:inherit}
+.btn-white-cta:hover{background:#f5f4f0}
+.footer-note{font-size:13px;color:rgba(255,255,255,0.6);margin-top:16px}
+
+footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-size:16px;font-weight:700;color:#fff}.footer-logo span{color:#F56B2A}
+.footer-copy{font-size:12px;color:#666}
+
+@media(max-width:768px){
+  .nav{padding:14px 20px}
+  .hero{grid-template-columns:1fr;padding:40px 20px;gap:32px}
+  .hero-title{font-size:36px}
+  .coach-grid{grid-template-columns:1fr;gap:32px}
+  .coach-grid.reverse{direction:ltr}
+  .steps,.testi-grid{grid-template-columns:1fr}
+  .coach-section,.how,.pricing,.testimonials,.footer-cta{padding:48px 20px}
+  .sp-inner{flex-wrap:wrap;gap:24px}
+  footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">Le <span>Bon</span> Vendeur</div>
+  <div class="nav-right">
+    <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Se connecter</button>
+    <button class="btn-orange" onclick="window.location.href='dashboard.html'">Commencer →</button>
+  </div>
+</nav>
+
+<section style="background:#fff">
+  <div class="hero">
+    <div>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>Votre coach personnel de vente</div>
+      <h1 class="hero-title">Un expert à vos côtés pour <span>vendre mieux.</span></h1>
+      <p class="hero-sub">Le Bon Vendeur vous accompagne à chaque étape : il rédige vos annonces, fixe le bon prix, et vous donne les conseils qu'un vrai vendeur expert vous donnerait.</p>
+      <div class="hero-cta-wrap">
+        <button class="btn-cta-hero" onclick="window.location.href='dashboard.html'">Commencer gratuitement →</button>
+      </div>
+      <div class="hero-note">2,99€/mois · <strong>Sans engagement</strong> · Annulez à tout moment</div>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-titlebar">
+        <div class="dot" style="background:#ff5f57"></div>
+        <div class="dot" style="background:#ffbd2e"></div>
+        <div class="dot" style="background:#28c840"></div>
+        <div class="demo-urlbar">le-bon-vendeur.com/dashboard</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-header">
+          <div class="demo-greeting">Bonjour Marie 👋</div>
+          <div class="demo-badge-active">Abonnement actif</div>
+        </div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-lbl">Revenus ce mois</div><div class="kpi-val" id="kpi-rev">0 €</div><div class="kpi-delta" id="kpi-delta">↑ +0%</div></div>
+          <div class="kpi"><div class="kpi-lbl">Ventes</div><div class="kpi-val" id="kpi-ventes">0</div><div class="kpi-delta">↑ +3 ce mois</div></div>
+          <div class="kpi"><div class="kpi-lbl">Délai moyen</div><div class="kpi-val">3.8j</div><div class="kpi-delta">↑ Record</div></div>
+        </div>
+        <div class="section-lbl">Annonces actives</div>
+        <div class="ann-row"><div class="ann-thumb">📱</div><div class="ann-info"><div class="ann-title-d">iPhone 14 128Go — Noir</div><div class="ann-meta-d">Publié il y a 2j · 34 vues</div></div><div class="score-d high">Score 91</div></div>
+        <div class="ann-row" id="ann2" style="opacity:0"><div class="ann-thumb">🛋️</div><div class="ann-info"><div class="ann-title-d">Table basse scandinave chêne</div><div class="ann-meta-d">Vient d'être publiée · 6 vues</div></div><div class="score-d med">Score 78</div></div>
+        <div class="ann-row" id="ann3" style="opacity:0"><div class="ann-thumb">👟</div><div class="ann-info"><div class="ann-title-d">Nike Air Max 90 — T42</div><div class="ann-meta-d">Publié hier · 21 vues</div></div><div class="score-d high">Score 85</div></div>
+        <div class="insight-d" id="insight-block" style="opacity:0"><div style="font-size:14px">💡</div><div class="insight-d-text"><strong>Le Bon Vendeur :</strong> Publiez dimanche 18h–21h pour +40% de vues cette semaine.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="social-proof">
+  <div class="sp-inner">
+    <div class="sp-stat"><div class="sp-val">10 <span>sec</span></div><div class="sp-lbl">pour créer une annonce parfaite</div></div>
+    <div class="sp-stat"><div class="sp-val"><span>+</span>35%</div><div class="sp-lbl">de revenus en moyenne</div></div>
+    <div class="sp-stat"><div class="sp-val">2,99 <span>€</span></div><div class="sp-lbl">par mois sans engagement</div></div>
+    <div class="sp-stat"><div class="sp-val"><span>100%</span></div><div class="sp-lbl">pensé pour le grand public</div></div>
+  </div>
+</div>
+
+<section class="coach-section">
+  <div class="coach-inner">
+    <h2 class="section-title">Votre expert personnel de vente</h2>
+    <p class="section-sub">Comme si vous aviez un ami expert du Bon Coin toujours disponible pour vous aider à vendre mieux et gagner plus.</p>
+
+    <div class="coach-grid">
+      <div class="coach-visual">
+        <div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px">iPhone 14 128Go Noir — Débloqué</div>
+          <div style="font-size:12px;color:#666;line-height:1.6">Vends mon iPhone 14 en parfait état, utilisé 8 mois. Aucune rayure, batterie à 98%. Livré avec boîte originale, câble et chargeur. Idéal pour quelqu'un qui cherche un iPhone premium sans payer le prix neuf.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:11px;padding:4px 10px;background:#f5f4f0;border-radius:20px;color:#555;border:1px solid #eee">iPhone 14</span>
+          <span style="font-size:11px;padding:4px 10px;background:#f5f4f0;border-radius:20px;color:#555;border:1px solid #eee">Apple</span>
+          <span style="font-size:11px;padding:4px 10px;background:#f5f4f0;border-radius:20px;color:#555;border:1px solid #eee">smartphone</span>
+          <span style="font-size:11px;padding:4px 10px;background:#f5f4f0;border-radius:20px;color:#555;border:1px solid #eee">débloqué</span>
+        </div>
+      </div>
+      <div class="coach-text-wrap">
+        <div class="coach-tag">Annonces parfaites en 10 secondes</div>
+        <h3 class="coach-title">Il rédige vos annonces comme un professionnel</h3>
+        <p class="coach-desc">Fini les annonces ternes qui ne donnent pas envie. Le Bon Vendeur analyse votre photo, identifie l'objet et rédige une annonce accrocheuse qui donne vraiment envie d'acheter.</p>
+        <div class="coach-points">
+          <div class="coach-point"><div class="coach-point-check">✓</div>Titre optimisé pour être trouvé facilement</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Description vendeuse qui rassure l'acheteur</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Mots-clés pour apparaître dans les recherches</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Conseils pour améliorer vos photos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coach-grid reverse">
+      <div class="coach-visual">
+        <div class="score-demo">
+          <div class="score-demo-header">
+            <div class="score-circle"><div class="score-circle-num">82</div><div class="score-circle-sub">/100</div></div>
+            <div class="score-bars">
+              <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px">Très bonne annonce !</div>
+              <div class="score-bar-row"><span class="score-bar-lbl" style="font-size:10px">Prix</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:88%;background:#1a6e3e"></div></div><span style="font-size:11px;font-weight:700;color:#1a6e3e">88</span></div>
+              <div class="score-bar-row"><span class="score-bar-lbl" style="font-size:10px">Clarté</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:79%;background:#F56B2A"></div></div><span style="font-size:11px;font-weight:700;color:#F56B2A">79</span></div>
+              <div class="score-bar-row"><span class="score-bar-lbl" style="font-size:10px">Confiance</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:75%;background:#1a5abe"></div></div><span style="font-size:11px;font-weight:700;color:#1a5abe">75</span></div>
+              <div class="score-bar-row"><span class="score-bar-lbl" style="font-size:10px">Impact</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:85%;background:#7a3abe"></div></div><span style="font-size:11px;font-weight:700;color:#7a3abe">85</span></div>
+            </div>
+          </div>
+          <div class="conseil-demo"><div class="conseil-demo-label">Le conseil du Bon Vendeur</div><div class="conseil-demo-text">Précisez l'état exact de la batterie — ça rassure l'acheteur et justifie votre prix.</div></div>
+        </div>
+      </div>
+      <div class="coach-text-wrap">
+        <div class="coach-tag">Score de vente personnel</div>
+        <h3 class="coach-title">Il évalue vos annonces et vous dit comment les améliorer</h3>
+        <p class="coach-desc">Chaque annonce reçoit un score sur 100 avec 4 critères détaillés. Le Bon Vendeur vous dit exactement quoi corriger pour maximiser vos chances de vente.</p>
+        <div class="coach-points">
+          <div class="coach-point"><div class="coach-point-check">✓</div>Score global et 4 sous-scores détaillés</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Actions concrètes classées par impact</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Diagnostic avant même de publier</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Progressez à chaque annonce</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coach-grid">
+      <div class="coach-visual">
+        <div class="pricing-demo" style="margin-bottom:12px">
+          <div class="prix-d flash"><div class="prix-d-label">⚡ Flash</div><div class="prix-d-val">280 €</div><div class="prix-d-sub">Vente rapide</div></div>
+          <div class="prix-d marche"><div style="font-size:9px;font-weight:700;background:#1a6e3e;color:#fff;padding:2px 6px;border-radius:10px;margin-bottom:4px;display:inline-block">Recommandé</div><div class="prix-d-label">🎯 Marché</div><div class="prix-d-val">350 €</div><div class="prix-d-sub">Prix idéal</div></div>
+          <div class="prix-d premium"><div class="prix-d-label">💎 Premium</div><div class="prix-d-val">420 €</div><div class="prix-d-sub">Maximum</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fdecea;border:1px solid #f5c5c0;border-radius:8px"><span style="font-size:13px">🚫</span><div style="font-size:12px;color:#9e2a2a;font-weight:500">Prix plancher : ne descendez pas sous 245 €</div></div>
+      </div>
+      <div class="coach-text-wrap">
+        <div class="coach-tag">Prix recommandé par Le Bon Vendeur</div>
+        <h3 class="coach-title">Il fixe le prix juste pour maximiser vos gains</h3>
+        <p class="coach-desc">Plus besoin de chercher pendant des heures sur Le Bon Coin. Le Bon Vendeur analyse le marché et vous propose 3 stratégies de prix selon votre objectif.</p>
+        <div class="coach-points">
+          <div class="coach-point"><div class="coach-point-check">✓</div>3 scénarios : vendre vite, prix idéal, ou maximum</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Prix plancher pour ne jamais brader</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Marge de négociation estimée</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Positionnement par rapport au marché</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coach-grid reverse">
+      <div class="coach-visual">
+        <div class="coach-profil">
+          <div class="profil-hero-mini"><div class="profil-emoji">🚀</div><div class="profil-type">Vendeur régulier</div><div class="profil-sub-mini">Vous progressez bien</div></div>
+          <div class="conseil-list">
+            <div class="conseil-mini"><div class="conseil-num-mini">1</div><div class="conseil-text-mini"><strong>Publiez dimanche 18h–21h</strong> — vos annonces reçoivent 40% de vues en plus.</div></div>
+            <div class="conseil-mini"><div class="conseil-num-mini">2</div><div class="conseil-text-mini"><strong>Table basse stagne depuis 5j</strong> — republier maintenant pour relancer l'intérêt.</div></div>
+            <div class="conseil-mini"><div class="conseil-num-mini">3</div><div class="conseil-text-mini"><strong>Votre panier peut progresser</strong> — visez des objets à 80–120€ pour atteindre 600€/mois.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="coach-text-wrap">
+        <div class="coach-tag">Votre coach personnel</div>
+        <h3 class="coach-title">Il suit vos progrès et vous guide chaque semaine</h3>
+        <p class="coach-desc">Comme un vrai coach, Le Bon Vendeur analyse votre historique, identifie vos points forts et vos axes de progression, et vous donne des conseils personnalisés chaque semaine.</p>
+        <div class="coach-points">
+          <div class="coach-point"><div class="coach-point-check">✓</div>Profil vendeur personnalisé</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Conseils basés sur votre historique réel</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Alertes sur vos annonces qui stagnent</div>
+          <div class="coach-point"><div class="coach-point-check">✓</div>Tableau de bord de vos revenus</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <h2 class="section-title" style="text-align:center;margin-bottom:10px">Comment ça marche ?</h2>
+  <p class="section-sub" style="text-align:center;margin-bottom:40px">Trois étapes. C'est tout.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Prenez une photo</div>
+      <div class="step-desc">Photographiez votre objet avec votre téléphone ou importez une image. Pas besoin de studio photo.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Le Bon Vendeur s'occupe du reste</div>
+      <div class="step-desc">En 10 secondes, il analyse l'objet, rédige l'annonce parfaite, recommande le meilleur prix et vous donne votre score de vente.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Publiez et progressez</div>
+      <div class="step-desc">Copiez l'annonce sur Le Bon Coin, suivez vos ventes et recevez les conseils personnalisés de votre coach chaque semaine.</div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing">
+  <h2 class="section-title">Un coach expert pour moins d'un café</h2>
+  <p class="section-sub" style="text-align:center;margin-bottom:40px;color:#888">Tout inclus. Sans surprise. Sans engagement.</p>
+  <div class="pricing-card">
+    <div class="pricing-badge">Sans engagement</div>
+    <div class="pricing-amount"><div class="pricing-num">2,99</div><div class="pricing-currency">€</div></div>
+    <div class="pricing-period">par mois</div>
+    <div class="pricing-engag">Annulez quand vous voulez · Pas de frais cachés</div>
+    <div class="pricing-feats">
+      <div class="pricing-feat"><div class="check">✓</div>Annonces parfaites en 10 secondes</div>
+      <div class="pricing-feat"><div class="check">✓</div>Score de vente sur chaque annonce</div>
+      <div class="pricing-feat"><div class="check">✓</div>Prix recommandé par Le Bon Vendeur</div>
+      <div class="pricing-feat"><div class="check">✓</div>Coach personnel avec conseils hebdo</div>
+      <div class="pricing-feat"><div class="check">✓</div>Tableau de bord de vos revenus</div>
+      <div class="pricing-feat"><div class="check">✓</div>Meilleur moment pour publier</div>
+    </div>
+    <button class="btn-pricing" onclick="window.location.href='dashboard.html'">Commencer maintenant →</button>
+    <div class="pricing-reassurance">Essayez dès aujourd'hui · Annulez à tout moment</div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2 class="section-title" style="text-align:center;margin-bottom:10px">Ils vendent mieux avec leur coach</h2>
+  <p class="section-sub" style="text-align:center;margin-bottom:40px">Des vendeurs réguliers comme vous.</p>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"C'est vraiment comme avoir un ami expert du Bon Coin. Il m'a dit exactement quoi écrire et à quel prix vendre. Mes objets partent deux fois plus vite qu'avant."</div>
+      <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Marie L.</div><div class="testi-meta">Vend 15 objets par mois en moyenne</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Le score de vente m'a ouvert les yeux. Je sous-évaluais systématiquement mes objets. En suivant les conseils, j'ai gagné 40% de revenus en plus le mois suivant."</div>
+      <div class="testi-author"><div class="testi-avatar">T</div><div><div class="testi-name">Thomas B.</div><div class="testi-meta">+487€ de revenus ce mois</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Je regardais mes stats tous les matins. C'est devenu un vrai business de côté. Le coach m'a aidée à comprendre ce qui marchait et à me concentrer dessus."</div>
+      <div class="testi-author"><div class="testi-avatar">S</div><div><div class="testi-name">Sophie R.</div><div class="testi-meta">Vendeuse régulière depuis 6 mois</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="footer-cta">
+  <h2>Prêt à vendre comme un pro ?</h2>
+  <p>Votre coach personnel vous attend.<br>Commencez en 30 secondes, sans carte bancaire.</p>
+  <button class="btn-white-cta" onclick="window.location.href='dashboard.html'">Créer mon compte gratuitement →</button>
+  <div class="footer-note">2,99€/mois · Sans engagement · Annulez quand vous voulez</div>
+</section>
+
+<footer>
+  <div class="footer-logo">Le <span>Bon</span> Vendeur</div>
+  <div class="footer-copy">© 2025 Le Bon Vendeur · Tous droits réservés</div>
+</footer>
+
+<script>
+function animCount(el, target, suffix, duration) {
+  let v = 0;
+  const step = target / (duration / 20);
+  const iv = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = Math.round(v) + suffix;
+    if (v >= target) clearInterval(iv);
+  }, 20);
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animCount(document.getElementById('kpi-rev'), 487, ' €', 1800);
+      animCount(document.getElementById('kpi-ventes'), 9, '', 1400);
+      const delta = document.getElementById('kpi-delta');
+      let pct = 0;
+      const di = setInterval(() => { pct = Math.min(pct + 1, 24); delta.textContent = '↑ +' + pct + '%'; if (pct >= 24) clearInterval(di); }, 70);
+      setTimeout(() => { document.getElementById('ann2').style.opacity = '1'; }, 1200);
+      setTimeout(() => { document.getElementById('ann3').style.opacity = '1'; }, 2200);
+      setTimeout(() => { document.getElementById('insight-block').style.opacity = '1'; }, 3400);
+      observer.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+const demoEl = document.querySelector('.demo-wrap');
+if (demoEl) observer.observe(demoEl);
+</script>
+</body>
+</html>
