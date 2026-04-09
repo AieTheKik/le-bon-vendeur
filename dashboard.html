@@ -667,16 +667,38 @@ async function loadVentes(){
   const list=document.getElementById('ventes-list');
   list.innerHTML='<div class="loading"><div class="spinner"></div>Chargement</div>';
   try{
-    const res=await fetch(API+'/ventes',{headers:{authorization:token}});
-    allVentes=await res.json();renderVentesList();
+    const [ventesRes, annoncesRes] = await Promise.all([
+      fetch(API+'/ventes',{headers:{authorization:token}}),
+      fetch(API+'/annonces',{headers:{authorization:token}})
+    ]);
+    allVentes=await ventesRes.json();
+    allAnnonces=await annoncesRes.json();
+    renderVentesList();
   }catch(e){list.innerHTML='<div class="empty-state"><div class="empty-title">Erreur</div></div>';}
 }
 
 function renderVentesList(){
   const list=document.getElementById('ventes-list');
-  if(allVentes.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📈</div><div class="empty-title">Aucune vente</div><div class="empty-sub">Ajoutez vos premières ventes</div></div>';return;}
-  const sorted=[...allVentes].sort((a,b)=>new Date(b.dateVente)-new Date(a.dateVente));
-  list.innerHTML=sorted.map(v=>`<div class="vente-row" style="cursor:pointer" onclick="ouvrirDetailDepuisVente('${v.id}')"><div class="vente-icon">${getEmoji(v.categorie)}</div><div class="vente-info"><div class="vente-titre">${v.titre||v.objet||'Vente'}</div><div class="vente-meta">${new Date(v.dateVente).toLocaleDateString('fr-FR')} · ${v.categorie||'Autre'}</div></div><div class="vente-prix">+${parseFloat(v.prixVente).toFixed(0)} €</div><button class="vente-del" onclick="event.stopPropagation();supprimerVente('${v.id}')">×</button></div>`).join('');
+  const annoncesVendues=allAnnonces.filter(a=>a.statut==='vendu');
+  const idsAnnoncesVendues=new Set(annoncesVendues.map(a=>String(a.id)));
+  const ventesManuelle=allVentes.filter(v=>!idsAnnoncesVendues.has(String(v.id)));
+  if(annoncesVendues.length===0&&ventesManuelle.length===0){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">🏷️</div><div class="empty-title">Aucune vente</div><div class="empty-sub">Marquez vos annonces comme vendues</div></div>';return;
+  }
+  const htmlAnnonces=annoncesVendues.sort((a,b)=>new Date(b.dateVente||b.dateCreation)-new Date(a.dateVente||a.dateCreation)).map(a=>`
+    <div class="vente-row" style="cursor:pointer" onclick="showDetail('${a.id}','ventes')">
+      <div class="vente-icon">${getEmoji(a.categorie)}</div>
+      <div class="vente-info"><div class="vente-titre">${a.titre||a.objet||'Annonce'}</div><div class="vente-meta">${a.dateVente?new Date(a.dateVente).toLocaleDateString('fr-FR'):'—'} · ${a.categorie||'Autre'}</div></div>
+      <div class="vente-prix">+${parseFloat(a.prixVente||0).toFixed(0)} €</div>
+    </div>`).join('');
+  const htmlManuelles=ventesManuelle.sort((a,b)=>new Date(b.dateVente)-new Date(a.dateVente)).map(v=>`
+    <div class="vente-row">
+      <div class="vente-icon">${getEmoji(v.categorie)}</div>
+      <div class="vente-info"><div class="vente-titre">${v.titre||v.objet||'Vente'}</div><div class="vente-meta">${new Date(v.dateVente).toLocaleDateString('fr-FR')} · ${v.categorie||'Autre'} · Ajout manuel</div></div>
+      <div class="vente-prix">+${parseFloat(v.prixVente).toFixed(0)} €</div>
+      <button class="vente-del" onclick="supprimerVente('${v.id}')">×</button>
+    </div>`).join('');
+  list.innerHTML=htmlAnnonces+htmlManuelles;
 }
 
 let currentDetailAnnonce = null;
