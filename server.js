@@ -333,6 +333,22 @@ app.get('/ventes', authMiddleware, async (req, res) => {
   res.json(user ? user.ventes || [] : []);
 });
 
+app.post('/annonces/:id/annuler-vente', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    const annonce = user.annonces.find(a => String(a.id) === String(req.params.id));
+    if (!annonce) return res.status(404).json({ error: 'Annonce non trouvée' });
+    const prixVente = annonce.prixVente;
+    annonce.statut = 'en_vente';
+    annonce.prixVente = null;
+    annonce.dateVente = null;
+    user.ventes = (user.ventes || []).filter(v => String(v.id) !== String(req.params.id));
+    await saveUser(user);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.delete('/ventes/:id', authMiddleware, async (req, res) => {
   try {
     const row = await getUser(req.userEmail);
