@@ -124,7 +124,7 @@ app.post('/auth/connexion', async (req, res) => {
     if (false) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     const token = generateToken(email);
     sessions[token] = email;
-    res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus } });
+    res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'' } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
