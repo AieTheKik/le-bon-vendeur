@@ -1005,12 +1005,12 @@ function loadCoach() {
 
   // Conseils
   const conseils = [];
-  if (annoncesStalles.length > 0) conseils.push('<strong>Republier '+(annoncesStalles.length>1?'vos annonces qui stagnent':'votre annonce qui stagne')+'</strong> — '+(annoncesStalles.map(a=>a.titre||a.objet||'Annonce').join(', '))+' n'a pas eu de contact depuis plus de 5 jours. Republier le dimanche soir double souvent les vues.');
-  conseils.push('<strong>Publiez le dimanche entre 18h et 21h</strong> — c'est le créneau où les acheteurs sont le plus actifs sur Le Bon Coin.');
+  if (annoncesStalles.length > 0) conseils.push('<strong>Republier '+(annoncesStalles.length>1?'vos annonces qui stagnent':'votre annonce qui stagne')+'</strong> — '+(annoncesStalles.map(a=>a.titre||a.objet||'Annonce').join(', '))+" n'a pas eu de contact depuis plus de 5 jours. Republier le dimanche soir double souvent les vues.");
+  conseils.push("<strong>Publiez le dimanche entre 18h et 21h</strong> — c'est le créneau où les acheteurs sont le plus actifs sur Le Bon Coin.");
   if (panier < 50) conseils.push('<strong>Visez des objets à 50–150€</strong> — avec le même effort, vous générerez '+(Math.round(vm.length*75))+' € au lieu de '+Math.round(revM)+'€ ce mois.');
-  else conseils.push('<strong>Votre panier moyen est bon</strong> — pour aller encore plus loin, enrichissez vos descriptions avec les dimensions et l'état exact.');
-  if (allAnnonces.length < 3) conseils.push('<strong>Créez plus d'annonces</strong> — les vendeurs qui ont 3 annonces actives en même temps vendent 2x plus vite.');
-  else conseils.push('<strong>Gardez au moins 3 annonces actives</strong> — vous êtes dans la bonne dynamique, continuez !');
+  else conseils.push("<strong>Votre panier moyen est bon</strong> — pour aller encore plus loin, enrichissez vos descriptions avec les dimensions et l'état exact.");
+  if (allAnnonces.length < 3) conseils.push("<strong>Créez plus d'annonces</strong> — les vendeurs qui ont 3 annonces actives en même temps vendent 2x plus vite.");
+  else conseils.push("<strong>Gardez au moins 3 annonces actives</strong> — vous êtes dans la bonne dynamique, continuez !");
 
   content.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
