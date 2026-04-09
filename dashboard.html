@@ -635,7 +635,7 @@ async function loadAnnonces(){
       const score=a.sellScore||70;const sc=score>=75?'high':score>=55?'med':'low';
       const days=Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
       const isVendu=a.statut==='vendu';
-      return`<div class="annonce-row" style="opacity:${isVendu?0.6:1}"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">${isVendu?'✓ Vendu':'Publié il y a '+days+'j'} · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div>${!isVendu?`<button class="btn-vendu" onclick="ouvrirModalVendu('${a.id}')">Marquer vendu</button>`:''}</div></div>`;
+      return`<div class="annonce-row" style="opacity:${isVendu?0.6:1};cursor:pointer" onclick="showDetail('${a.id}','annonces')"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">${isVendu?'✓ Vendu':'Publié il y a '+days+'j'} · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div>${!isVendu?`<button class="btn-vendu" onclick="event.stopPropagation();ouvrirModalVendu('${a.id}')">Marquer vendu</button>`:''}</div></div>`;
     }).join('');
   }catch(e){list.innerHTML='<div class="empty-state"><div class="empty-title">Erreur de chargement</div></div>';}
 }
