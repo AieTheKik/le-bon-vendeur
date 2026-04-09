@@ -270,8 +270,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="nav-item active" id="nav-cockpit" onclick="showPage('cockpit')" title="Cockpit"><svg viewBox="0 0 18 18"><rect x="1" y="1" width="7" height="7" rx="1.5"/><rect x="10" y="1" width="7" height="7" rx="1.5"/><rect x="1" y="10" width="7" height="7" rx="1.5"/><rect x="10" y="10" width="7" height="7" rx="1.5"/></svg><span class="nav-label">Cockpit</span></button>
     <button class="nav-item" id="nav-coach" onclick="showPage('coach')" title="Mon coach"><svg viewBox="0 0 18 18"><path d="M9 2a5 5 0 100 10A5 5 0 009 2z"/><path d="M9 8v2M9 12h.01"/></svg><span class="nav-label">Coach</span></button>
     <button class="nav-item" id="nav-analyse" onclick="showPage('analyse')" title="Créer une annonce"><svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="7"/><path d="M9 6v3M9 12h.01"/></svg><span class="nav-label">Ajouter</span></button>
-    <button class="nav-item" id="nav-annonces" onclick="showPage('annonces')" title="Mes annonces"><svg viewBox="0 0 18 18"><path d="M2 5h14M2 9h9M2 13h6"/></svg><span class="nav-label">Annonces</span></button>
-    <button class="nav-item" id="nav-ventes" onclick="showPage('ventes')" title="Mes ventes"><svg viewBox="0 0 18 18"><path d="M3 14L7 8l3.5 3.5L13 7l3 4"/></svg><span class="nav-label">Ventes</span></button>
+    <button class="nav-item" id="nav-annonces" onclick="showPage('annonces')" title="En cours"><svg viewBox="0 0 18 18"><path d="M2 5h14M2 9h9M2 13h6"/></svg><span class="nav-label">En cours</span></button>
+    <button class="nav-item" id="nav-ventes" onclick="showPage('ventes')" title="Vendus"><svg viewBox="0 0 18 18"><path d="M3 14L7 8l3.5 3.5L13 7l3 4"/></svg><span class="nav-label">Vendus</span></button>
     <button class="nav-item" id="nav-compte" onclick="showPage('compte')" title="Mon compte" style="margin-top:auto"><svg viewBox="0 0 18 18"><circle cx="9" cy="7" r="3"/><path d="M3 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg><span class="nav-label">Compte</span></button>
   </div>
 
@@ -342,7 +342,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
 
     <div class="page" id="page-annonces">
-      <div class="topbar"><div><div class="page-title">Mes annonces</div></div><div class="topbar-right"><button class="btn-new" onclick="showPage('analyse')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Nouvelle</button></div></div>
+      <div class="topbar"><div><div class="page-title">En cours</div></div><div class="topbar-right"><button class="btn-new" onclick="showPage('analyse')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Nouvelle</button></div></div>
       <div id="annonces-list-full"><div class="loading"><div class="spinner"></div>Chargement</div></div>
     </div>
 
@@ -388,7 +388,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="page" id="page-ventes">
-      <div class="topbar"><div><div class="page-title">Mes ventes</div></div><div class="topbar-right"><button class="btn-new" onclick="openModalVente()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Ajouter</button></div></div>
+      <div class="topbar"><div><div class="page-title">Vendus</div></div><div class="topbar-right"><button class="btn-new" onclick="openModalVente()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Ajouter</button></div></div>
       <div id="ventes-list"><div class="loading"><div class="spinner"></div>Chargement</div></div>
     </div>
 
@@ -649,7 +649,7 @@ async function loadAnnonces(){
       const score=a.sellScore||70;const sc=score>=75?'high':score>=55?'med':'low';
       const days=Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
       const isVendu=a.statut==='vendu';
-      return`<div class="annonce-row" style="opacity:${isVendu?0.6:1};cursor:pointer" onclick="showDetail('${a.id}','annonces')"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">${isVendu?'✓ Vendu':'Publié il y a '+days+'j'} · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div>${!isVendu?`<button class="btn-vendu" onclick="event.stopPropagation();ouvrirModalVendu('${a.id}')">Marquer vendu</button>`:''}</div></div>`;
+      return`<div class="annonce-row" style="cursor:pointer" onclick="showDetail('${a.id}','annonces')"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Publié il y a ${days}j · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div><button class="btn-vendu" onclick="event.stopPropagation();ouvrirModalVendu('${a.id}')">Marquer vendu</button></div></div>`;
     }).join('');
   }catch(e){list.innerHTML='<div class="empty-state"><div class="empty-title">Erreur de chargement</div></div>';}
 }
@@ -734,11 +734,11 @@ function showDetail(id, backPage) {
   `;
 
   // Prix
-  document.getElementById('detail-prix').innerHTML = `
-    <div class="prix-block"><div class="prix-block-label">Prix minimum</div><div class="prix-block-val">${annonce.prixMin || '—'} €</div></div>
+  document.getElementById('detail-prix').innerHTML = annonce.statut === 'vendu' ?
+    `<div class="prix-block recommended" style="grid-column:1/-1;text-align:center"><div class="prix-block-label">Prix de vente final</div><div class="prix-block-val" style="font-size:32px">+${parseFloat(annonce.prixVente||0).toFixed(0)} €</div><div style="font-size:12px;color:#5aaa7e;margin-top:4px">Vendu le ${annonce.dateVente?new Date(annonce.dateVente).toLocaleDateString('fr-FR'):'—'}</div></div>` :
+    `<div class="prix-block"><div class="prix-block-label">Prix minimum</div><div class="prix-block-val">${annonce.prixMin || '—'} €</div></div>
     <div class="prix-block recommended"><div class="prix-block-label">Prix conseillé ✓</div><div class="prix-block-val">${annonce.prixRecommande || '—'} €</div></div>
-    <div class="prix-block"><div class="prix-block-label">Prix maximum</div><div class="prix-block-val">${annonce.prixMax || '—'} €</div></div>
-  `;
+    <div class="prix-block"><div class="prix-block-label">Prix maximum</div><div class="prix-block-val">${annonce.prixMax || '—'} €</div></div>`;
 
   // Infos
   document.getElementById('detail-infos').innerHTML = `
