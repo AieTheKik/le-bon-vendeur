@@ -9,7 +9,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '20mb' }));
+app.use((req, res, next) => { if (req.originalUrl === '/webhook') { express.raw({ type: 'application/json' })(req, res, next); } else { express.json({ limit: '20mb' })(req, res, next); } });
 app.use(express.static(__dirname));
 app.get("/", (req, res) => res.redirect("/lebonvendeur.html"));
 
