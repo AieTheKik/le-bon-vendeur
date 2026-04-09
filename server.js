@@ -291,15 +291,12 @@ app.post('/annonces/:id/vendu', authMiddleware, async (req, res) => {
     annonce.prixVente = prixVente;
     annonce.dateVente = new Date().toISOString();
     if (!user.ventes) user.ventes = [];
-    user.ventes.push({
-      id: annonce.id,
-      objet: annonce.objet,
-      titre: annonce.titre,
-      prixVente,
-      dateVente: annonce.dateVente,
-      categorie: annonce.categorie
-    });
+    const nouvelleVente = { id: annonce.id, objet: annonce.objet, titre: annonce.titre, prixVente, dateVente: annonce.dateVente, categorie: annonce.categorie };
+    user.ventes.push(nouvelleVente);
     await saveUser(user);
+    const ventesMois2 = user.ventes.filter(v => { const d = new Date(v.dateVente); const n = new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); });
+    const revMois2 = ventesMois2.reduce((s,v)=>s+parseFloat(v.prixVente||0),0);
+    resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: req.userEmail, subject: 'Vente enregistrée — '+(annonce.titre||annonce.objet||'Annonce'), html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f4f0;font-family:Arial,sans-serif"><div style="max-width:600px;margin:40px auto;background:white;border-radius:16px;overflow:hidden"><div style="background:#F56B2A;padding:32px;text-align:center"><h1 style="color:white;margin:0;font-size:24px;font-weight:800">Le Bon Vendeur</h1></div><div style="padding:36px"><h2 style="color:#1a1a1a;font-size:22px;font-weight:800;margin-bottom:8px">Vente enregistrée !</h2><p style="color:#666;font-size:15px;margin-bottom:24px">Félicitations pour cette vente.</p><div style="background:#f5f4f0;border-radius:12px;padding:20px;margin-bottom:24px"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#888;font-size:14px">Objet vendu</span><span style="color:#1a1a1a;font-size:14px;font-weight:700">${annonce.titre||annonce.objet||'Annonce'}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#888;font-size:14px">Prix de vente</span><span style="color:#1a6e3e;font-size:18px;font-weight:800">+${parseFloat(prixVente).toFixed(0)} €</span></div><div style="display:flex;justify-content:space-between"><span style="color:#888;font-size:14px">Revenus ce mois</span><span style="color:#1a1a1a;font-size:14px;font-weight:700">${revMois2.toFixed(0)} €</span></div></div><div style="background:#e8f5ef;border:1px solid #c5e8d8;border-radius:10px;padding:16px;margin-bottom:24px"><p style="color:#1a6e3e;font-size:14px;margin:0">Le Bon Vendeur vous félicite ! ${ventesMois2.length} vente${ventesMois2.length>1?'s':''} ce mois pour ${revMois2.toFixed(0)} € de revenus.</p></div><div style="text-align:center"><a href="https://le-bon-vendeur.com/dashboard.html" style="background:#F56B2A;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:15px;font-weight:700">Voir mon tableau de bord</a></div></div><div style="background:#f5f4f0;padding:20px;text-align:center"><p style="color:#aaa;font-size:12px;margin:0">© 2025 Le Bon Vendeur · le-bon-vendeur.com</p></div></div></body></html>` });
     res.json({ ok: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -323,6 +320,9 @@ app.post('/ventes', authMiddleware, async (req, res) => {
     };
     user.ventes.push(vente);
     await saveUser(user);
+    const ventesMois = user.ventes.filter(v => { const d = new Date(v.dateVente); const n = new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); });
+    const revMois = ventesMois.reduce((s,v)=>s+parseFloat(v.prixVente||0),0);
+    resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: req.userEmail, subject: 'Vente enregistrée — '+vente.objet, html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f4f0;font-family:Arial,sans-serif"><div style="max-width:600px;margin:40px auto;background:white;border-radius:16px;overflow:hidden"><div style="background:#F56B2A;padding:32px;text-align:center"><h1 style="color:white;margin:0;font-size:24px;font-weight:800">Le Bon Vendeur</h1></div><div style="padding:36px"><h2 style="color:#1a1a1a;font-size:22px;font-weight:800;margin-bottom:8px">Vente enregistrée !</h2><p style="color:#666;font-size:15px;margin-bottom:24px">Félicitations pour cette vente.</p><div style="background:#f5f4f0;border-radius:12px;padding:20px;margin-bottom:24px"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#888;font-size:14px">Objet vendu</span><span style="color:#1a1a1a;font-size:14px;font-weight:700">${vente.objet}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:#888;font-size:14px">Prix de vente</span><span style="color:#1a6e3e;font-size:18px;font-weight:800">+${parseFloat(vente.prixVente).toFixed(0)} €</span></div><div style="display:flex;justify-content:space-between"><span style="color:#888;font-size:14px">Revenus ce mois</span><span style="color:#1a1a1a;font-size:14px;font-weight:700">${revMois.toFixed(0)} €</span></div></div><div style="background:#e8f5ef;border:1px solid #c5e8d8;border-radius:10px;padding:16px;margin-bottom:24px"><p style="color:#1a6e3e;font-size:14px;margin:0">Le Bon Vendeur vous félicite ! Continuez sur cette lancée — ${ventesMois.length} vente${ventesMois.length>1?'s':''} ce mois pour ${revMois.toFixed(0)} €.</p></div><div style="text-align:center"><a href="https://le-bon-vendeur.com/dashboard.html" style="background:#F56B2A;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:15px;font-weight:700">Voir mon tableau de bord</a></div></div><div style="background:#f5f4f0;padding:20px;text-align:center"><p style="color:#aaa;font-size:12px;margin:0">© 2025 Le Bon Vendeur · le-bon-vendeur.com</p></div></div></body></html>` });
     res.json({ ok: true, vente });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
