@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /dashboard-v1.html
+
+Sitemap: https://le-bon-vendeur.com/sitemap.xml
