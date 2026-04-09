@@ -687,8 +687,11 @@ function showDetail(id, backPage) {
   if (!annonce) return;
   currentDetailAnnonce = annonce;
   detailBackPage = backPage || "annonces";
-  const backLabels = {"annonces":"← Retour aux annonces","ventes":"← Retour aux ventes","cockpit":"← Retour au cockpit"};
+  const backLabels = {"annonces":"← Retour aux annonces","ventes":"← Retour aux vendus","cockpit":"← Retour au cockpit"};
   document.getElementById("detail-back-btn").textContent = backLabels[detailBackPage] || "← Retour";
+  const navActive = detailBackPage === "ventes" ? "nav-ventes" : detailBackPage === "cockpit" ? "nav-cockpit" : "nav-annonces";
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(navActive).classList.add('active');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
