@@ -49,7 +49,9 @@ async function saveUser(user) {
     email_verified: user.emailVerified,
     verification_token: user.verificationToken,
     annonces: user.annonces || [],
-    ventes: user.ventes || []
+    ventes: user.ventes || [],
+    prenom: user.prenom || '',
+    nom: user.nom || ''
   });
   return error;
 }
@@ -64,7 +66,9 @@ function dbToUser(row) {
     emailVerified: row.email_verified,
     verificationToken: row.verification_token,
     annonces: row.annonces || [],
-    ventes: row.ventes || []
+    ventes: row.ventes || [],
+    prenom: row.prenom || '',
+    nom: row.nom || ''
   };
 }
 
@@ -86,13 +90,13 @@ function authMiddleware(req, res, next) {
 // AUTH
 app.post('/auth/inscription', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, prenom, nom } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email et mot de passe requis' });
     const existing = await getUser(email);
     if (existing) return res.status(400).json({ error: 'Compte déjà existant' });
     const customer = await getStripe().customers.create({ email });
     const verificationToken = generateToken(email + 'verify');
-    const newUser = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [], emailVerified: false, verificationToken };
+    const newUser = { email, password: hashPassword(password), stripeCustomerId: customer.id, subscriptionId: null, subscriptionStatus: 'inactive', annonces: [], ventes: [], emailVerified: false, verificationToken, prenom: prenom||'', nom: nom||'' };
     await saveUser(newUser);
 resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: email, subject: 'Confirmez votre email - Le Bon Vendeur', html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif"><div style="max-width:600px;margin:40px auto;background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="background:#F56B2A;padding:40px;text-align:center"><h1 style="color:white;margin:0;font-size:28px">Le Bon Vendeur</h1></div><div style="padding:40px"><h2 style="color:#1a1a1a;font-size:24px">Bienvenue, vous faites le bon choix !</h2><p style="color:#555;font-size:16px;line-height:1.6">Votre compte est cree et pret a emploi. Prenez une photo de vos objets, notre IA genere une annonce professionnelle en quelques secondes.</p><p style="color:#555;font-size:16px;line-height:1.6">Plus besoin de chercher le bon prix ou les bons mots, on s occupe pour vous.</p><div style="text-align:center;margin:40px 0"><a href="https://le-bon-vendeur.com/auth/verify?token=${verificationToken}" style="background:#F56B2A;color:white;padding:16px 40px;border-radius:100px;text-decoration:none;font-size:18px;font-weight:bold">Confirmer mon email</a></div><p style="color:#999;font-size:14px;text-align:center">Des questions ? Repondez a cet email, on est la.</p></div><div style="background:#f5f5f5;padding:24px;text-align:center"><p style="color:#aaa;font-size:12px;margin:0">2025 Le Bon Vendeur</p></div></div></body></html>` });
     res.json({ success: true, message: 'Verifiez votre email pour activer votre compte' });
@@ -133,7 +137,7 @@ app.get('/auth/me', authMiddleware, async (req, res) => {
   const row = await getUser(req.userEmail);
   const user = dbToUser(row);
   if (!user) return res.status(404).json({ error: 'Utilisateur non trouve' });
-  res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus });
+  res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'' });
 });
 
 // ABONNEMENT

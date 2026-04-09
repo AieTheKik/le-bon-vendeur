@@ -247,6 +247,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <p style="font-size:12px;color:#5aaa7e;margin-top:8px">Pensez à vérifier vos spams.</p>
       </div>
       <div id="form-inscription-fields">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-group"><label class="form-label">Prénom</label><input type="text" class="form-input" id="ins-prenom" placeholder="Marie"></div><div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="ins-nom" placeholder="Dupont"></div></div>
         <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="ins-email" placeholder="vous@email.com"></div>
         <div class="form-group"><label class="form-label">Mot de passe</label><div class="pwd-wrap"><input type="password" class="form-input" id="ins-pwd" placeholder="Minimum 6 caractères"><button class="pwd-eye" onclick="togglePwd('ins-pwd',this)">👁</button></div></div>
         <button class="btn-primary" onclick="inscrire()">Créer mon compte</button>
@@ -467,12 +468,14 @@ async function init(){
 }
 
 async function inscrire(){
+  const prenom=document.getElementById('ins-prenom').value;
+  const nom=document.getElementById('ins-nom').value;
   const email=document.getElementById('ins-email').value;
   const pwd=document.getElementById('ins-pwd').value;
   const errEl=document.getElementById('err-inscription');
   errEl.style.display='none';
   try{
-    const res=await fetch(API+'/auth/inscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pwd})});
+    const res=await fetch(API+'/auth/inscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pwd,prenom,nom})});
     const data=await res.json();
     if(!res.ok){errEl.textContent=data.error;errEl.style.display='block';return;}
     document.getElementById('form-inscription-fields').style.display='none';
@@ -502,8 +505,8 @@ async function deconnecter(){
 function showApp(){
   document.getElementById('auth-wrap').style.display='none';
   document.getElementById('app').style.display='block';
-  const name=currentUser.email.split('@')[0];
-  const initials=name.substring(0,2).toUpperCase();
+  const name=currentUser.prenom||currentUser.email.split('@')[0];
+  const initials=((currentUser.prenom||'')[0]||(currentUser.email[0]||'')).toUpperCase()+((currentUser.nom||'')[0]||'').toUpperCase();
   document.getElementById('greeting-title').textContent='Bonjour '+name+' 👋';
   document.getElementById('avatar-circle').textContent=initials;
   document.getElementById('compte-email').textContent=currentUser.email;
