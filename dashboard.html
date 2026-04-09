@@ -766,7 +766,7 @@ function ouvrirDetailDepuisVente(venteId) {
 }
 
 async function annulerVente(id) {
-  if (!confirm('Annuler cette vente et remettre l'annonce en vente ?')) return;
+  if (!confirm("Annuler cette vente et remettre l'annonce en vente ?")) return;
   await fetch(API + '/annonces/' + id + '/annuler-vente', { method: 'POST', headers: { authorization: token } });
   await loadAnnonces();
   await loadVentes();
