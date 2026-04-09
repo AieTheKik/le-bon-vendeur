@@ -742,10 +742,10 @@ function showDetail(id, backPage) {
 
   // Infos
   document.getElementById('detail-infos').innerHTML = `
-    <div class="compte-row"><span class="compte-key">Catégorie</span><span class="compte-val">${annonce.categorie || '—'}</span></div>
-    <div class="compte-row"><span class="compte-key">État</span><span class="compte-val">${annonce.etat || '—'}</span></div>
-    <div class="compte-row"><span class="compte-key">Marque</span><span class="compte-val">${annonce.marque || '—'}</span></div>
-    <div class="compte-row"><span class="compte-key">Statut</span><span class="compte-val">${annonce.statut === 'vendu' ? '✓ Vendu' : 'En vente'}</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f4f0"><span style="font-size:13px;color:#888">Catégorie</span><span style="font-size:13px;font-weight:600;color:#1a1a1a;text-align:right;max-width:60%">${annonce.categorie || '—'}</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f4f0"><span style="font-size:13px;color:#888">État</span><span style="font-size:13px;font-weight:600;color:#1a1a1a">${annonce.etat || '—'}</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f4f0"><span style="font-size:13px;color:#888">Marque</span><span style="font-size:13px;font-weight:600;color:#1a1a1a;text-align:right;max-width:60%">${annonce.marque || '—'}</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><span style="font-size:13px;color:#888">Statut</span><span style="font-size:13px;font-weight:600;color:${annonce.statut === 'vendu' ? '#1a6e3e' : '#1a1a1a'}">${annonce.statut === 'vendu' ? '✓ Vendu' : 'En vente'}</span></div>
   `;
 
   // Mots-clés
