@@ -717,13 +717,15 @@ function showDetail(id, backPage) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-detail').classList.add('active');
-  document.getElementById('nav-annonces').classList.add('active');
+  document.getElementById(navActive).classList.add('active');
   document.getElementById('detail-titre').textContent = annonce.titre || annonce.objet || 'Annonce';
   const days = Math.floor((Date.now() - new Date(annonce.dateCreation)) / 86400000);
   document.getElementById('detail-meta').textContent = (annonce.statut === 'vendu' ? 'Vendu' : 'Publiée il y a ' + days + 'j') + ' · ' + (annonce.categorie || 'Autre');
   document.getElementById('detail-description').textContent = annonce.description || '—';
   const btnVendu = document.getElementById('detail-btn-vendu');
-  btnVendu.style.display = annonce.statut === 'vendu' ? 'none' : 'flex';
+  const btnAnnuler2 = document.getElementById('detail-btn-annuler');
+  if (btnVendu) btnVendu.style.display = annonce.statut === 'vendu' ? 'none' : 'flex';
+  if (btnAnnuler2) btnAnnuler2.style.display = annonce.statut === 'vendu' ? 'flex' : 'none';
 
   // Score
   const score = annonce.sellScore || 75;
