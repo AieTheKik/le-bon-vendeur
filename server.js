@@ -359,5 +359,26 @@ app.delete('/ventes/:id', authMiddleware, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+
+app.post('/contact', async (req, res) => {
+  try {
+    const { email, message } = req.body;
+    if (!email || !message) return res.status(400).json({ error: 'Champs manquants' });
+    await resend.emails.send({
+      from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>',
+      to: 'hakim.baka@gmail.com',
+      subject: 'Nouveau message de contact — ' + email,
+      html: '<div style="font-family:Arial,sans-serif;padding:24px"><h2 style="color:#F56B2A">Nouveau message</h2><p><strong>De :</strong> ' + email + '</p><p><strong>Message :</strong></p><p style="background:#f5f4f0;padding:16px;border-radius:8px">' + message.replace(/\n/g,'<br>') + '</p></div>'
+    });
+    await resend.emails.send({
+      from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>',
+      to: email,
+      subject: 'Votre message a bien été reçu — Le Bon Vendeur',
+      html: '<div style="font-family:Arial,sans-serif;padding:24px"><h2 style="color:#F56B2A">Message bien reçu !</h2><p>Merci, nous vous répondons sous 24h.</p></div>'
+    });
+    res.json({ ok: true });
+  } catch(e) { console.error('Contact error:', e.message); res.status(500).json({ error: e.message }); }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
