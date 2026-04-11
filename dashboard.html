@@ -1117,6 +1117,17 @@ function loadCoach() {
   `;
 }
 
+async function envoyerContactDash() {
+  const message = document.getElementById('dash-contact-message').value;
+  const feedback = document.getElementById('dash-contact-feedback');
+  if (!message) { feedback.style.display='block';feedback.style.background='#fdecea';feedback.style.color='#9e2a2a';feedback.textContent='Merci d\'écrire un message.';return; }
+  try {
+    const res = await fetch('/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:currentUser.email, message}) });
+    if (res.ok) { feedback.style.display='block';feedback.style.background='#e8f5ef';feedback.style.color='#1a6e3e';feedback.textContent='Message envoyé ! On vous répond sous 24h.';document.getElementById('dash-contact-message').value=''; }
+    else throw new Error();
+  } catch(e) { feedback.style.display='block';feedback.style.background='#fdecea';feedback.style.color='#9e2a2a';feedback.textContent='Erreur. Écrivez-nous par email.'; }
+}
+
 function renderCompte(){
   const block=document.getElementById('abonnement-block');
   if(currentUser.subscriptionStatus==='active'){

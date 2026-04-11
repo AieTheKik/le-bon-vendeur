@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nous contacter — Le Bon Vendeur</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;min-height:100vh;display:flex;flex-direction:column}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:#fff;border-bottom:1px solid #eee}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;text-decoration:none;color:#1a1a1a}.nav-logo span{color:#F56B2A}
+.btn-ghost{padding:9px 18px;border:1px solid #e0ddd5;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#555;font-family:inherit;text-decoration:none}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 24px}
+.card{background:#fff;border-radius:16px;border:1px solid #eee;padding:40px;max-width:540px;width:100%}
+.tag{display:inline-block;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;color:#c44d0d;margin-bottom:20px}
+h1{font-size:28px;font-weight:800;letter-spacing:-1px;color:#1a1a1a;margin-bottom:8px}
+.sub{font-size:15px;color:#888;line-height:1.6;margin-bottom:28px}
+.form-label{font-size:13px;font-weight:600;color:#1a1a1a;display:block;margin-bottom:6px}
+.form-input{width:100%;padding:12px 16px;border:1px solid #e0ddd5;border-radius:10px;font-size:14px;font-family:inherit;outline:none;color:#1a1a1a;margin-bottom:16px;display:block}
+.form-input:focus{border-color:#F56B2A}
+textarea.form-input{resize:none}
+.btn{width:100%;padding:14px;background:#F56B2A;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit}
+.btn:hover{background:#e55a1a}
+.feedback{display:none;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;margin-bottom:16px}
+.mail-link{text-align:center;margin-top:16px;font-size:13px;color:#bbb}
+.mail-link a{color:#F56B2A;font-weight:600;text-decoration:none}
+footer{background:#1a1a1a;padding:20px 48px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-size:14px;font-weight:700;color:#fff}.footer-logo span{color:#F56B2A}
+.footer-copy{font-size:12px;color:#444}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">Le <span>Bon</span> Vendeur</a>
+  <a href="/dashboard.html" class="btn-ghost">Mon tableau de bord</a>
+</nav>
+<div class="main">
+  <div class="card">
+    <div class="tag">Contact</div>
+    <h1>On est là pour vous aider.</h1>
+    <p class="sub">Une question sur Le Bon Vendeur ? Un problème avec votre compte ? Écrivez-nous, on répond sous 24h.</p>
+    <label class="form-label">Votre email</label>
+    <input type="email" id="contact-email" class="form-input" placeholder="vous@email.com">
+    <label class="form-label">Votre message</label>
+    <textarea id="contact-message" class="form-input" rows="5" placeholder="Décrivez votre question ou problème..."></textarea>
+    <div id="contact-feedback" class="feedback"></div>
+    <button class="btn" id="contact-btn" onclick="envoyerContact()">Envoyer le message →</button>
+    <div class="mail-link">Ou directement : <a href="mailto:bonjour@le-bon-vendeur.com">bonjour@le-bon-vendeur.com</a></div>
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Le <span>Bon</span> Vendeur</div>
+  <div class="footer-copy">© 2025 Le Bon Vendeur</div>
+</footer>
+<script>
+async function envoyerContact() {
+  const email = document.getElementById('contact-email').value;
+  const message = document.getElementById('contact-message').value;
+  const btn = document.getElementById('contact-btn');
+  const feedback = document.getElementById('contact-feedback');
+  if (!email || !message) {
+    feedback.style.display = 'block';
+    feedback.style.background = '#fdecea';
+    feedback.style.color = '#9e2a2a';
+    feedback.textContent = 'Merci de remplir tous les champs.';
+    return;
+  }
+  btn.textContent = 'Envoi en cours...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/contact', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, message})
+    });
+    if (res.ok) {
+      feedback.style.display = 'block';
+      feedback.style.background = '#e8f5ef';
+      feedback.style.color = '#1a6e3e';
+      feedback.textContent = 'Message envoyé ! On vous répond sous 24h.';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-message').value = '';
+      btn.textContent = 'Message envoyé ✓';
+    } else { throw new Error(); }
+  } catch(e) {
+    feedback.style.display = 'block';
+    feedback.style.background = '#fdecea';
+    feedback.style.color = '#9e2a2a';
+    feedback.textContent = "Erreur lors de l'envoi. Écrivez-nous directement par email.";
+    btn.textContent = 'Envoyer le message →';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
