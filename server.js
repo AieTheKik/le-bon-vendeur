@@ -398,3 +398,23 @@ app.post('/waitlist', async (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
+
+// Route analyze-url — utilisée par l'extension Chrome
+app.post('/analyze-url', authenticateToken, async (req, res) => {
+  try {
+    const { titre, prix } = req.body;
+    if (!titre || !prix) return res.status(400).json({ error: 'titre et prix requis' });
+    const prompt = `Tu es Le Bon Vendeur. Analyse cette annonce LBC:\nTitre: ${titre}\nPrix actuel: ${prix}€\nRetourne UNIQUEMENT ce JSON sans markdown:\n{\n  "sellScore": 72,\n  "prixFlash": 45,\n  "prixMarche": 55,\n  "prixPremium": 70,\n  "insightPrix": "Le prix est légèrement au-dessus du marché."\n}`;
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 500,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    const text = response.content[0].text;
+    const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+    res.json(json);
+  } catch (err) {
+    console.error('analyze-url error:', err);
+    res.status(500).json({ error: 'Erreur analyse' });
+  }
+});
