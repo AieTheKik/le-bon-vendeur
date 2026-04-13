@@ -281,6 +281,28 @@ app.get('/annonces', authMiddleware, async (req, res) => {
   res.json(user ? user.annonces || [] : []);
 });
 
+
+// CRÉER UNE ANNONCE (depuis extension Chrome)
+app.post('/annonces', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    const { titre, prix, url, statut } = req.body;
+    if (!user.annonces) user.annonces = [];
+    const annonce = {
+      id: Date.now(),
+      titre: titre || 'Sans titre',
+      prix: prix || 0,
+      url: url || '',
+      statut: statut || 'en_cours',
+      date: new Date().toISOString()
+    };
+    user.annonces.push(annonce);
+    await saveUser(user);
+    res.json(annonce);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
 // MARQUER COMME VENDU
 app.post('/annonces/:id/vendu', authMiddleware, async (req, res) => {
   try {
