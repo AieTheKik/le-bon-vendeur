@@ -385,14 +385,14 @@ app.post('/waitlist', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email manquant' });
     await supabase.from('waitlist').upsert({ email });
-    await resend.emails.send({
+    resend.emails.send({
       from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>',
       to: 'hakim.baka@gmail.com',
       subject: 'Nouveau inscrit liste attente Pro — ' + email,
-      html: '<div style="font-family:Arial,sans-serif;padding:24px"><h2 style="color:#F56B2A">Nouveau inscrit liste d\'attente Pro</h2><p><strong>' + email + '</strong> veut Le Bon Vendeur +</p></div>'
+      html: '<div style="font-family:Arial,sans-serif;padding:24px;max-width:500px"><h2 style="color:#F56B2A;margin-bottom:12px">Nouveau inscrit Pro !</h2><p style="font-size:15px"><strong>' + email + '</strong> vient de rejoindre la liste attente Le Bon Vendeur +</p></div>'
     });
     res.json({ ok: true });
-  } catch(e) { res.status(500).json({ error: e.message }); }
+  } catch(e) { console.error('Waitlist error:', e.message); res.status(500).json({ error: e.message }); }
 });
 
 const PORT = process.env.PORT || 3001;
