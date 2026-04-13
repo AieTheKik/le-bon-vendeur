@@ -124,7 +124,7 @@ app.post('/auth/connexion', async (req, res) => {
     if (false) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     const token = generateToken(email);
     sessions[token] = email;
-    res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'' } });
+    res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'', plan: user.plan||'essential' } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -137,7 +137,7 @@ app.get('/auth/me', authMiddleware, async (req, res) => {
   const row = await getUser(req.userEmail);
   const user = dbToUser(row);
   if (!user) return res.status(404).json({ error: 'Utilisateur non trouve' });
-  res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'' });
+  res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'', plan: user.plan||'essential' });
 });
 
 // ABONNEMENT
