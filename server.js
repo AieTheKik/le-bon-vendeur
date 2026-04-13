@@ -287,7 +287,7 @@ app.post('/annonces', authMiddleware, async (req, res) => {
   try {
     const row = await getUser(req.userEmail);
     const user = dbToUser(row);
-    const { titre, prix, url, statut } = req.body;
+    const { titre, prix, url, statut, sellScore, prixFlash, prixMarche, prixPremium, description } = req.body;
     if (!user.annonces) user.annonces = [];
     const annonce = {
       id: Date.now(),
@@ -295,7 +295,12 @@ app.post('/annonces', authMiddleware, async (req, res) => {
       prix: prix || 0,
       url: url || '',
       statut: statut || 'en_cours',
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      sellScore: sellScore || 0,
+      prixMin: prixFlash || 0,
+      prixCible: prixMarche || 0,
+      prixMax: prixPremium || 0,
+      description: description || ''
     };
     user.annonces.push(annonce);
     await saveUser(user);
