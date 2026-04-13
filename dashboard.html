@@ -1145,10 +1145,22 @@ async function envoyerContactDash() {
 function renderCompte(){
   const block=document.getElementById('abonnement-block');
   if(currentUser.subscriptionStatus==='active'){
-    block.innerHTML=`<div class="abo-block active-abo"><div><div class="abo-title">Abonnement actif</div><div class="abo-sub">2,99 €/mois · sans engagement</div></div><button class="btn-danger" onclick="resilier()">Résilier</button></div>`;
+    const isPro = currentUser.plan === 'pro';
+    const planLabel = isPro ? 'Le Bon Vendeur +' : 'Le Bon Vendeur Essentiel';
+    const planPrice = isPro ? '4,99 €/mois' : '2,99 €/mois';
+    const upgradeBtn = !isPro ? `<button onclick="upgradePro()" style="margin-top:10px;width:100%;padding:10px;background:#F56B2A;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit">Passer au plan Pro — 4,99€/mois →</button>` : `<div style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#e8f5ef;border-radius:8px"><span style="font-size:12px;font-weight:600;color:#1a6e3e">Plan Pro actif — Extension Chrome incluse</span></div>`;
+    block.innerHTML=`<div class="abo-block active-abo"><div><div class="abo-title">${planLabel}</div><div class="abo-sub">${planPrice} · sans engagement</div></div><button class="btn-danger" onclick="resilier()">Résilier</button></div>${upgradeBtn}`;
   }else{
     block.innerHTML=`<div class="abo-block inactive-abo"><div><div class="abo-title">Pas encore abonné</div><div class="abo-sub">Accédez aux conseils du Bon Vendeur</div></div><button class="btn-subscribe" onclick="souscrire()">S'abonner — 2,99€/mois</button></div>`;
   }
+}
+
+async function upgradePro(){
+  try{
+    const res=await fetch(API+'/abonnement/checkout',{method:'POST',headers:{'Content-Type':'application/json',authorization:token},body:JSON.stringify({plan:'pro'})});
+    const data=await res.json();
+    if(data.url)window.location.href=data.url;
+  }catch(e){alert('Erreur lors de la mise à niveau');}
 }
 
 async function souscrire(){
