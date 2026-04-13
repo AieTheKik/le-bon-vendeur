@@ -380,5 +380,20 @@ app.post('/contact', async (req, res) => {
   } catch(e) { console.error('Contact error:', e.message); res.status(500).json({ error: e.message }); }
 });
 
+app.post('/waitlist', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email manquant' });
+    await supabase.from('waitlist').upsert({ email });
+    await resend.emails.send({
+      from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>',
+      to: 'hakim.baka@gmail.com',
+      subject: 'Nouveau inscrit liste attente Pro — ' + email,
+      html: '<div style="font-family:Arial,sans-serif;padding:24px"><h2 style="color:#F56B2A">Nouveau inscrit liste d\'attente Pro</h2><p><strong>' + email + '</strong> veut Le Bon Vendeur +</p></div>'
+    });
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
