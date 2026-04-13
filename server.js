@@ -406,7 +406,7 @@ app.post('/analyze-url', authMiddleware, async (req, res) => {
     const { titre, prix } = req.body;
     if (!titre || !prix) return res.status(400).json({ error: 'titre et prix requis' });
     const prompt = `Tu es Le Bon Vendeur. Analyse cette annonce LBC:\nTitre: ${titre}\nPrix actuel: ${prix}€\nRetourne UNIQUEMENT ce JSON sans markdown:\n{\n  "sellScore": 72,\n  "prixFlash": 45,\n  "prixMarche": 55,\n  "prixPremium": 70,\n  "insightPrix": "Le prix est légèrement au-dessus du marché."\n}`;
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 500,
       messages: [{ role: 'user', content: prompt }]
