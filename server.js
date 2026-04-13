@@ -411,7 +411,11 @@ app.post('/analyze-url', authMiddleware, async (req, res) => {
       messages: [{ role: 'user', content: prompt }]
     });
     const text = response.content[0].text;
-    const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+    console.log('analyze-url raw:', text);
+    const clean = text.replace(/```json|```/g, '').trim();
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    const json = JSON.parse(clean.slice(start, end+1));
     res.json(json);
   } catch (err) {
     console.error('analyze-url error:', err);
