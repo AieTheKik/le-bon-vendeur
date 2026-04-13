@@ -382,21 +382,54 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 <section class="pricing">
   <h2 class="section-title">Un coach expert pour moins d'un café</h2>
   <p class="section-sub" style="text-align:center;margin-bottom:40px;color:#888">Tout inclus. Sans surprise. Sans engagement.</p>
-  <div class="pricing-card">
-    <div class="pricing-badge">Sans engagement</div>
-    <div class="pricing-amount"><div class="pricing-num">2,99</div><div class="pricing-currency">€</div></div>
-    <div class="pricing-period">par mois</div>
-    <div class="pricing-engag">Annulez quand vous voulez · Pas de frais cachés</div>
-    <div class="pricing-feats">
-      <div class="pricing-feat"><div class="check">✓</div>Annonces parfaites en 10 secondes</div>
-      <div class="pricing-feat"><div class="check">✓</div>Score de vente sur chaque annonce</div>
-      <div class="pricing-feat"><div class="check">✓</div>Prix recommandé par Le Bon Vendeur</div>
-      <div class="pricing-feat"><div class="check">✓</div>Coach personnel avec conseils hebdo</div>
-      <div class="pricing-feat"><div class="check">✓</div>Tableau de bord de vos revenus</div>
-      <div class="pricing-feat"><div class="check">✓</div>Meilleur moment pour publier</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto">
+
+    <div style="background:#fff;border:1px solid #eee;border-radius:22px;padding:36px;text-align:center">
+      <div class="pricing-badge">Sans engagement</div>
+      <div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:16px">Le Bon Vendeur</div>
+      <div class="pricing-amount"><div class="pricing-num">2,99</div><div class="pricing-currency">€</div></div>
+      <div class="pricing-period">par mois</div>
+      <div class="pricing-engag">Annulez quand vous voulez</div>
+      <div class="pricing-feats" style="text-align:left">
+        <div class="pricing-feat"><div class="check">✓</div>Annonces parfaites en 10 secondes</div>
+        <div class="pricing-feat"><div class="check">✓</div>Score de vente sur chaque annonce</div>
+        <div class="pricing-feat"><div class="check">✓</div>Prix recommandé par Le Bon Vendeur</div>
+        <div class="pricing-feat"><div class="check">✓</div>Coach personnel avec conseils hebdo</div>
+        <div class="pricing-feat"><div class="check">✓</div>Tableau de bord de vos revenus</div>
+        <div class="pricing-feat"><div class="check">✓</div>Meilleur moment pour publier</div>
+      </div>
+      <button class="btn-pricing" onclick="window.location.href='dashboard.html'">Commencer →</button>
+      <div class="pricing-reassurance">Essayez dès aujourd'hui</div>
     </div>
-    <button class="btn-pricing" onclick="window.location.href='dashboard.html'">Commencer maintenant →</button>
-    <div class="pricing-reassurance">Essayez dès aujourd'hui · Annulez à tout moment</div>
+
+    <div style="background:#fff;border:2px solid #F56B2A;border-radius:22px;padding:36px;text-align:center;position:relative">
+      <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#F56B2A;color:#fff;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;white-space:nowrap">Bientôt disponible</div>
+      <div class="pricing-badge">Le plus complet</div>
+      <div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:16px">Le Bon Vendeur +</div>
+      <div class="pricing-amount"><div class="pricing-num">4,99</div><div class="pricing-currency">€</div></div>
+      <div class="pricing-period">par mois</div>
+      <div class="pricing-engag">Annulez quand vous voulez</div>
+      <div class="pricing-feats" style="text-align:left">
+        <div class="pricing-feat"><div class="check">✓</div>Tout le plan Essentiel inclus</div>
+        <div class="pricing-feat"><div class="check" style="background:#FEF0E8;color:#c44d0d">★</div>Extension Chrome LBC</div>
+        <div class="pricing-feat"><div class="check" style="background:#FEF0E8;color:#c44d0d">★</div>Import auto de vos annonces LBC</div>
+        <div class="pricing-feat"><div class="check" style="background:#FEF0E8;color:#c44d0d">★</div>Assistant de négociation</div>
+        <div class="pricing-feat"><div class="check" style="background:#FEF0E8;color:#c44d0d">★</div>Alertes republication intelligentes</div>
+        <div class="pricing-feat"><div class="check" style="background:#FEF0E8;color:#c44d0d">★</div>Score affiché directement sur LBC</div>
+      </div>
+      <button class="btn-pricing" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})" style="background:#1a1a1a">Rejoindre la liste d'attente →</button>
+      <div class="pricing-reassurance">Extension en cours de développement</div>
+    </div>
+
+  </div>
+
+  <div id="waitlist" style="max-width:500px;margin:32px auto 0;text-align:center">
+    <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:8px">Être prévenu en premier pour Le Bon Vendeur +</div>
+    <div style="display:flex;gap:10px">
+      <input type="email" id="waitlist-input" placeholder="votre@email.com" style="flex:1;padding:12px 16px;border:1px solid #e0ddd5;border-radius:10px;font-size:14px;font-family:inherit;outline:none">
+      <button onclick="rejoindreWaitlist()" style="padding:12px 20px;background:#F56B2A;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit;white-space:nowrap">Je veux le Pro →</button>
+    </div>
+    <div id="waitlist-feedback" style="margin-top:10px;font-size:13px;color:#1a6e3e;display:none">Parfait ! On vous prévient dès que disponible.</div>
   </div>
 </section>
 
@@ -465,6 +498,13 @@ const observer = new IntersectionObserver(entries => {
 
 const demoEl = document.querySelector('.demo-wrap');
 if (demoEl) observer.observe(demoEl);
+async function rejoindreWaitlist(){
+    const email = document.getElementById('waitlist-input').value;
+    if(!email) return;
+    try{ await fetch('/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}); }catch(e){}
+    document.getElementById('waitlist-feedback').style.display='block';
+    document.getElementById('waitlist-input').value='';
+  }
 </script>
 </body>
 </html>
