@@ -68,7 +68,8 @@ function dbToUser(row) {
     annonces: row.annonces || [],
     ventes: row.ventes || [],
     prenom: row.prenom || '',
-    nom: row.nom || ''
+    nom: row.nom || '',
+    plan: row.plan || 'essential'
   };
 }
 
