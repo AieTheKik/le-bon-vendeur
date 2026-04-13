@@ -79,12 +79,13 @@ function hashPassword(pwd) {
 function generateToken(email) {
   return crypto.createHash('sha256').update(email + Date.now()).digest('hex');
 }
-const sessions = {};
 
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const token = req.headers['authorization'];
-  if (!token || !sessions[token]) return res.status(401).json({ error: 'Non connecté' });
-  req.userEmail = sessions[token];
+  if (!token) return res.status(401).json({ error: 'Non connecté' });
+  const { data: user } = await supabase.from('users').select('email').eq('session_token', token).single();
+  if (!user) return res.status(401).json({ error: 'Non connecté' });
+  req.userEmail = user.email;
   next();
 }
 
@@ -124,13 +125,13 @@ app.post('/auth/connexion', async (req, res) => {
     if (!user.emailVerified) return res.status(403).json({ error: 'Veuillez verifier votre email avant de vous connecter' });
     if (false) return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     const token = generateToken(email);
-    sessions[token] = email;
+    await supabase.from('users').update({ session_token: token }).eq('email', email);
     res.json({ token, user: { email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'', plan: user.plan||'essential' } });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/auth/deconnexion', authMiddleware, (req, res) => {
-  delete sessions[req.headers['authorization']];
+  await supabase.from('users').update({ session_token: null }).eq('email', req.userEmail);
   res.json({ ok: true });
 });
 
