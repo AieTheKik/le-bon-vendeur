@@ -308,6 +308,18 @@ app.post('/annonces', authMiddleware, async (req, res) => {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+
+// SUPPRIMER UNE ANNONCE
+app.delete('/annonces/:id', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    user.annonces = (user.annonces || []).filter(a => String(a.id) !== String(req.params.id));
+    await saveUser(user);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
 // MARQUER COMME VENDU
 app.post('/annonces/:id/vendu', authMiddleware, async (req, res) => {
   try {
