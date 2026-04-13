@@ -400,7 +400,7 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
 
 // Route analyze-url — utilisée par l'extension Chrome
-app.post('/analyze-url', authenticateToken, async (req, res) => {
+app.post('/analyze-url', authMiddleware, async (req, res) => {
   try {
     const { titre, prix } = req.body;
     if (!titre || !prix) return res.status(400).json({ error: 'titre et prix requis' });
