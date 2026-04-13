@@ -130,7 +130,7 @@ app.post('/auth/connexion', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/auth/deconnexion', authMiddleware, (req, res) => {
+app.post('/auth/deconnexion', authMiddleware, async (req, res) => {
   await supabase.from('users').update({ session_token: null }).eq('email', req.userEmail);
   res.json({ ok: true });
 });
