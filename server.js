@@ -296,6 +296,7 @@ app.post('/annonces', authMiddleware, async (req, res) => {
       url: url || '',
       statut: statut || 'en_cours',
       date: new Date().toISOString(),
+      dateCreation: new Date().toISOString(),
       sellScore: sellScore || 0,
       prixMin: prixFlash || 0,
       prixCible: prixMarche || 0,
