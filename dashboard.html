@@ -785,7 +785,7 @@ function showDetail(id, backPage) {
   document.getElementById('detail-prix').innerHTML = annonce.statut === 'vendu' ?
     `<div class="prix-block recommended" style="grid-column:1/-1;text-align:center"><div class="prix-block-label">Prix de vente final</div><div class="prix-block-val" style="font-size:32px">+${parseFloat(annonce.prixVente||0).toFixed(0)} €</div><div style="font-size:12px;color:#5aaa7e;margin-top:4px">Vendu le ${annonce.dateVente?new Date(annonce.dateVente).toLocaleDateString('fr-FR'):'—'}</div></div>` :
     `<div class="prix-block"><div class="prix-block-label">Prix minimum</div><div class="prix-block-val">${annonce.prixMin || '—'} €</div></div>
-    <div class="prix-block recommended"><div class="prix-block-label">Prix conseillé ✓</div><div class="prix-block-val">${annonce.prixRecommande || '—'} €</div></div>
+    <div class="prix-block recommended"><div class="prix-block-label">Prix conseillé ✓</div><div class="prix-block-val">${annonce.prixCible || annonce.prixRecommande || '—'} €</div></div>
     <div class="prix-block"><div class="prix-block-label">Prix maximum</div><div class="prix-block-val">${annonce.prixMax || '—'} €</div></div>`;
 
   // Infos
