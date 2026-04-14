@@ -458,7 +458,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 const API='https://le-bon-vendeur.com';
-let token=localStorage.getItem('lbv_token');
+const urlToken=new URLSearchParams(window.location.search).get('token');if(urlToken){localStorage.setItem('lbv_token',urlToken);history.replaceState({},'','/dashboard.html');}let token=localStorage.getItem('lbv_token');
 let currentUser=null,imageBase64=null,imageType=null,chartInstance=null,allVentes=[],allAnnonces=[];
 
 function togglePwd(id,el){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';el.textContent=i.type==='password'?'👁':'🙈';}
