@@ -287,7 +287,7 @@ app.post('/annonces', authMiddleware, async (req, res) => {
   try {
     const row = await getUser(req.userEmail);
     const user = dbToUser(row);
-    const { titre, prix, url, statut, sellScore, prixFlash, prixMarche, prixPremium, description } = req.body;
+    const { titre, prix, url, statut, sellScore, prixFlash, prixMarche, prixPremium, description, origin, imported_from_leboncoin } = req.body;
     if (!user.annonces) user.annonces = [];
     const annonce = {
       id: Date.now(),
@@ -300,7 +300,10 @@ app.post('/annonces', authMiddleware, async (req, res) => {
       prixMin: prixFlash || 0,
       prixCible: prixMarche || 0,
       prixMax: prixPremium || 0,
-      description: description || ''
+      description: description || '',
+      origin: origin || 'dashboard',
+      imported_from_leboncoin: imported_from_leboncoin || false,
+      exported_to_leboncoin: false
     };
     user.annonces.push(annonce);
     await saveUser(user);
