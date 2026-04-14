@@ -324,6 +324,29 @@ app.delete('/annonces/:id', authMiddleware, async (req, res) => {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+// MARQUER COMME PENDING INJECTION
+app.post('/annonces/:id/pending-injection', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    const annonce = user.annonces.find(a => String(a.id) === String(req.params.id));
+    if (!annonce) return res.status(404).json({ error: 'Annonce non trouvée' });
+    annonce.pending_injection = true;
+    await saveUser(user);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+// RÉCUPÉRER L'ANNONCE PENDING INJECTION
+app.get('/annonces/pending-injection', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    const annonce = (user.annonces || []).find(a => a.pending_injection === true);
+    res.json(annonce || null);
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
 // MARQUER COMME VENDU
 app.post('/annonces/:id/vendu', authMiddleware, async (req, res) => {
   try {

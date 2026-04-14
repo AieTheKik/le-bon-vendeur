@@ -356,7 +356,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="page-sub" id="detail-meta">—</div>
     </div>
     <div class="topbar-right">
-      <button class="btn-new" id="detail-btn-vendu" onclick="ouvrirModalVenduFromDetail()">Marquer comme vendu</button>
+      <button class="btn-new" id="detail-btn-vendu" onclick="ouvrirModalVenduFromDetail()">Marquer comme vendu</button><button id="detail-btn-publier" onclick="publierSurLBC()" style="display:none;padding:10px 16px;background:#1a5abe;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Publier sur LBC →</button>
       <button id="detail-btn-annuler" onclick="annulerVente(currentDetailAnnonce.id)" style="display:none;padding:10px 16px;background:#fdecea;color:#9e2a2a;border:1px solid #f5c5c0;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;align-items:center;gap:6px">Annuler la vente</button>
     </div>
   </div>
@@ -668,6 +668,13 @@ async function loadAnnonces(){
   }catch(e){list.innerHTML='<div class="empty-state"><div class="empty-title">Erreur de chargement</div></div>';}
 }
 
+async function publierSurLBC() {
+  const annonce = currentDetailAnnonce;
+  if (!annonce) return;
+  await fetch(API+'/annonces/'+annonce.id+'/pending-injection', {method:'POST', headers:{authorization:token}});
+  window.open('https://www.leboncoin.fr/deposer-une-annonce', '_blank');
+}
+
 async function supprimerAnnonce(id){
   if(!confirm('Supprimer cette annonce ?'))return;
   await fetch(API+'/annonces/'+id,{method:'DELETE',headers:{authorization:token}});
@@ -747,6 +754,8 @@ function showDetail(id, backPage) {
   const btnAnnuler2 = document.getElementById('detail-btn-annuler');
   if (btnVendu) btnVendu.style.display = annonce.statut === 'vendu' ? 'none' : 'flex';
   if (btnAnnuler2) btnAnnuler2.style.display = annonce.statut === 'vendu' ? 'flex' : 'none';
+  const btnPublier = document.getElementById('detail-btn-publier');
+  if (btnPublier) btnPublier.style.display = (annonce.origin === 'dashboard' && annonce.statut !== 'vendu') ? 'inline-flex' : 'none';
 
   // Score
   const score = annonce.sellScore || 75;
