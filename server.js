@@ -289,6 +289,9 @@ app.post('/annonces', authMiddleware, async (req, res) => {
     const user = dbToUser(row);
     const { titre, prix, url, statut, sellScore, prixFlash, prixMarche, prixPremium, description, origin, imported_from_leboncoin } = req.body;
     if (!user.annonces) user.annonces = [];
+    const importedFinal = (origin === 'leboncoin_native' && req.body.imported_from_leboncoin === undefined)
+      ? true
+      : (imported_from_leboncoin || false);
     const annonce = {
       id: Date.now(),
       titre: titre || 'Sans titre',
@@ -303,7 +306,7 @@ app.post('/annonces', authMiddleware, async (req, res) => {
       prixMax: prixPremium || 0,
       description: description || '',
       origin: origin || 'dashboard',
-      imported_from_leboncoin: imported_from_leboncoin || false,
+      imported_from_leboncoin: importedFinal,
       exported_to_leboncoin: false
     };
     user.annonces.push(annonce);

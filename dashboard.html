@@ -405,7 +405,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="page" id="page-compte">
       <div class="topbar"><div><div class="page-title">Mon compte</div></div></div>
       <div class="compte-section"><div class="compte-section-title">Abonnement</div><div id="abonnement-block"></div></div>
-      <div class="compte-section"><div class="compte-section-title">Informations</div><div class="compte-row"><span class="compte-key">Email</span><span class="compte-val" id="compte-email">—</span></div><div class="compte-row"><span class="compte-key">Membre depuis</span><span class="compte-val">2025</span></div></div>
+      <div class="compte-section"><div class="compte-section-title">Informations</div><div class="compte-row"><span class="compte-key">Email</span><span class="compte-val" id="compte-email">—</span></div><div class="compte-row"><span class="compte-key">Membre depuis</span><span class="compte-val" id="compte-membre-depuis">2025</span></div></div>
 
   <div class="compte-section">
     <div class="compte-section-title">Nous contacter</div>
@@ -525,6 +525,15 @@ function showApp(){
   }
   document.getElementById('avatar-circle').textContent=initials;
   document.getElementById('compte-email').textContent=currentUser.email;
+  const membreDepuisEl=document.getElementById('compte-membre-depuis');
+  if(membreDepuisEl){
+    if(currentUser.created_at){
+      const d=new Date(currentUser.created_at);
+      membreDepuisEl.textContent=isNaN(d.getTime())?'2025':d.getFullYear();
+    } else {
+      membreDepuisEl.textContent='2025';
+    }
+  }
   const now=new Date();
   document.getElementById('topbar-date').textContent=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   const badgeSub=document.getElementById('badge-sub');
@@ -617,13 +626,13 @@ function getEmoji(cat){return({'High-tech':'📱','Mobilier':'🛋️','Mode':'�
 
 function renderAnnoncesCockpit(){
   const list=document.getElementById('annonces-cockpit-list');
-  const recent=[...allAnnonces].sort((a,b)=>new Date(b.dateCreation)-new Date(a.dateCreation)).slice(0,4);
+  const recent=[...allAnnonces].sort((a,b)=>new Date(b.dateCreation || b.date)-new Date(a.dateCreation || a.date)).slice(0,4);
   document.getElementById('nb-annonces-cockpit').textContent=allAnnonces.length+' au total';
   if(recent.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune annonce</div><div class="empty-sub">Créez votre première annonce IA</div></div>';return;}
   list.innerHTML=recent.map(a=>{
     const score=a.sellScore||70;
     const sc=score>=75?'high':score>=55?'med':'low';
-    const days=Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
+    const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date))/86400000);
     return`<div class="annonce-row" style="cursor:pointer" onclick="loadAnnonces().then(()=>showDetail('${a.id}'))"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Il y a ${days}j · ${a.statut==='vendu'?'Vendu ✓':'En vente'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div></div></div>`;
   }).join('');
 }
@@ -661,7 +670,7 @@ async function loadAnnonces(){
     if(allAnnonces.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune annonce</div><div class="empty-sub">Créez votre première annonce avec l\'IA</div></div>';return;}
     list.innerHTML=allAnnonces.map(a=>{
       const score=a.sellScore||70;const sc=score>=75?'high':score>=55?'med':'low';
-      const days=Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
+      const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date))/86400000);
       const isVendu=a.statut==='vendu';
       return`<div class="annonce-row" style="cursor:pointer" onclick="showDetail('${a.id}','annonces')"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Publié il y a ${days}j · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div><button class="btn-vendu" onclick="event.stopPropagation();ouvrirModalVendu('${a.id}')">Marquer vendu</button><button class="vente-del" onclick="event.stopPropagation();supprimerAnnonce('${a.id}')">×</button></div></div>`;
     }).join('');
