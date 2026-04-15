@@ -613,7 +613,7 @@ function renderActions(){
   const list=document.getElementById('actions-list');
   const actions=[];
   allAnnonces.filter(a=>a.statut==='en_vente').forEach(a=>{
-    const days=Math.floor((Date.now()-new Date(a.dateCreation))/86400000);
+    const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date || Date.now()))/86400000);
     if(days>=5)actions.push({type:'orange',title:'Republier maintenant',sub:(a.titre||a.objet||'Annonce')+' — sans message depuis '+days+'j'});
   });
   if(currentUser.subscriptionStatus!=='active')actions.push({type:'orange',title:'Activer l\'abonnement',sub:'Débloquez la génération d\'annonces IA'});
@@ -632,7 +632,7 @@ function renderAnnoncesCockpit(){
   list.innerHTML=recent.map(a=>{
     const score=a.sellScore||70;
     const sc=score>=75?'high':score>=55?'med':'low';
-    const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date))/86400000);
+    const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date || Date.now()))/86400000);
     return`<div class="annonce-row" style="cursor:pointer" onclick="loadAnnonces().then(()=>showDetail('${a.id}'))"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Il y a ${days}j · ${a.statut==='vendu'?'Vendu ✓':'En vente'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div></div></div>`;
   }).join('');
 }
@@ -670,7 +670,7 @@ async function loadAnnonces(){
     if(allAnnonces.length===0){list.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune annonce</div><div class="empty-sub">Créez votre première annonce avec l\'IA</div></div>';return;}
     list.innerHTML=allAnnonces.map(a=>{
       const score=a.sellScore||70;const sc=score>=75?'high':score>=55?'med':'low';
-      const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date))/86400000);
+      const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date || Date.now()))/86400000);
       const isVendu=a.statut==='vendu';
       return`<div class="annonce-row" style="cursor:pointer" onclick="showDetail('${a.id}','annonces')"><div class="annonce-thumb">${getEmoji(a.categorie)}</div><div class="annonce-info"><div class="annonce-titre">${a.titre||a.objet||'Annonce'}</div><div class="annonce-meta">Publié il y a ${days}j · ${a.categorie||'Autre'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="annonce-prix">${a.prixRecommande||'—'} €</div><div class="score-pill ${sc}">Score ${score}</div><button class="btn-vendu" onclick="event.stopPropagation();ouvrirModalVendu('${a.id}')">Marquer vendu</button><button class="vente-del" onclick="event.stopPropagation();supprimerAnnonce('${a.id}')">×</button></div></div>`;
     }).join('');
@@ -756,7 +756,7 @@ function showDetail(id, backPage) {
   document.getElementById('page-detail').classList.add('active');
   document.getElementById(navActive).classList.add('active');
   document.getElementById('detail-titre').textContent = annonce.titre || annonce.objet || 'Annonce';
-  const days = Math.floor((Date.now() - new Date(annonce.dateCreation)) / 86400000);
+  const days = Math.floor((Date.now() - new Date(annonce.dateCreation || annonce.date || Date.now())) / 86400000);
   document.getElementById('detail-meta').textContent = (annonce.statut === 'vendu' ? 'Vendu' : 'Publiée il y a ' + days + 'j') + ' · ' + (annonce.categorie || 'Autre');
   document.getElementById('detail-description').textContent = annonce.description || '—';
   const btnVendu = document.getElementById('detail-btn-vendu');
@@ -1081,7 +1081,7 @@ function loadCoach() {
   allVentes.forEach(v=>{cats[v.categorie||'Autre']=(cats[v.categorie||'Autre']||0)+1;});
   const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
   const annoncesActives = allAnnonces.filter(a=>a.statut==='en_vente');
-  const annoncesStalles = annoncesActives.filter(a=>Math.floor((Date.now()-new Date(a.dateCreation))/86400000)>=5);
+  const annoncesStalles = annoncesActives.filter(a=>Math.floor((Date.now()-new Date(a.dateCreation || a.date || Date.now()))/86400000)>=5);
   const scoresMoyens = allAnnonces.filter(a=>a.sellScore).map(a=>a.sellScore);
   const scoreMoyen = scoresMoyens.length>0?Math.round(scoresMoyens.reduce((s,v)=>s+v,0)/scoresMoyens.length):0;
   const niveau = Math.min(100, Math.round((allVentes.length*5)+(revM/10)+(scoreMoyen*0.3)));

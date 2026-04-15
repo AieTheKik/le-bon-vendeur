@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Le Bon Vendeur — Vendez mieux sur Le Bon Coin">
 <meta name="twitter:description" content="La bonne annonce. Le bon prix. Vendu. À partir de 9,99€/mois sans engagement.">
-<link rel="canonical" href="https://le-bon-vendeur.com">
+<link rel="canonical" href="https://le-bon-vendeur.com" />
 <title>Le Bon Vendeur — La bonne annonce. Le bon prix. Vendu.</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -179,6 +179,18 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 .footer-logo{font-size:16px;font-weight:700;color:#fff}.footer-logo span{color:#F56B2A}
 .footer-copy{font-size:12px;color:#666}
 
+.faq{background:#fff;padding:80px 48px}
+.faq-inner{max-width:780px;margin:0 auto}
+.faq-list{background:#fff;border:1px solid #eee;border-radius:16px;overflow:hidden;margin-top:40px}
+.faq-item{border-bottom:1px solid #f0efe9}
+.faq-item:last-child{border-bottom:none}
+.faq-item summary{list-style:none;cursor:pointer;padding:22px 24px;font-size:16px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;justify-content:space-between;gap:16px;line-height:1.45}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';font-size:24px;font-weight:400;color:#F56B2A;flex-shrink:0;transition:transform 0.2s}
+.faq-item[open] summary::after{content:'−'}
+.faq-item summary:hover{background:#fafaf8}
+.faq-answer{padding:0 24px 22px;font-size:15px;color:#666;line-height:1.75}
+
 @media(max-width:768px){
   .nav{padding:14px 20px}
   .hero{grid-template-columns:1fr;padding:40px 20px;gap:32px}
@@ -186,8 +198,10 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
   .coach-grid{grid-template-columns:1fr;gap:32px}
   .coach-grid.reverse{direction:ltr}
   .steps,.testi-grid{grid-template-columns:1fr}
-  .coach-section,.how,.pricing,.testimonials,.footer-cta{padding:48px 20px}
+  .coach-section,.how,.pricing,.testimonials,.footer-cta,.faq{padding:48px 20px}
   .sp-inner{flex-wrap:wrap;gap:24px}
+  .faq-item summary{padding:18px 18px;font-size:15px}
+  .faq-answer{padding:0 18px 18px;font-size:14px}
   footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
 }
 </style>
@@ -366,7 +380,7 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-title">Le Bon Vendeur s'occupe du reste</div>
-      <div class="step-desc">En 10 secondes, il analyse l'objet, rédige l'annonce parfaite, recommande le meilleur prix et vous donne votre score de vente.</div>
+      <div class="step-desc">Il analyse l'objet, rédige l'annonce parfaite, recommande le meilleur prix et vous donne votre score de vente.</div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
@@ -427,6 +441,39 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 
   </div>
   <p style="text-align:center;margin-top:32px;font-size:15px;color:#888;max-width:480px;margin-left:auto;margin-right:auto">Un seul objet mieux vendu rembourse largement votre abonnement.</p>
+</section>
+
+<section class="faq">
+  <div class="faq-inner">
+    <h2 class="section-title" style="text-align:center;margin-bottom:10px">Questions fréquentes</h2>
+    <p class="section-sub" style="text-align:center;margin-bottom:0">Tout ce qu'il faut savoir avant de commencer.</p>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Est-ce que Le Bon Vendeur publie à ma place ?</summary>
+        <div class="faq-answer">Non. Le Bon Vendeur prépare votre annonce et recommande un prix, mais c'est vous qui publiez sur Le Bon Coin. Vous gardez le contrôle.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Est-ce utile si je ne vends que quelques objets par an ?</summary>
+        <div class="faq-answer">Oui, c'est exactement pour ça. Vous n'avez pas besoin d'être un vendeur régulier. Le plan Essentiel est fait pour ceux qui ont quelques objets à vendre et veulent le faire bien.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Comment les prix sont-ils recommandés ?</summary>
+        <div class="faq-answer">Le Bon Vendeur analyse votre objet et génère 3 prix selon votre objectif : vendre vite (Flash), vendre au juste prix (Idéal), ou vendre au maximum (Premium).</div>
+      </details>
+      <details class="faq-item">
+        <summary>Faut-il installer Chrome ou une extension ?</summary>
+        <div class="faq-answer">Non, pour l'essentiel du produit. Le tableau de bord fonctionne depuis n'importe quel navigateur. L'extension Chrome est une option incluse dans le plan Pro.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Puis-je annuler quand je veux ?</summary>
+        <div class="faq-answer">Oui. Vous pouvez annuler à tout moment depuis votre compte, sans frais et sans préavis.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Que contient le plan Pro par rapport à l'Essentiel ?</summary>
+        <div class="faq-answer">Le plan Pro inclut tout ce que contient l'Essentiel, plus l'extension Chrome qui s'intègre directement à Le Bon Coin pour analyser vos annonces en temps réel.</div>
+      </details>
+    </div>
+  </div>
 </section>
 
 <section class="testimonials">

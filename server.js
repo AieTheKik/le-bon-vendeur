@@ -106,14 +106,16 @@ resend.emails.send({ from: 'Le Bon Vendeur <bonjour@le-bon-vendeur.com>', to: em
 });
 
 app.get('/auth/verify', async (req, res) => {
-  const { token } = req.query;
-  const { data: row } = await supabase.from('users').select('*').eq('verification_token', token).single();
-  const user = dbToUser(row);
-  if (!user) return res.status(400).send('Lien invalide ou expire');
-  user.emailVerified = true;
-  user.verificationToken = null;
-  await saveUser(user);
-  res.redirect('/dashboard.html?verified=true');
+  try {
+    const { token } = req.query;
+    const { data: row } = await supabase.from('users').select('*').eq('verification_token', token).single();
+    const user = dbToUser(row);
+    if (!user) return res.status(400).send('Lien invalide ou expire');
+    user.emailVerified = true;
+    user.verificationToken = null;
+    await saveUser(user);
+    res.redirect('/dashboard.html?verified=true');
+  } catch (err) { res.status(500).send('Erreur de vérification'); }
 });
 
 app.post('/auth/connexion', async (req, res) => {
@@ -131,15 +133,19 @@ app.post('/auth/connexion', async (req, res) => {
 });
 
 app.post('/auth/deconnexion', authMiddleware, async (req, res) => {
-  await supabase.from('users').update({ session_token: null }).eq('email', req.userEmail);
-  res.json({ ok: true });
+  try {
+    await supabase.from('users').update({ session_token: null }).eq('email', req.userEmail);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/auth/me', authMiddleware, async (req, res) => {
-  const row = await getUser(req.userEmail);
-  const user = dbToUser(row);
-  if (!user) return res.status(404).json({ error: 'Utilisateur non trouve' });
-  res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'', plan: user.plan||'essential' });
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouve' });
+    res.json({ email: user.email, subscriptionStatus: user.subscriptionStatus, prenom: user.prenom||'', nom: user.nom||'', plan: user.plan||'essential' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ABONNEMENT
@@ -191,18 +197,20 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   try {
     event = getStripe().webhooks.constructEvent(req.body, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET || '');
   } catch (err) { return res.status(400).send('Webhook Error: ' + err.message); }
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const email = session.metadata.email;
-    const wRow = await getUser(email);
-    const wUser = dbToUser(wRow);
-    if (wUser && session.subscription) {
-      wUser.subscriptionId = session.subscription;
-      wUser.subscriptionStatus = 'active';
-      await saveUser(wUser);
+  try {
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const email = session.metadata.email;
+      const wRow = await getUser(email);
+      const wUser = dbToUser(wRow);
+      if (wUser && session.subscription) {
+        wUser.subscriptionId = session.subscription;
+        wUser.subscriptionStatus = 'active';
+        await saveUser(wUser);
+      }
     }
-  }
-  res.json({ received: true });
+    res.json({ received: true });
+  } catch (err) { console.error('Webhook handler error:', err.message); res.status(500).json({ error: err.message }); }
 });
 
 // ANALYSE PHOTO + GÉNÉRATION ANNONCE
@@ -276,9 +284,12 @@ Réponds UNIQUEMENT en JSON valide, sans balises markdown :
 });
 
 app.get('/annonces', authMiddleware, async (req, res) => {
-  const row = await getUser(req.userEmail);
-  const user = dbToUser(row);
-  res.json(user ? user.annonces || [] : []);
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    if (!user) return res.json([]);
+    res.json(user.annonces || []);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 
@@ -399,9 +410,11 @@ app.post('/ventes', authMiddleware, async (req, res) => {
 });
 
 app.get('/ventes', authMiddleware, async (req, res) => {
-  const row = await getUser(req.userEmail);
-  const user = dbToUser(row);
-  res.json(user ? user.ventes || [] : []);
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    res.json(user ? user.ventes || [] : []);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/annonces/:id/annuler-vente', authMiddleware, async (req, res) => {
