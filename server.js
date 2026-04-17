@@ -485,6 +485,50 @@ app.post('/waitlist', async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('✅ Serveur Le Bon Vendeur sur port ' + PORT));
 
+// ASSISTANT DE NÉGOCIATION
+app.post('/negociation', authMiddleware, async (req, res) => {
+  try {
+    const { offreMontant, prixInitial, titre } = req.body;
+    if (!offreMontant) return res.status(400).json({ error: 'offreMontant requis' });
+    const prompt = `Tu es Le Bon Vendeur, expert en négociation sur Le Bon Coin.
+Un acheteur propose ${offreMontant}€ pour l'objet "${titre || 'objet'}" dont le prix initial est ${prixInitial || 'inconnu'}€.
+Analyse cette offre et retourne UNIQUEMENT ce JSON sans markdown :
+{
+  "analyse": "analyse courte de l'offre (raisonnable, basse, correcte...)",
+  "contreOffre": nombre entier en euros (0 si l'offre est acceptable telle quelle),
+  "messageReponse": "message de réponse prêt à copier pour répondre à l'acheteur, poli et professionnel",
+  "recommandation": "accepter|negocier|refuser"
+}`;
+    const response = await getAnthropic().messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 500,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    const text = response.content[0].text;
+    const clean = text.replace(/```json|```/g, '').trim();
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    const json = JSON.parse(clean.slice(start, end + 1));
+    res.json(json);
+  } catch (err) {
+    console.error('negociation error:', err);
+    res.status(500).json({ error: 'Erreur négociation' });
+  }
+});
+
+// MARQUER COMME EXPORTÉ VERS LEBONCOIN
+app.post('/annonces/:id/exported', authMiddleware, async (req, res) => {
+  try {
+    const row = await getUser(req.userEmail);
+    const user = dbToUser(row);
+    const annonce = (user.annonces || []).find(a => String(a.id) === String(req.params.id));
+    if (!annonce) return res.status(404).json({ error: 'Annonce non trouvée' });
+    annonce.exported_to_leboncoin = true;
+    await saveUser(user);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Route analyze-url — utilisée par l'extension Chrome
 app.post('/analyze-url', authMiddleware, async (req, res) => {
   try {
