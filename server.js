@@ -32,7 +32,8 @@ function getStripe() {
   return _stripe;
 }
 
-const PRICE_ID = 'price_1TJdoXCdfs6oSAwSVjIEhwWR';
+const STRIPE_PRICE_ESSENTIAL = 'price_1TN9MYCdfs6oSAwSuJoBSkF2';
+const STRIPE_PRICE_PRO = 'price_1TN9MzCdfs6oSAwSBPoOymA0';
 const BASE_URL = 'https://le-bon-vendeur.com';
 
 async function getUser(email) {
@@ -156,7 +157,7 @@ app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
     const session = await getStripe().checkout.sessions.create({
       customer: user.stripeCustomerId,
       payment_method_types: ['card'],
-      line_items: [{ price: PRICE_ID, quantity: 1 }],
+      line_items: [{ price: req.body.plan === 'pro' ? STRIPE_PRICE_PRO : STRIPE_PRICE_ESSENTIAL, quantity: 1 }],
       mode: 'subscription',
       success_url: BASE_URL + '/dashboard.html?abonnement=succes',
       cancel_url: BASE_URL + '/dashboard.html?abonnement=annule',
