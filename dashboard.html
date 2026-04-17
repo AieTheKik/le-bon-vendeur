@@ -1190,7 +1190,7 @@ async function upgradePro(){
 }
 
 async function souscrire(){
-  try{const res=await fetch(API+'/abonnement/checkout',{method:'POST',headers:{authorization:token}});const data=await res.json();if(data.url)window.location.href=data.url;}catch(e){alert('Erreur');}
+  try{const res=await fetch(API+'/abonnement/checkout',{method:'POST',headers:{'Content-Type':'application/json',authorization:token},body:'{}'});const data=await res.json();if(data.url)window.location.href=data.url;}catch(e){alert('Erreur');}
 }
 
 async function resilier(){
