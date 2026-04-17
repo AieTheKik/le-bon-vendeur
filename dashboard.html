@@ -288,6 +288,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <div class="avatar-circle" id="avatar-circle">—</div>
         </div>
       </div>
+      <div id="cockpit-abo-block" style="display:none;background:#FEF0E8;border:1px solid #FDDCC8;border-radius:12px;padding:14px 20px;margin-bottom:16px;display:none;align-items:center;justify-content:space-between"><span style="font-size:14px;font-weight:600;color:#c44d0d">Activez votre abonnement pour commencer</span><button onclick="showPage('compte')" style="background:#F56B2A;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">S'abonner — 9,99€/mois →</button></div>
       <div class="kpi-grid">
         <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:#FEF0E8">💰</div><div class="kpi-badge" id="kpi-rev-badge">—</div></div><div class="kpi-label">Revenus ce mois</div><div class="kpi-value" id="kpi-revenus">—</div></div>
         <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:#e8f5ef">🏷️</div><div class="kpi-badge" id="kpi-ventes-badge">—</div></div><div class="kpi-label">Ventes ce mois</div><div class="kpi-value" id="kpi-ventes">—</div></div>
@@ -539,6 +540,8 @@ function showApp(){
   const badgeSub=document.getElementById('badge-sub');
   if(currentUser.subscriptionStatus==='active'){badgeSub.textContent='Abonnement actif';badgeSub.className='badge-sub active';}
   else{badgeSub.textContent='Sans abonnement';badgeSub.className='badge-sub inactive';}
+  const cockpitAbo=document.getElementById('cockpit-abo-block');
+  cockpitAbo.style.display=currentUser.subscriptionStatus==='active'?'none':'flex';
   loadCockpit();renderCompte();
 }
 
