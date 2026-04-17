@@ -32,8 +32,8 @@ function getStripe() {
   return _stripe;
 }
 
-const STRIPE_PRICE_ESSENTIAL = 'price_1TN9MYCdfs6oSAwSuJoBSkF2';
-const STRIPE_PRICE_PRO = 'price_1TN9MzCdfs6oSAwSBPoOymA0';
+const STRIPE_PRICE_ESSENTIAL = 'price_1TNEEYCuO271C6haus0FKy3e';
+const STRIPE_PRICE_PRO = 'price_1TNEEmCuO271C6haEBtg8LK1';
 const BASE_URL = 'https://le-bon-vendeur.com';
 
 async function getUser(email) {
