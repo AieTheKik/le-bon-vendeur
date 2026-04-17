@@ -616,10 +616,10 @@ function renderActions(){
     const days=Math.floor((Date.now()-new Date(a.dateCreation || a.date || Date.now()))/86400000);
     if(days>=5)actions.push({type:'orange',title:'Republier maintenant',sub:(a.titre||a.objet||'Annonce')+' — sans message depuis '+days+'j'});
   });
-  if(currentUser.subscriptionStatus!=='active')actions.push({type:'orange',title:'Activer l\'abonnement',sub:'Débloquez la génération d\'annonces IA'});
+  if(currentUser.subscriptionStatus!=='active')actions.push({type:'orange',title:'S\'abonner — 9,99€/mois →',sub:'Débloquez la génération d\'annonces IA',onclick:"showPage('compte')"});
   if(actions.length===0)actions.push({type:'green',title:'Tout est à jour ✓',sub:'Aucune action requise pour le moment'});
   document.getElementById('nb-actions').textContent=actions.length+' en attente';
-  list.innerHTML=actions.map(a=>`<div class="action-item ${a.type}"><div class="action-dot"></div><div><div class="action-title">${a.title}</div><div class="action-sub">${a.sub}</div></div></div>`).join('');
+  list.innerHTML=actions.map(a=>`<div class="action-item ${a.type}" ${a.onclick?'onclick="'+a.onclick+'" style="cursor:pointer"':''}><div class="action-dot"></div><div><div class="action-title">${a.title}</div><div class="action-sub">${a.sub}</div></div></div>`).join('');
 }
 
 function getEmoji(cat){return({'High-tech':'📱','Mobilier':'🛋️','Mode':'👟','Électroménager':'🏠','Sport':'🚴','Jeux vidéo':'🎮','Livres':'📚'})[cat]||'📦';}
@@ -1170,11 +1170,11 @@ function renderCompte(){
   if(currentUser.subscriptionStatus==='active'){
     const isPro = currentUser.plan === 'pro';
     const planLabel = isPro ? 'Le Bon Vendeur +' : 'Le Bon Vendeur Essentiel';
-    const planPrice = isPro ? '4,99 €/mois' : '2,99 €/mois';
-    const upgradeBtn = !isPro ? `<button onclick="upgradePro()" style="margin-top:10px;width:100%;padding:10px;background:#F56B2A;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit">Passer au plan Pro — 4,99€/mois →</button>` : `<div style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#e8f5ef;border-radius:8px"><span style="font-size:12px;font-weight:600;color:#1a6e3e">Plan Pro actif — Extension Chrome incluse</span></div>`;
+    const planPrice = isPro ? '19,99 €/mois' : '9,99 €/mois';
+    const upgradeBtn = !isPro ? `<button onclick="upgradePro()" style="margin-top:10px;width:100%;padding:10px;background:#F56B2A;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit">Passer au plan Pro — 19,99€/mois →</button>` : `<div style="margin-top:8px;display:flex;align-items:center;gap:6px;padding:8px 12px;background:#e8f5ef;border-radius:8px"><span style="font-size:12px;font-weight:600;color:#1a6e3e">Plan Pro actif — Extension Chrome incluse</span></div>`;
     block.innerHTML=`<div class="abo-block active-abo"><div><div class="abo-title">${planLabel}</div><div class="abo-sub">${planPrice} · sans engagement</div></div><button class="btn-danger" onclick="resilier()">Résilier</button></div>${upgradeBtn}`;
   }else{
-    block.innerHTML=`<div class="abo-block inactive-abo"><div><div class="abo-title">Pas encore abonné</div><div class="abo-sub">Accédez aux conseils du Bon Vendeur</div></div><button class="btn-subscribe" onclick="souscrire()">S'abonner — 2,99€/mois</button></div>`;
+    block.innerHTML=`<div class="abo-block inactive-abo"><div><div class="abo-title">Pas encore abonné</div><div class="abo-sub">Accédez aux conseils du Bon Vendeur</div></div><button class="btn-subscribe" onclick="souscrire()">S'abonner — 9,99€/mois</button></div>`;
   }
 }
 
