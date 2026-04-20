@@ -156,8 +156,15 @@ app.post('/abonnement/checkout', authMiddleware, async (req, res) => {
   try {
     const row = await getUser(req.userEmail);
     const user = dbToUser(row);
+    let customerId = user.stripeCustomerId;
+    try { await getStripe().customers.retrieve(customerId); } catch(e) {
+      const newCustomer = await getStripe().customers.create({ email: req.userEmail });
+      customerId = newCustomer.id;
+      user.stripeCustomerId = customerId;
+      await saveUser(user);
+    }
     const session = await getStripe().checkout.sessions.create({
-      customer: user.stripeCustomerId,
+      customer: customerId,
       payment_method_types: ['card'],
       line_items: [{ price: req.body.plan === 'pro' ? STRIPE_PRICE_PRO : STRIPE_PRICE_ESSENTIAL, quantity: 1 }],
       mode: 'subscription',
