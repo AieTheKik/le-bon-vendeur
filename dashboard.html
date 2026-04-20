@@ -349,6 +349,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <div class="page" id="page-annonces">
       <div class="topbar"><div><div class="page-title">En cours</div></div><div class="topbar-right"><button class="btn-new" onclick="showPage('analyse')"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Nouvelle</button></div></div>
+      <div id="annonces-abonnement-block" style="display:none" class="abonnement-requis"><h3>Fonctionnalité réservée aux abonnés</h3><p>Activez votre abonnement pour suivre vos annonces en cours et accéder à toutes les recommandations.</p><button class="btn-subscribe" onclick="souscrire()">S'abonner — 9,99€/mois →</button></div>
       <div id="annonces-list-full"><div class="loading"><div class="spinner"></div>Chargement</div></div>
     </div>
 
@@ -395,6 +396,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="page" id="page-ventes">
       <div class="topbar"><div><div class="page-title">Vendus</div></div><div class="topbar-right"><button class="btn-new" onclick="openModalVente()"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>Ajouter</button></div></div>
+      <div id="ventes-abonnement-block" style="display:none" class="abonnement-requis"><h3>Fonctionnalité réservée aux abonnés</h3><p>Activez votre abonnement pour suivre vos ventes et analyser vos revenus.</p><button class="btn-subscribe" onclick="souscrire()">S'abonner — 9,99€/mois →</button></div>
       <div id="ventes-list"><div class="loading"><div class="spinner"></div>Chargement</div></div>
     </div>
 
@@ -554,8 +556,8 @@ function showPage(name){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.getElementById('nav-'+name).classList.add('active');
-  if(name==='annonces')loadAnnonces();
-  if(name==='ventes')loadVentes();
+  if(name==='annonces'){checkAbonnementPage('annonces');loadAnnonces();}
+  if(name==='ventes'){checkAbonnementPage('ventes');loadVentes();}
   if(name==='analyse')checkAbonnement();
   if(name==='coach')loadCoach();
 }
@@ -887,6 +889,13 @@ async function supprimerVente(id){
 function checkAbonnement(){
   const block=document.getElementById('analyse-abonnement-block');
   const content=document.getElementById('analyse-content');
+  if(currentUser.subscriptionStatus!=='active'){block.style.display='block';content.style.display='none';}
+  else{block.style.display='none';content.style.display='block';}
+}
+
+function checkAbonnementPage(page){
+  const block=document.getElementById(page+'-abonnement-block');
+  const content=document.getElementById(page===('annonces')?'annonces-list-full':'ventes-list');
   if(currentUser.subscriptionStatus!=='active'){block.style.display='block';content.style.display='none';}
   else{block.style.display='none';content.style.display='block';}
 }
