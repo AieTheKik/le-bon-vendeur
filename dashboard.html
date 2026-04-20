@@ -854,6 +854,7 @@ function ouvrirModalVenduFromDetail() {
 }
 
 function openModalVente(){
+  if(currentUser.subscriptionStatus!=='active'){showPage('compte');return;}
   document.getElementById('modal-objet').value='';document.getElementById('modal-prix').value='';
   document.getElementById('modal-date').value=new Date().toISOString().split('T')[0];
   document.getElementById('modal-vente').classList.add('active');
