@@ -215,7 +215,9 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 
   /* TÂCHE 3 — Pricing mobile */
   .pricing .section-title{font-size:24px;letter-spacing:-0.5px}
-  .pricing-cards-grid{display:flex!important;flex-direction:column-reverse!important;gap:16px!important}
+  .pricing-cards-grid{display:flex!important;flex-direction:column!important;gap:16px!important}
+  .pricing-cards-grid>div:first-child{order:1!important}
+  .pricing-cards-grid>div:last-child{order:2!important}
   .pricing-cards-grid>div{max-width:100%!important}
   .btn-pricing{width:100%;min-height:52px;font-size:16px}
 
