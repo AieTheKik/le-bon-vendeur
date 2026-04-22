@@ -229,6 +229,77 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 .btn-vendu{font-size:11px;font-weight:600;padding:4px 10px;background:#e8f5ef;color:#1a6e3e;border:1px solid #c5e8d8;border-radius:8px;cursor:pointer;font-family:inherit;margin-top:4px}
 .btn-vendu:hover{background:#d5ede4}
+
+@media(max-width:768px){
+  /* Sidebar → bottom bar */
+  .sidebar{position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;height:60px;flex-direction:row;justify-content:space-around;padding:0;border-right:none;border-top:1px solid #eee;background:#fff;z-index:1000}
+  .sidebar-logo{display:none}
+  .nav-item{width:auto;height:auto;min-width:48px;padding:6px 4px;gap:2px;border-radius:8px}
+  .nav-label{font-size:10px}
+  .nav-item svg{width:20px;height:20px}
+
+  /* Main content padding */
+  .main{margin-left:0;padding:16px 14px;padding-bottom:70px;min-height:auto}
+
+  /* Auth */
+  .auth-card{padding:28px 20px;margin:0 12px}
+
+  /* Topbar */
+  .topbar{flex-direction:column;align-items:flex-start;gap:12px}
+  .topbar-right{width:100%;flex-wrap:wrap;gap:8px}
+  .page-title{font-size:22px}
+
+  /* KPI cards 2x2 */
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi-value{font-size:24px}
+  .kpi-card{padding:14px}
+
+  /* Mid grid & bottom grid stacked */
+  .mid-grid{grid-template-columns:1fr;gap:12px}
+  .bottom-grid{grid-template-columns:1fr;gap:12px}
+
+  /* Detail page */
+  #page-detail .topbar .topbar-right{flex-direction:column}
+  #page-detail .topbar .topbar-right button{width:100%}
+  div[style*="grid-template-columns:1fr 340px"]{display:block!important}
+  div[style*="grid-template-columns:1fr 340px"]>div{margin-bottom:16px}
+
+  /* Action buttons full-width */
+  .btn-new{width:100%;min-height:52px;justify-content:center;font-size:14px}
+  .btn-primary{min-height:52px;font-size:15px}
+  .btn-subscribe{width:100%;min-height:52px;font-size:15px}
+  .btn-danger{width:100%;min-height:44px}
+
+  /* Annonce rows */
+  .annonce-row{flex-wrap:wrap;gap:10px;padding:12px}
+  .vente-row{flex-wrap:wrap;gap:10px;padding:12px}
+
+  /* Forms */
+  .form-group{margin-bottom:14px}
+  .form-input{font-size:16px;padding:12px 14px}
+  .form-label{margin-bottom:8px}
+  .upload-zone{padding:32px 16px}
+
+  /* Modal */
+  .modal{margin:12px;max-width:none;padding:22px 18px}
+  .modal-footer{flex-direction:column}
+  .modal-footer .btn-primary,.modal-footer .btn-cancel{flex:none;width:100%}
+
+  /* Chart */
+  .chart-footer{flex-direction:column;gap:10px}
+  .cf-item{padding:0;border-right:none;border-bottom:1px solid #f5f4f0;padding-bottom:10px}
+  .cf-item:last-child{border-bottom:none;padding-bottom:0}
+
+  /* Coach page */
+  #page-coach div[style*="grid-template-columns:1fr 1fr"]{display:block!important}
+  #page-coach div[style*="grid-template-columns:1fr 1fr"]>.card{margin-bottom:16px}
+
+  /* Result meta grid */
+  .result-meta-grid{grid-template-columns:1fr}
+
+  /* Prix zone */
+  .prix-zone{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>

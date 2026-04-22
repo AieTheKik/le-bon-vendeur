@@ -192,17 +192,52 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 .faq-answer{padding:0 24px 22px;font-size:15px;color:#666;line-height:1.75}
 
 @media(max-width:768px){
+  /* Nav */
   .nav{padding:14px 20px}
+
+  /* TÂCHE 1 — Hero mobile */
   .hero{grid-template-columns:1fr;padding:40px 20px;gap:32px}
-  .hero-title{font-size:36px}
+  .hero-title{font-size:36px;letter-spacing:-1.5px}
+  .hero-sub{font-size:15px}
+  .btn-cta-hero{width:100%;min-height:52px;font-size:16px;text-align:center}
+  .hero-cta-wrap{flex-direction:column}
+  .demo-wrap{display:none}
+
+  /* Barre réassurance : 1 item par ligne */
+  .sp-inner{flex-direction:column;gap:16px;align-items:center}
+  .sp-stat{width:100%}
+
+  /* TÂCHE 2 — Features mobile */
   .coach-grid{grid-template-columns:1fr;gap:32px}
   .coach-grid.reverse{direction:ltr}
+  .coach-visual{display:none}
+  .coach-point{min-height:44px;align-items:center}
+
+  /* TÂCHE 3 — Pricing mobile */
+  .pricing .section-title{font-size:24px;letter-spacing:-0.5px}
+  .pricing-cards-grid{display:flex!important;flex-direction:column-reverse!important;gap:16px!important}
+  .pricing-cards-grid>div{max-width:100%!important}
+  .btn-pricing{width:100%;min-height:52px;font-size:16px}
+
+  /* Steps */
   .steps,.testi-grid{grid-template-columns:1fr}
+
+  /* Sections padding */
   .coach-section,.how,.pricing,.testimonials,.footer-cta,.faq{padding:48px 20px}
-  .sp-inner{flex-wrap:wrap;gap:24px}
-  .faq-item summary{padding:18px 18px;font-size:15px}
-  .faq-answer{padding:0 18px 18px;font-size:14px}
+
+  /* TÂCHE 4 — FAQ mobile */
+  .faq-item summary{padding:16px;font-size:15px}
+  .faq-answer{padding:0 16px 16px;font-size:15px}
+
+  /* Testimonials 1 colonne — déjà via testi-grid 1fr */
+
+  /* Footer */
   footer{flex-direction:column;gap:12px;text-align:center;padding:24px 20px}
+
+  /* Footer CTA mobile */
+  .footer-cta h2{font-size:28px;letter-spacing:-1px}
+  .footer-cta p{font-size:15px}
+  .btn-white-cta{width:100%;min-height:52px;font-size:16px}
 }
 </style>
 </head>
@@ -393,7 +428,7 @@ footer{background:#1a1a1a;padding:32px 48px;display:flex;align-items:center;just
 <section class="pricing">
   <h2 class="section-title">Simple, sans engagement, rentabilisé dès le premier objet mieux vendu</h2>
   <p class="section-sub" style="text-align:center;margin-bottom:40px;color:#888">Tout inclus. Sans surprise. Sans engagement.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto">
+  <div class="pricing-cards-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:860px;margin:0 auto">
 
     <div style="background:#fff;border:1px solid #eee;border-radius:22px;padding:36px;text-align:center">
       <div class="pricing-badge">Sans engagement</div>
